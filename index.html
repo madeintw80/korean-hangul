@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<!-- viewport-fit=cover：讓背景延伸到 iPhone 瀏海區 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>한글 練習 — 用 K-pop 學韓文 🐱</title>
+<meta name="description" content="用 K-pop 女團學韓文字母發音：母音、子音、收尾音、拼字實驗室、聽音測驗">
+
+<!-- PWA 設定 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff7fb0">
+<!-- iOS 加到主畫面 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="한글練習">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>🐱 한글 練習</h1>
+    <div class="subtitle">用 K-pop 女團學韓文發音｜點任何卡片就唸給你聽</div>
+    <div id="voiceStatus" class="voice-status">🔍 偵測韓文語音中…</div>
+    <div class="controls">
+      🐢 語速
+      <input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="0.85">
+      <span id="rateVal">0.85x</span> 🐇
+    </div>
+  </header>
+
+  <!-- 分頁列（手機可橫向滑）-->
+  <nav class="tabs">
+    <button class="tab-btn active" data-target="tab-vowels">🔤 母音</button>
+    <button class="tab-btn" data-target="tab-consonants">🔡 子音</button>
+    <button class="tab-btn" data-target="tab-batchim">🧩 收尾</button>
+    <button class="tab-btn" data-target="tab-lab">✨ 拼字</button>
+    <button class="tab-btn" data-target="tab-quiz">🎧 測驗</button>
+    <button class="tab-btn" data-target="tab-idols">🎵 女團</button>
+  </nav>
+
+  <main>
+    <!-- ① 母音 -->
+    <section id="tab-vowels" class="tab-content active"></section>
+
+    <!-- ② 子音 -->
+    <section id="tab-consonants" class="tab-content"></section>
+
+    <!-- ③ 收尾音 -->
+    <section id="tab-batchim" class="tab-content"></section>
+
+    <!-- ④ 拼字實驗室 -->
+    <section id="tab-lab" class="tab-content"></section>
+
+    <!-- ⑤ 測驗 -->
+    <section id="tab-quiz" class="tab-content">
+      <p class="tab-intro">聽發音 → 從 4 個字母裡選對的，訓練耳朵 👂</p>
+      <div class="quiz-scope">
+        <button class="scope-btn active" data-scope="vowel">只考母音</button>
+        <button class="scope-btn" data-scope="consonant">只考子音</button>
+        <button class="scope-btn" data-scope="all">全部混合</button>
+      </div>
+      <div class="quiz-box">
+        <button class="big-btn" id="quizReplay">🔊 再播一次</button>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div id="quizFeedback"></div>
+        <div id="quizScore">答對 0 ／ 共 0 題</div>
+      </div>
+    </section>
+
+    <!-- ⑥ 女團 -->
+    <section id="tab-idols" class="tab-content"></section>
+  </main>
+
+  <footer>한글 練習 v1.0.0 ｜ 跟妮妮說「韓文 Day N」解鎖每日課程 🎵</footer>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
