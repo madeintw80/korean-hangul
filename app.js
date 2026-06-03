@@ -110,6 +110,34 @@ const phrases = [
   { han:'언니',       rom:'eonni',          mean:'姊姊(女生叫女生)' },
 ];
 
+// 拼字實驗室「範例字」— 只存 子音/母音/收尾，字本身由 composeHangul 算（保證一致）
+const labExamples = [
+  { cho:'ㅎ', jung:'ㅏ', jong:'ㄴ', mean:'韓' },   // 한
+  { cho:'ㄱ', jung:'ㅡ', jong:'ㄹ', mean:'字' },   // 글
+  { cho:'ㅂ', jung:'ㅏ', jong:'ㅂ', mean:'飯' },   // 밥
+  { cho:'ㅁ', jung:'ㅜ', jong:'ㄹ', mean:'水' },   // 물
+  { cho:'ㄲ', jung:'ㅜ', jong:'ㅁ', mean:'夢' },   // 꿈
+  { cho:'ㅂ', jung:'ㅕ', jong:'ㄹ', mean:'星' },   // 별
+  { cho:'ㅂ', jung:'ㅗ', jong:'ㅁ', mean:'春' },   // 봄
+  { cho:'ㄱ', jung:'ㅏ', jong:'ㅇ', mean:'江' },   // 강
+];
+
+// 歌詞片段（教學引用，已查證精確 Hangul）— 韓文歌常中英韓夾雜屬正常
+const lyrics = [
+  { group:'aespa', song:'Next Level', lines:[
+    { han:'광야로 걸어가', rom:'gwangyaro georeoga', mean:'走向曠野（aespa 世界觀的 KWANGYA）' },
+    { han:'제껴라 제껴라 제껴라', rom:'jekkyeora jekkyeora jekkyeora', mean:'甩開、超越（經典口號）' },
+  ]},
+  { group:'NMIXX', song:'DASH', lines:[
+    { han:'날 막아선 barricade', rom:'nal magaseon barricade', mean:'擋住我的路障' },
+    { han:'사뿐히 즈려밟고 가', rom:'sappunhi jeuryeobalpgo ga', mean:'輕盈地踩過去（化用名詩 진달래꽃）' },
+  ]},
+  { group:'ITZY', song:'WANNABE', lines:[
+    { han:'잔소리는 Stop it 알아서 할게', rom:'jansorineun Stop it araseo halge', mean:'嘮叨 stop it，我自己會搞定' },
+    { han:'내가 뭐가 되든', rom:'naega mwoga doedeun', mean:'不管我變成什麼樣' },
+  ]},
+];
+
 // 韓文組字用的三組字母（標準 Unicode 順序，拼字實驗室會用到）
 const CHO  = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; // 初聲 19
 const JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ']; // 中聲 21
@@ -281,6 +309,23 @@ function renderLab() {
   root.appendChild(makeRow('母音', JUNG, 'jung'));
   root.appendChild(makeRow('收尾', ['', 'ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅇ'], 'jong'));
 
+  // 範例字：點一下自動帶入拼法 + 高亮對應字母
+  const exRow = document.createElement('div');
+  exRow.className = 'lab-row';
+  exRow.innerHTML = '<div class="lab-label">範例字（點看怎麼拼出來）</div>';
+  const exBtns = document.createElement('div');
+  exBtns.className = 'lab-btns';
+  labExamples.forEach(ex => {
+    const ch = composeHangul(ex.cho, ex.jung, ex.jong);
+    const b = document.createElement('button');
+    b.className = 'lab-btn lab-example';
+    b.innerHTML = `${ch}<span class="ex-mean">${ex.mean}</span>`;
+    b.onclick = () => { labCho = ex.cho; labJung = ex.jung; labJong = ex.jong; updateLab(); };
+    exBtns.appendChild(b);
+  });
+  exRow.appendChild(exBtns);
+  root.appendChild(exRow);
+
   updateLab();
 }
 
@@ -406,6 +451,31 @@ function renderIdols() {
   root.appendChild(grid2);
 }
 
+// 分頁⑦：歌詞（點句子跟著唸）
+function renderLyrics() {
+  const root = document.getElementById('tab-lyrics');
+  const intro = document.createElement('p');
+  intro.className = 'tab-intro';
+  intro.innerHTML = '你愛的團的副歌片段，點句子就跟著唸 🎤（韓文歌常中英韓夾雜，很正常）';
+  root.appendChild(intro);
+
+  lyrics.forEach(s => {
+    const h = document.createElement('h3');
+    h.className = 'group-title';
+    h.textContent = `${s.group} — ${s.song}`;
+    root.appendChild(h);
+    s.lines.forEach(ln => {
+      const card = document.createElement('div');
+      card.className = 'card lyric-card';
+      card.innerHTML = `<div class="lyric-han">${ln.han}</div>
+                        <div class="rom">${ln.rom}</div>
+                        <div class="mean">${ln.mean}</div>`;
+      card.onclick = () => speak(ln.han);
+      root.appendChild(card);
+    });
+  });
+}
+
 /* ---------------------------------------------------------------------
    4. 分頁切換
    --------------------------------------------------------------------- */
@@ -448,6 +518,7 @@ function init() {
   renderBatchim();
   renderLab();
   renderIdols();
+  renderLyrics();
   setupTabs();
 
   // 測驗範圍按鈕
