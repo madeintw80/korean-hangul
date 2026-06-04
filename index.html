@@ -26,6 +26,10 @@
     <div class="subtitle">用 K-pop 女團學韓文發音｜點任何卡片就唸給你聽</div>
     <div id="voiceStatus" class="voice-status">🔍 偵測韓文語音中…</div>
     <div class="controls">
+      🔊 語音
+      <select id="voiceSelect" class="voice-select"></select>
+    </div>
+    <div class="controls">
       🐢 語速
       <input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="0.85">
       <span id="rateVal">0.85x</span> 🐇
@@ -79,7 +83,7 @@
     <section id="tab-lyrics" class="tab-content"></section>
   </main>
 
-  <footer>한글 練習 v1.1.0 ｜ 跟妮妮說「韓文 Day N」解鎖每日課程 🎵</footer>
+  <footer>한글 練習 v1.2.0 ｜ 跟妮妮說「韓文 Day N」解鎖每日課程 🎵</footer>
 
 </div>
 <script src="app.js"></script>

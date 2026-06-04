@@ -15,18 +15,18 @@
 // 母音（21 個，分 4 組教學）
 const vowelGroups = [
   { title: '基本母音', items: [
-    { h:'ㅏ', r:'a',  s:'아', hint:'啊' },
-    { h:'ㅓ', r:'eo', s:'어', hint:'呃(嘴張大)' },
-    { h:'ㅗ', r:'o',  s:'오', hint:'歐(嘴圓)' },
-    { h:'ㅜ', r:'u',  s:'우', hint:'烏' },
-    { h:'ㅡ', r:'eu', s:'으', hint:'扁嘴呃' },
-    { h:'ㅣ', r:'i',  s:'이', hint:'衣' },
+    { h:'ㅏ', r:'a',  s:'아', hint:'ㄚ' },
+    { h:'ㅓ', r:'eo', s:'어', hint:'ㄜ(嘴張大)' },
+    { h:'ㅗ', r:'o',  s:'오', hint:'ㄛ(嘴圓)' },
+    { h:'ㅜ', r:'u',  s:'우', hint:'ㄨ' },
+    { h:'ㅡ', r:'eu', s:'으', hint:'≈ㄜ(扁嘴)' },
+    { h:'ㅣ', r:'i',  s:'이', hint:'ㄧ' },
   ]},
   { title: 'Y 母音（前面多一個 y 音）', items: [
-    { h:'ㅑ', r:'ya',  s:'야', hint:'呀' },
-    { h:'ㅕ', r:'yeo', s:'여', hint:'唷(yeo)' },
-    { h:'ㅛ', r:'yo',  s:'요', hint:'喲' },
-    { h:'ㅠ', r:'yu',  s:'유', hint:'呦(yu)' },
+    { h:'ㅑ', r:'ya',  s:'야', hint:'ㄧㄚ' },
+    { h:'ㅕ', r:'yeo', s:'여', hint:'ㄧㄜ' },
+    { h:'ㅛ', r:'yo',  s:'요', hint:'ㄧㄛ' },
+    { h:'ㅠ', r:'yu',  s:'유', hint:'ㄧㄨ' },
   ]},
   { title: 'ㅐ ㅔ 系（都唸「ㄝ」）', items: [
     { h:'ㅐ', r:'ae', s:'애', hint:'ㄝ' },
@@ -35,54 +35,54 @@ const vowelGroups = [
     { h:'ㅖ', r:'ye',  s:'예', hint:'ㄧㄝ' },
   ]},
   { title: 'W 複合母音（前面多一個 w 音）', items: [
-    { h:'ㅘ', r:'wa',  s:'와', hint:'哇' },
-    { h:'ㅙ', r:'wae', s:'왜', hint:'歪' },
-    { h:'ㅚ', r:'oe',  s:'외', hint:'威' },
-    { h:'ㅝ', r:'wo',  s:'워', hint:'喔(wo)' },
-    { h:'ㅞ', r:'we',  s:'웨', hint:'為' },
-    { h:'ㅟ', r:'wi',  s:'위', hint:'威(wi)' },
-    { h:'ㅢ', r:'ui',  s:'의', hint:'ㄜ衣' },
+    { h:'ㅘ', r:'wa',  s:'와', hint:'ㄨㄚ' },
+    { h:'ㅙ', r:'wae', s:'왜', hint:'ㄨㄝ' },
+    { h:'ㅚ', r:'oe',  s:'외', hint:'ㄨㄝ' },
+    { h:'ㅝ', r:'wo',  s:'워', hint:'ㄨㄛ' },
+    { h:'ㅞ', r:'we',  s:'웨', hint:'ㄨㄝ' },
+    { h:'ㅟ', r:'wi',  s:'위', hint:'ㄨㄧ' },
+    { h:'ㅢ', r:'ui',  s:'의', hint:'≈ㄜㄧ' },
   ]},
 ];
 
 // 子音（19 個，分 3 組）— 子音配 ㅏ 唸（가 나 다…）比較準
 const consonantGroups = [
   { title: '平音（基本，輕鬆發）', items: [
-    { h:'ㄱ', r:'g/k', s:'가', hint:'가 ga' },
-    { h:'ㄴ', r:'n',   s:'나', hint:'나 na' },
-    { h:'ㄷ', r:'d/t', s:'다', hint:'다 da' },
-    { h:'ㄹ', r:'r/l', s:'라', hint:'라 ra' },
-    { h:'ㅁ', r:'m',   s:'마', hint:'마 ma' },
-    { h:'ㅂ', r:'b/p', s:'바', hint:'바 ba' },
-    { h:'ㅅ', r:'s',   s:'사', hint:'사 sa' },
+    { h:'ㄱ', r:'g/k', s:'가', hint:'ㄍ／가' },
+    { h:'ㄴ', r:'n',   s:'나', hint:'ㄋ／나' },
+    { h:'ㄷ', r:'d/t', s:'다', hint:'ㄉ／다' },
+    { h:'ㄹ', r:'r/l', s:'라', hint:'ㄌ／라(舌輕彈)' },
+    { h:'ㅁ', r:'m',   s:'마', hint:'ㄇ／마' },
+    { h:'ㅂ', r:'b/p', s:'바', hint:'ㄅ／바' },
+    { h:'ㅅ', r:'s',   s:'사', hint:'ㄙ／사(ㅣ前像ㄒ)' },
     { h:'ㅇ', r:'不發音/ng', s:'아', hint:'開頭不發音' },
-    { h:'ㅈ', r:'j',   s:'자', hint:'자 ja' },
-    { h:'ㅎ', r:'h',   s:'하', hint:'하 ha' },
+    { h:'ㅈ', r:'j',   s:'자', hint:'ㄐ／자' },
+    { h:'ㅎ', r:'h',   s:'하', hint:'ㄏ／하' },
   ]},
   { title: '送氣音（用力吐一口氣）', items: [
-    { h:'ㅋ', r:'k',  s:'카', hint:'ㄱ 的吐氣版' },
-    { h:'ㅌ', r:'t',  s:'타', hint:'ㄷ 的吐氣版' },
-    { h:'ㅍ', r:'p',  s:'파', hint:'ㅂ 的吐氣版' },
-    { h:'ㅊ', r:'ch', s:'차', hint:'ㅈ 的吐氣版' },
+    { h:'ㅋ', r:'k',  s:'카', hint:'ㄎ（ㄱ吐氣）' },
+    { h:'ㅌ', r:'t',  s:'타', hint:'ㄊ（ㄷ吐氣）' },
+    { h:'ㅍ', r:'p',  s:'파', hint:'ㄆ（ㅂ吐氣）' },
+    { h:'ㅊ', r:'ch', s:'차', hint:'ㄘ（ㅈ吐氣）' },
   ]},
   { title: '緊音（繃緊喉嚨、短促）', items: [
-    { h:'ㄲ', r:'kk', s:'까', hint:'用力的 가' },
-    { h:'ㄸ', r:'tt', s:'따', hint:'用力的 다' },
-    { h:'ㅃ', r:'pp', s:'빠', hint:'用力的 바' },
-    { h:'ㅆ', r:'ss', s:'싸', hint:'用力的 사' },
-    { h:'ㅉ', r:'jj', s:'짜', hint:'用力的 자' },
+    { h:'ㄲ', r:'kk', s:'까', hint:'用力ㄍ' },
+    { h:'ㄸ', r:'tt', s:'따', hint:'用力ㄉ' },
+    { h:'ㅃ', r:'pp', s:'빠', hint:'用力ㄅ' },
+    { h:'ㅆ', r:'ss', s:'싸', hint:'用力ㄙ' },
+    { h:'ㅉ', r:'jj', s:'짜', hint:'用力ㄐ' },
   ]},
 ];
 
 // 받침（收尾音）— 7 個代表音 + 真實例字
 const batchim = [
-  { h:'ㄱ', r:'k',  s:'악', ex:'책', exr:'chaek', exm:'書' },
-  { h:'ㄴ', r:'n',  s:'안', ex:'손', exr:'son',   exm:'手' },
-  { h:'ㄷ', r:'t',  s:'앋', ex:'옷', exr:'ot',    exm:'衣服' },
-  { h:'ㄹ', r:'l',  s:'알', ex:'물', exr:'mul',   exm:'水' },
-  { h:'ㅁ', r:'m',  s:'암', ex:'밤', exr:'bam',   exm:'夜晚' },
-  { h:'ㅂ', r:'p',  s:'압', ex:'밥', exr:'bap',   exm:'飯' },
-  { h:'ㅇ', r:'ng', s:'앙', ex:'강', exr:'gang',  exm:'江' },
+  { h:'ㄱ', r:'k',  zhu:'ㄍ(擋住)', s:'악', ex:'책', exr:'chaek', exm:'書' },
+  { h:'ㄴ', r:'n',  zhu:'ㄣ',       s:'안', ex:'손', exr:'son',   exm:'手' },
+  { h:'ㄷ', r:'t',  zhu:'ㄊ(擋住)', s:'앋', ex:'옷', exr:'ot',    exm:'衣服' },
+  { h:'ㄹ', r:'l',  zhu:'ㄌ',       s:'알', ex:'물', exr:'mul',   exm:'水' },
+  { h:'ㅁ', r:'m',  zhu:'ㄇ(閉嘴)', s:'암', ex:'밤', exr:'bam',   exm:'夜晚' },
+  { h:'ㅂ', r:'p',  zhu:'ㄅ(閉唇)', s:'압', ex:'밥', exr:'bap',   exm:'飯' },
+  { h:'ㅇ', r:'ng', zhu:'ㄥ',       s:'앙', ex:'강', exr:'gang',  exm:'江' },
 ];
 
 // 女團拼讀案例庫
@@ -157,15 +157,37 @@ function composeHangul(choChar, jungChar, jongChar) {
 /* ---------------------------------------------------------------------
    2. 語音引擎（Web Speech API）
    --------------------------------------------------------------------- */
-let koVoice = null;       // 抓到的韓文語音
+let koVoice = null;       // 目前選用的韓文語音
+let koVoices = [];        // 裝置上所有韓文語音
 let currentRate = 0.85;   // 語速（初學者調慢）
 
 function loadVoices() {
   const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
-  koVoice = voices.find(v => v.lang === 'ko-KR')
-         || voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ko'))
-         || null;
+  koVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('ko'));
+  // 自動挑最自然的：上次選過的 > Google > Natural/Siri/Yuna > 第一個
+  const saved = localStorage.getItem('koVoiceName');
+  koVoice = koVoices.find(v => v.name === saved)
+         || koVoices.find(v => /google/i.test(v.name))
+         || koVoices.find(v => /natural|siri|yuna|sora/i.test(v.name))
+         || koVoices[0] || null;
+  populateVoiceSelect();
   updateVoiceStatus();
+}
+
+// 把裝置上所有韓文語音填進下拉選單，讓使用者自己挑最順耳的
+function populateVoiceSelect() {
+  const sel = document.getElementById('voiceSelect');
+  if (!sel) return;
+  if (!koVoices.length) { sel.style.display = 'none'; return; }  // 沒語音就藏起來
+  sel.style.display = '';
+  sel.innerHTML = '';
+  koVoices.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = (/google/i.test(v.name) ? '⭐ ' : '') + v.name;  // Google 標星號
+    if (koVoice && v.name === koVoice.name) opt.selected = true;
+    sel.appendChild(opt);
+  });
 }
 
 function updateVoiceStatus() {
@@ -249,7 +271,7 @@ function renderBatchim() {
     const card = document.createElement('div');
     card.className = 'card batchim-card';
     card.innerHTML = `<div class="han">${b.h}</div>
-                      <div class="rom">收尾音 ${b.r}</div>
+                      <div class="rom">收尾音 ${b.r}｜注音 ${b.zhu}</div>
                       <div class="ex">例：<b>${b.ex}</b> ${b.exr}（${b.exm}）</div>`;
     // 點上半部唸代表音，點例字唸例字
     card.onclick = (e) => speak(b.s);
@@ -529,6 +551,17 @@ function init() {
     if (!quizAnswer) setQuizScope('vowel');
     else speak(quizAnswer.s);
   };
+
+  // 語音選單：切換 voice + 記住選擇 + 立刻試聽
+  const voiceSel = document.getElementById('voiceSelect');
+  if (voiceSel) {
+    voiceSel.onchange = () => {
+      koVoice = koVoices.find(v => v.name === voiceSel.value) || koVoice;
+      localStorage.setItem('koVoiceName', voiceSel.value);  // 記住，下次自動用
+      updateVoiceStatus();
+      speak('안녕하세요');   // 換 voice 馬上聽一句
+    };
+  }
 
   // 語速滑桿
   const rate = document.getElementById('rate');
