@@ -521,9 +521,9 @@ function speakSeq(items, rate, gapMs) {
    --------------------------------------------------------------------- */
 
 // 小工具：建一張會發音的字母卡
-function makeCard(item, extraClass) {
+function makeCard(item) {
   const card = document.createElement('div');
-  card.className = 'card' + (extraClass ? ' ' + extraClass : '');
+  card.className = 'card';
   let inner = `<div class="han">${item.h}</div><div class="rom">${item.r}</div>`;
   if (item.hint) inner += `<div class="hint">${item.hint}</div>`;
   card.innerHTML = inner;
@@ -532,7 +532,7 @@ function makeCard(item, extraClass) {
 }
 
 // 小工具：建一個「分組標題 + 卡片格線」
-function makeGroupBlock(title, items, extraCardClass) {
+function makeGroupBlock(title, items) {
   const wrap = document.createElement('div');
   const h = document.createElement('h3');
   h.className = 'group-title';
@@ -540,7 +540,7 @@ function makeGroupBlock(title, items, extraCardClass) {
   wrap.appendChild(h);
   const grid = document.createElement('div');
   grid.className = 'grid';
-  items.forEach(it => grid.appendChild(makeCard(it, extraCardClass)));
+  items.forEach(it => grid.appendChild(makeCard(it)));
   wrap.appendChild(grid);
   return wrap;
 }
@@ -674,6 +674,18 @@ function updateLab(speakIt) {
 let quizPool = [];        // 目前題庫
 let quizAnswer = null;
 let quizCorrect = 0, quizTotal = 0;
+let quizLocked = false;   // 作答後鎖住，避免補點正解被重複計分
+let quizTimer = null;     // 待跳下一題的 timer（切頁/換範圍要清，否則會在別處突然出題發聲）
+
+/* 發音相同的字母組 — 同題出現用聽的不可能分辨：
+   ㅐ/ㅔ、ㅒ/ㅖ、ㅙ/ㅚ/ㅞ 現代韓語已合流（app 的 hint 也標同音）；
+   母音 ㅏ 與子音 ㅇ 的示範音節都是「아」，TTS 唸出來 100% 一樣 */
+const HOMOPHONES = [['ㅐ','ㅔ'], ['ㅒ','ㅖ'], ['ㅙ','ㅚ','ㅞ'], ['ㅏ','ㅇ']];
+
+function sameSound(a, b) {
+  if (a.s === b.s) return true;   // 示範音節相同 → 必同音
+  return HOMOPHONES.some(g => g.includes(a.h) && g.includes(b.h));
+}
 
 function flatVowels() { return vowelGroups.flatMap(g => g.items); }
 function flatConsonants() { return consonantGroups.flatMap(g => g.items); }
@@ -697,11 +709,21 @@ function shuffle(arr) {
 }
 
 function newQuestion() {
+  clearTimeout(quizTimer);   // 清掉殘留 timer（連點/切範圍時不會被舊 timer 再洗一次題）
+  quizLocked = false;
   const fb = document.getElementById('quizFeedback');
   if (fb) fb.textContent = '';
   const pool = shuffle(quizPool);
   quizAnswer = pool[0];
-  const options = shuffle(pool.slice(0, 4));
+  // 干擾項排除「跟正解同音」與「彼此同音」的字母，保證 4 個選項用聽的分得出來
+  const distractors = [];
+  for (const item of pool.slice(1)) {
+    if (distractors.length === 3) break;
+    if (sameSound(item, quizAnswer)) continue;
+    if (distractors.some(d => sameSound(d, item))) continue;
+    distractors.push(item);
+  }
+  const options = shuffle([quizAnswer, ...distractors]);
   const optWrap = document.getElementById('quizOptions');
   optWrap.innerHTML = '';
   options.forEach(opt => {
@@ -715,6 +737,9 @@ function newQuestion() {
 }
 
 function checkAnswer(opt, btn) {
+  if (quizLocked) return;   // 這題已作答 — 補點任何選項都不再計分
+  quizLocked = true;
+  document.querySelectorAll('.quiz-opt').forEach(b => { b.disabled = true; });
   quizTotal++;
   const fb = document.getElementById('quizFeedback');
   if (opt.h === quizAnswer.h) {
@@ -731,7 +756,7 @@ function checkAnswer(opt, btn) {
     });
   }
   document.getElementById('quizScore').textContent = `答對 ${quizCorrect} ／ 共 ${quizTotal} 題`;
-  setTimeout(newQuestion, 1200);
+  quizTimer = setTimeout(newQuestion, 1200);
 }
 
 // 分頁⑥：女團 + 常用語
@@ -959,10 +984,12 @@ function setupTabs() {
       document.querySelectorAll('.tab-content').forEach(c => {
         c.classList.toggle('active', c.id === target);
       });
-      // 切走時停掉正在唸的音（含逐字隊伍）
+      // 切走時停掉正在唸的音（含逐字隊伍）+ 清掉測驗待跳題 timer（避免在別的分頁突然出題發聲）
       stopSpeak();
-      // 切到測驗分頁且還沒出題 → 自動出第一題
+      clearTimeout(quizTimer);
+      // 切到測驗分頁：還沒出過題 → 出第一題；上一題已作答（timer 被切頁清掉）→ 直接出新題
       if (target === 'tab-quiz' && !quizAnswer) setQuizScope('vowel');
+      else if (target === 'tab-quiz' && quizLocked) newQuestion();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
   });
