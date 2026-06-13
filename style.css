@@ -246,3 +246,31 @@ footer { text-align: center; color: #aaa; font-size: 0.78rem; margin-top: 30px; 
   flex: 1; max-width: 280px; padding: 5px 8px; border-radius: 10px;
   border: 1px solid #ddd; background: #fff; font-size: 0.78rem; color: var(--ink);
 }
+
+/* ===== 檢查更新鍵（標題列）===== */
+.check-update-btn {
+  display: inline-block; margin: 4px auto 0; border: none; cursor: pointer;
+  background: #fff8; color: #a0356e; border-radius: 14px;
+  padding: 5px 14px; font-size: 0.78rem; font-weight: bold;
+}
+.check-update-btn:hover { background: var(--pink-soft); }
+.check-update-btn:active { transform: scale(.95); }
+
+/* ===== 有新版本橫幅（固定在底部，滑入）===== */
+.update-bar {
+  position: fixed; left: 50%; bottom: 16px; transform: translate(-50%, 120%);
+  z-index: 100; display: flex; align-items: center; gap: 12px;
+  background: var(--pink); color: #fff; border-radius: 30px;
+  padding: 10px 12px 10px 20px; font-size: 0.95rem; font-weight: bold;
+  box-shadow: 0 6px 20px #ff7fb088; transition: transform .3s ease;
+  max-width: calc(100% - 28px);
+  /* iPhone 底部安全區 */
+  margin-bottom: env(safe-area-inset-bottom);
+}
+.update-bar.show { transform: translate(-50%, 0); }
+.update-bar button {
+  border: none; cursor: pointer; background: #fff; color: var(--pink-deep);
+  border-radius: 20px; padding: 8px 16px; font-size: 0.9rem; font-weight: bold;
+  white-space: nowrap;
+}
+.update-bar button:active { transform: scale(.95); }

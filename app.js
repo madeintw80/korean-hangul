@@ -1047,9 +1047,95 @@ function init() {
 
 document.addEventListener('DOMContentLoaded', init);
 
-// 註冊 Service Worker（PWA：可加到主畫面、離線可用）
+/* ---------------------------------------------------------------------
+   6. Service Worker + App 內更新鍵 🔄
+   PWA 的更新很容易卡在舊快取，所以這裡做兩件事：
+   ① 自動偵測新版 → 跳「有新版本」橫幅，按一下就更新（不用關 App 重開）
+   ② 標題列常駐「🔄 檢查更新」鍵 → 隨時手動戳一下看有沒有新版
+   --------------------------------------------------------------------- */
+let swReg = null;          // 記住註冊物件，更新鍵要用
+let reloadingForUpdate = false;
+
+// 顯示「有新版本」橫幅（按鈕一按 → 叫新版 SW 接管 → 自動重載）
+function showUpdateBar() {
+  let bar = document.getElementById('updateBar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'updateBar';
+    bar.className = 'update-bar';
+    bar.innerHTML = '<span>🎉 有新版本！</span><button id="updateNow">立即更新</button>';
+    document.body.appendChild(bar);
+  }
+  bar.classList.add('show');
+  document.getElementById('updateNow').onclick = () => {
+    document.getElementById('updateNow').textContent = '更新中…';
+    // 叫等待中的新版 SW 立刻接管；沒有就直接重載
+    if (swReg && swReg.waiting) swReg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    else window.location.reload();
+  };
+}
+
+// 設定更新偵測（綁在註冊物件上）
+function setupUpdateDetection(reg) {
+  swReg = reg;
+  // 載入時就已經有等待中的新版（上次偵測到但沒更新）→ 直接顯示
+  if (reg.waiting && navigator.serviceWorker.controller) showUpdateBar();
+  // 偵測到新版正在安裝 → 裝好且有舊版在跑 = 真的有更新
+  reg.addEventListener('updatefound', () => {
+    const nw = reg.installing;
+    if (!nw) return;
+    nw.addEventListener('statechange', () => {
+      if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateBar();
+    });
+  });
+}
+
+// 手動「檢查更新」鍵：戳一下主動問伺服器有沒有新版
+async function checkForUpdate() {
+  const btn = document.getElementById('checkUpdate');
+  if (!swReg) {                      // 還沒註冊好（或瀏覽器不支援）→ 直接重載保底
+    window.location.reload();
+    return;
+  }
+  if (btn) btn.textContent = '🔄 檢查中…';
+  try {
+    await swReg.update();            // 主動抓 sw.js 看版本有沒有變
+    setTimeout(() => {
+      if (swReg.waiting || swReg.installing) {
+        showUpdateBar();             // 有新版 → 橫幅會跳出來
+        if (btn) btn.textContent = '🔄 檢查更新';
+      } else if (btn) {
+        btn.textContent = '✅ 已是最新';
+        setTimeout(() => { btn.textContent = '🔄 檢查更新'; }, 2000);
+      }
+    }, 1200);
+  } catch (err) {
+    console.log('檢查更新失敗', err);
+    if (btn) btn.textContent = '🔄 檢查更新';
+  }
+}
+
+// 新版 SW 接管的那一刻 → 自動重載一次，畫面就變新版（只重載一次，防迴圈）
 if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloadingForUpdate) return;
+    reloadingForUpdate = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(err => console.log('SW 註冊失敗', err));
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => {
+        setupUpdateDetection(reg);
+        // 回到 App（從背景切回前景）時自動檢查一次新版
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') reg.update().catch(() => {});
+        });
+      })
+      .catch(err => console.log('SW 註冊失敗', err));
+
+    // 標題列的「🔄 檢查更新」鍵
+    const btn = document.getElementById('checkUpdate');
+    if (btn) btn.onclick = checkForUpdate;
   });
 }
