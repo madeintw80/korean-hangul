@@ -428,6 +428,44 @@ let koVoices = [];        // 裝置上所有韓文語音
 let currentRate = 0.85;   // 語速（初學者調慢）
 let seqToken = 0;         // 逐字播放的「世代」編號：發新動作就 +1，舊隊伍自動停
 
+/* ---------------------------------------------------------------------
+   2.5 雲端真人發音（Cloudflare Worker + MeloTTS）
+   - 預設用真人語音；抓不到（沒網路 / worker 掛）自動退回系統 Yuna
+   - 同一句只抓一次，存進 audioCache，省流量也更快
+   --------------------------------------------------------------------- */
+const TTS_WORKER = 'https://hangul-tts.madeintw80.workers.dev';
+let ttsMode = localStorage.getItem('ttsMode') || 'cloud';  // 'cloud'=真人 / 'system'=系統 Yuna
+const audioCache = new Map();   // text → 音檔 blob URL（同句不重抓）
+let curAudio = null;            // 目前在播的音檔，停止時要 pause 它
+
+// 抓某句的音檔網址（先查快取，沒有才打 worker）
+async function fetchTTSUrl(text) {
+  if (audioCache.has(text)) return audioCache.get(text);
+  const res = await fetch(TTS_WORKER + '/?text=' + encodeURIComponent(text));
+  if (!res.ok) throw new Error('worker HTTP ' + res.status);
+  const url = URL.createObjectURL(await res.blob());
+  audioCache.set(text, url);
+  return url;
+}
+
+// 用真人語音播一句；回傳 Promise（播完才 resolve）。失敗會 reject → 呼叫端退回系統語音
+// myToken：給逐字播放用的「世代」檢查，中途被打斷就不播
+function playCloud(text, rate, myToken) {
+  return new Promise((resolve, reject) => {
+    fetchTTSUrl(text).then(url => {
+      if (myToken !== undefined && myToken !== seqToken) { resolve(); return; }  // 已被打斷
+      const audio = new Audio(url);
+      audio.playbackRate = rate || 1;          // 語速（1 = 原速）
+      audio.preservesPitch = true;             // 變速不變調
+      audio.webkitPreservesPitch = true;
+      curAudio = audio;
+      audio.onended = resolve;
+      audio.onerror = () => reject(new Error('audio error'));
+      audio.play().catch(reject);
+    }).catch(reject);
+  });
+}
+
 function loadVoices() {
   const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
   koVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('ko'));
@@ -460,12 +498,17 @@ function populateVoiceSelect() {
 function updateVoiceStatus() {
   const el = document.getElementById('voiceStatus');
   if (!el) return;
+  if (ttsMode === 'cloud') {           // 真人模式：直接顯示已啟用
+    el.className = 'voice-status ok';
+    el.textContent = '🎙️ 真人發音已啟用（雲端）';
+    return;
+  }
   if (!('speechSynthesis' in window)) {
     el.className = 'voice-status warn';
     el.textContent = '⚠️ 此瀏覽器不支援語音，建議用 Chrome / Edge / Safari';
   } else if (koVoice) {
     el.className = 'voice-status ok';
-    el.textContent = '✅ 韓文語音就緒：' + koVoice.name;
+    el.textContent = '✅ 系統語音就緒：' + koVoice.name;
   } else {
     el.className = 'voice-status warn';
     el.textContent = '⚠️ 沒找到韓文語音 → 連網路用 Chrome/Edge/Safari 最穩，或裝系統韓文語音包';
@@ -476,13 +519,25 @@ function updateVoiceStatus() {
 function stopSpeak() {
   seqToken++;
   if ('speechSynthesis' in window) speechSynthesis.cancel();
+  if (curAudio) { try { curAudio.pause(); } catch (e) {} curAudio = null; }  // 停掉真人語音
   document.querySelectorAll('.w-chip.speaking').forEach(e => e.classList.remove('speaking'));
 }
 
 // 唸出韓文文字（rate 可另外指定，例如慢速跟讀）
+// 真人模式：走雲端 worker，失敗自動退回系統語音
 function speak(text, rate) {
-  if (!('speechSynthesis' in window)) return;
   stopSpeak();
+  const r = rate || currentRate;
+  if (ttsMode === 'cloud') {
+    playCloud(text, r).catch(() => speakSystem(text, r));
+  } else {
+    speakSystem(text, r);
+  }
+}
+
+// 系統內建語音（Web Speech API）— 真人模式的備援
+function speakSystem(text, rate) {
+  if (!('speechSynthesis' in window)) return;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'ko-KR';
   if (koVoice) u.voice = koVoice;
@@ -493,9 +548,10 @@ function speak(text, rate) {
 /* 逐字接力播放：一個字一個字唸，唸到哪個字就高亮哪個
    items = [{ text:'要唸的字', el:對應的 DOM（可空）}] */
 function speakSeq(items, rate, gapMs) {
-  if (!('speechSynthesis' in window)) return;
   stopSpeak();
   const myToken = ++seqToken;   // 記住自己的世代；中途有新動作就停
+  // 真人模式：先在背景把每個字的音檔抓好（填快取），播放時才不會一字一卡
+  if (ttsMode === 'cloud') items.forEach(it => fetchTTSUrl(it.text).catch(() => {}));
   let i = 0;
   const next = () => {
     if (myToken !== seqToken || i >= items.length) {
@@ -505,15 +561,26 @@ function speakSeq(items, rate, gapMs) {
     const it = items[i++];
     document.querySelectorAll('.w-chip.speaking').forEach(e => e.classList.remove('speaking'));
     if (it.el) it.el.classList.add('speaking');
-    const u = new SpeechSynthesisUtterance(it.text);
-    u.lang = 'ko-KR';
-    if (koVoice) u.voice = koVoice;
-    u.rate = rate;
-    u.onend = () => setTimeout(next, gapMs);
-    u.onerror = () => setTimeout(next, gapMs);
-    speechSynthesis.speak(u);
+    const advance = () => { if (myToken === seqToken) setTimeout(next, gapMs); };
+    if (ttsMode === 'cloud') {
+      playCloud(it.text, rate, myToken).then(advance).catch(() => speakSeqOneSystem(it.text, rate, advance));
+    } else {
+      speakSeqOneSystem(it.text, rate, advance);
+    }
   };
   next();
+}
+
+// 系統語音播一個字（逐字接力的備援）
+function speakSeqOneSystem(text, rate, done) {
+  if (!('speechSynthesis' in window)) { done(); return; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR';
+  if (koVoice) u.voice = koVoice;
+  u.rate = rate;
+  u.onend = done;
+  u.onerror = done;
+  speechSynthesis.speak(u);
 }
 
 /* ---------------------------------------------------------------------
@@ -1033,6 +1100,18 @@ function init() {
       localStorage.setItem('koVoiceName', voiceSel.value);  // 記住，下次自動用
       updateVoiceStatus();
       speak('안녕하세요');   // 換 voice 馬上聽一句
+    };
+  }
+
+  // 發音模式：真人（雲端 worker）/ 系統 Yuna
+  const ttsModeSel = document.getElementById('ttsMode');
+  if (ttsModeSel) {
+    ttsModeSel.value = ttsMode;
+    ttsModeSel.onchange = () => {
+      ttsMode = ttsModeSel.value;
+      localStorage.setItem('ttsMode', ttsMode);
+      updateVoiceStatus();
+      speak('안녕하세요');   // 換模式馬上試聽
     };
   }
 

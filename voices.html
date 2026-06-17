@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>語音診斷 — 한글 練習</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         margin: 0; padding: 16px; line-height: 1.6; background: #fff7fb; color: #333; }
+  h1 { font-size: 1.3rem; margin: .2rem 0; }
+  p.intro { color: #666; font-size: .92rem; }
+  button { font-size: 1rem; padding: 10px 16px; border: none; border-radius: 10px;
+           background: #ff7fb0; color: #fff; font-weight: bold; }
+  .summary { padding: 14px; background: #fff; border-radius: 12px; margin: 14px 0;
+             box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .big { font-size: 1.6rem; font-weight: bold; color: #ff5b8a; }
+  .verdict { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: .92rem; }
+  .verdict.locked { background: #fff0d0; border-left: 4px solid #ff9500; }
+  .verdict.ok { background: #e3f9e5; border-left: 4px solid #34c759; }
+  .v { padding: 10px 12px; margin: 8px 0; border-radius: 10px; background: #fff;
+       box-shadow: 0 1px 3px rgba(0,0,0,.08); font-size: .9rem; }
+  .v.ko { background: #fff6e0; border-left: 4px solid #ff9500; }
+  .name { font-weight: bold; font-size: 1rem; }
+  .tag { font-size: .72rem; color: #fff; background: #aaa; border-radius: 5px;
+         padding: 1px 6px; margin-left: 6px; }
+  .tag.local { background: #34c759; }
+  .tag.remote { background: #007aff; }
+  .uri { color: #999; font-size: .75rem; word-break: break-all; margin-top: 3px; }
+  .play { background: #ffb3d0; color: #7a2b4d; padding: 5px 12px; font-size: .85rem;
+          border-radius: 6px; margin-top: 6px; }
+</style>
+</head>
+<body>
+  <h1>🔍 語音診斷</h1>
+  <p class="intro">這頁列出「你這台裝置的這個瀏覽器」實際<strong>能給網頁用</strong>的所有語音。<br>
+     重點看：韓文 (ko) 到底有幾個？這就是真相。</p>
+  <button id="reload">🔄 重新偵測</button>
+  <div id="summary" class="summary">偵測中…（iOS 有時要等 1 秒，沒東西就按上面「重新偵測」）</div>
+  <div id="list"></div>
+
+<script>
+// 試聽某個語音唸一句韓文
+function speak(name){
+  const u = new SpeechSynthesisUtterance('안녕하세요, 만나서 반가워요');
+  const v = speechSynthesis.getVoices().find(x => x.name === name);
+  if (v){ u.voice = v; u.lang = v.lang; }
+  u.rate = 0.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+// 列出瀏覽器吐給網頁的所有語音
+function render(){
+  const voices = speechSynthesis.getVoices();
+  const isKo = v => (v.lang || '').toLowerCase().startsWith('ko');
+  const ko = voices.filter(isKo);
+
+  const summary = document.getElementById('summary');
+  let verdict;
+  if (ko.length <= 1){
+    verdict = '<div class="verdict locked">🔒 證實：這個瀏覽器對網頁<strong>只開放 ' + ko.length + ' 個韓文語音</strong>。'
+            + '你在系統下載的其他高音質韓文語音，網頁通通拿不到 —— 這是 Apple 對 iPhone Safari 的限制，不是 App 的問題。</div>';
+  } else {
+    verdict = '<div class="verdict ok">✅ 這個瀏覽器給了網頁 ' + ko.length + ' 個韓文語音，可以在主 App 下拉挑選。</div>';
+  }
+  summary.innerHTML =
+      '這個瀏覽器總共給網頁 <span class="big">' + voices.length + '</span> 個語音<br>'
+    + '其中韓文 (ko) 有 <span class="big">' + ko.length + '</span> 個' + verdict;
+
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  // 韓文排最前面，方便看
+  const sorted = [...ko, ...voices.filter(v => !isKo(v))];
+  sorted.forEach(v => {
+    const d = document.createElement('div');
+    d.className = 'v' + (isKo(v) ? ' ko' : '');
+    const tag = v.localService ? '<span class="tag local">📱本機</span>' : '<span class="tag remote">☁️雲端</span>';
+    const def = v.default ? '<span class="tag">預設</span>' : '';
+    let html = '<div class="name">' + (v.name || '?')
+             + ' <span style="color:#999;font-weight:normal">(' + (v.lang || '?') + ')</span>' + tag + def + '</div>';
+    html += '<div class="uri">' + (v.voiceURI || '') + '</div>';
+    if (isKo(v)){
+      const safe = (v.name || '').replace(/'/g, "\\'");
+      html += '<button class="play" onclick="speak(\'' + safe + '\')">▶︎ 試聽這個</button>';
+    }
+    d.innerHTML = html;
+    list.appendChild(d);
+  });
+}
+
+document.getElementById('reload').onclick = render;
+if ('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = render;   // 語音清單就緒時自動刷新
+  render();
+  setTimeout(render, 600);                      // iOS 第一次常回空，補一次
+} else {
+  document.getElementById('summary').textContent = '⚠️ 這個瀏覽器不支援語音 API';
+}
+</script>
+</body>
+</html>
