@@ -431,37 +431,56 @@ let seqToken = 0;         // 逐字播放的「世代」編號：發新動作就
 /* ---------------------------------------------------------------------
    2.5 雲端真人發音（Cloudflare Worker + MeloTTS）
    - 預設用真人語音；抓不到（沒網路 / worker 掛）自動退回系統 Yuna
-   - 同一句只抓一次，存進 audioCache，省流量也更快
+   - ⚠️ iPhone Safari 對 <audio> 在「非點擊當下」播放會擋掉（要抓雲端音檔約 1 秒，
+     抓完已脫離手勢），所以改用 Web Audio API（AudioContext）：第一次點擊時 resume
+     解鎖一次，之後就能自由播放，不受手勢限制
+   - 同一句只 decode 一次，存進 bufCache，省流量也更快
    --------------------------------------------------------------------- */
 const TTS_WORKER = 'https://hangul-tts.madeintw80.workers.dev';
-let ttsMode = localStorage.getItem('ttsMode') || 'cloud';  // 'cloud'=真人 / 'system'=系統 Yuna
-const audioCache = new Map();   // text → 音檔 blob URL（同句不重抓）
-let curAudio = null;            // 目前在播的音檔，停止時要 pause 它
+// ⚠️ 真人語音暫時停用：Cloudflare MeloTTS 唸韓文會截斷（英文正常）。整套基礎建設
+//    （worker + AudioContext 播放層）保留，之後改接 Google TTS 時把這開關打開即可
+const CLOUD_TTS_ENABLED = false;
+let ttsMode = CLOUD_TTS_ENABLED ? (localStorage.getItem('ttsMode') || 'cloud') : 'system';  // 'cloud'=真人 / 'system'=系統 Yuna
+const bufCache = new Map();     // text → 已 decode 的 AudioBuffer（同句不重抓）
+let audioCtx = null;            // Web Audio 播放引擎
+let curSource = null;           // 目前在播的音源，停止時要 stop 它
 
-// 抓某句的音檔網址（先查快取，沒有才打 worker）
-async function fetchTTSUrl(text) {
-  if (audioCache.has(text)) return audioCache.get(text);
-  const res = await fetch(TTS_WORKER + '/?text=' + encodeURIComponent(text));
-  if (!res.ok) throw new Error('worker HTTP ' + res.status);
-  const url = URL.createObjectURL(await res.blob());
-  audioCache.set(text, url);
-  return url;
+// 取得（或建立）AudioContext
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
 }
 
-// 用真人語音播一句；回傳 Promise（播完才 resolve）。失敗會 reject → 呼叫端退回系統語音
+// 解鎖音訊：iPhone 規定「播放必須源自使用者手勢」，第一次點擊就 resume 一次
+function unlockAudio() {
+  try { const ctx = getAudioCtx(); if (ctx.state === 'suspended') ctx.resume(); } catch (e) {}
+}
+
+// 抓某句的音檔並 decode 成 AudioBuffer（先查快取，沒有才打 worker）
+async function fetchTTSBuffer(text) {
+  if (bufCache.has(text)) return bufCache.get(text);
+  const res = await fetch(TTS_WORKER + '/?text=' + encodeURIComponent(text));
+  if (!res.ok) throw new Error('worker HTTP ' + res.status);
+  const buf = await getAudioCtx().decodeAudioData(await res.arrayBuffer());
+  bufCache.set(text, buf);
+  return buf;
+}
+
+// 用真人語音播一句；回傳 Promise（播完才 resolve）。失敗 reject → 呼叫端退回系統語音
 // myToken：給逐字播放用的「世代」檢查，中途被打斷就不播
 function playCloud(text, rate, myToken) {
   return new Promise((resolve, reject) => {
-    fetchTTSUrl(text).then(url => {
+    fetchTTSBuffer(text).then(buf => {
       if (myToken !== undefined && myToken !== seqToken) { resolve(); return; }  // 已被打斷
-      const audio = new Audio(url);
-      audio.playbackRate = rate || 1;          // 語速（1 = 原速）
-      audio.preservesPitch = true;             // 變速不變調
-      audio.webkitPreservesPitch = true;
-      curAudio = audio;
-      audio.onended = resolve;
-      audio.onerror = () => reject(new Error('audio error'));
-      audio.play().catch(reject);
+      const ctx = getAudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();    // 保險再解鎖一次
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.playbackRate.value = rate || 1;             // 語速（1 = 原速）
+      src.connect(ctx.destination);
+      curSource = src;
+      src.onended = resolve;
+      src.start(0);
     }).catch(reject);
   });
 }
@@ -519,7 +538,7 @@ function updateVoiceStatus() {
 function stopSpeak() {
   seqToken++;
   if ('speechSynthesis' in window) speechSynthesis.cancel();
-  if (curAudio) { try { curAudio.pause(); } catch (e) {} curAudio = null; }  // 停掉真人語音
+  if (curSource) { try { curSource.onended = null; curSource.stop(); } catch (e) {} curSource = null; }  // 停掉真人語音
   document.querySelectorAll('.w-chip.speaking').forEach(e => e.classList.remove('speaking'));
 }
 
@@ -551,7 +570,7 @@ function speakSeq(items, rate, gapMs) {
   stopSpeak();
   const myToken = ++seqToken;   // 記住自己的世代；中途有新動作就停
   // 真人模式：先在背景把每個字的音檔抓好（填快取），播放時才不會一字一卡
-  if (ttsMode === 'cloud') items.forEach(it => fetchTTSUrl(it.text).catch(() => {}));
+  if (ttsMode === 'cloud') items.forEach(it => fetchTTSBuffer(it.text).catch(() => {}));
   let i = 0;
   const next = () => {
     if (myToken !== seqToken || i >= items.length) {
@@ -1066,6 +1085,9 @@ function setupTabs() {
    5. 啟動
    --------------------------------------------------------------------- */
 function init() {
+  // 解鎖音訊：iPhone 規定播放要源自使用者手勢，第一次點擊就先 resume AudioContext
+  document.addEventListener('pointerdown', unlockAudio, { passive: true });
+
   // 語音
   if ('speechSynthesis' in window) {
     speechSynthesis.onvoiceschanged = loadVoices;
@@ -1104,8 +1126,11 @@ function init() {
   }
 
   // 發音模式：真人（雲端 worker）/ 系統 Yuna
+  const ttsModeRow = document.getElementById('ttsModeRow');
   const ttsModeSel = document.getElementById('ttsMode');
-  if (ttsModeSel) {
+  if (!CLOUD_TTS_ENABLED) {
+    if (ttsModeRow) ttsModeRow.style.display = 'none';   // 真人停用 → 藏起選單，固定用系統 Yuna
+  } else if (ttsModeSel) {
     ttsModeSel.value = ttsMode;
     ttsModeSel.onchange = () => {
       ttsMode = ttsModeSel.value;
