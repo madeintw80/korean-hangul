@@ -169,6 +169,25 @@ const songs = [
     { han:'날 막아선 barricade', mean:'擋住我的路障' },
     { han:'사뿐히 즈려밟고 가', mean:'輕盈地踩過去（化用名詩《진달래꽃》）' },
   ]},
+  { group:'NMIXX', song:'Blue Valentine', year:2025, lines:[
+    { han:'식어버린 너의 색은 blue', mean:'你那冷卻下來的顏色是 blue' },
+    { han:'파랗게 멍이 든 my heart', mean:'瘀青成一片藍的 my heart' },
+    { han:'붉게 타오르다 한순간에 식어가', mean:'火紅地燃燒，又一瞬間冷卻' },
+    { han:'깊게 새긴 상처 비친 red blood', mean:'深深刻下的傷口映出 red blood' },
+    { han:'식어도 타오르는 얼음 속 불꽃', mean:'就算冷卻仍在燃燒，冰裡的火花' },
+    { han:"You'll always be my blue valentine", mean:'你永遠是我的 blue valentine（英文 hook）' },
+  ]},
+  { group:'NMIXX', song:'Heavy Serenade', year:2026, lines:[
+    { han:'커진 심장 소릴 들어봐', mean:'聽聽我變大的心跳聲' },
+    { han:'영원히 기억될 이 순간', mean:'這個將被永遠記住的瞬間' },
+    { han:'가사가 된 꽃잎들을 봐', mean:'看那些化成歌詞的花瓣',
+      pron:'가사가 된 꼰닙뜨를 봐',
+      changes:[
+        { from:'꽃잎', to:'꼰닙', rule:'ㄴ添加＋鼻音化', desc:'合成詞「꽃(花)+잎(葉)」中間會生出一個 ㄴ 音，꽃的받침[ㄷ]再被ㄴ同化成鼻音 → 唸 꼰닙（한글進階規則，背起來）' },
+        { from:'들을', to:'뜨를', rule:'緊音化＋連音', desc:'前字받침[ㅂ]後的 ㄷ 繃成緊音 ㄸ，「들」的받침 ㄹ 再滑到 을 → 뜨를' },
+      ] },
+    { han:'이미 넌 불러본 멜로디', mean:'你早已唱過的旋律' },
+  ]},
   { group:'ITZY', song:'WANNABE', year:2020, lines:[
     { han:'잔소리는 Stop it 알아서 할게', mean:'嘮叨 stop it，我自己會搞定',
       pron:'잔소리는 Stop it 아라서 할께',
