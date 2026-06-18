@@ -165,6 +165,17 @@ const songs = [
     { han:'불러낸 내 우주를 봐 봐', mean:'看我召喚出的宇宙' },
     { han:'수수수 Supernova', mean:'Su-su-su 超新星（洗腦 hook）' },
   ]},
+  { group:'aespa', song:'Whiplash', year:2024, lines:[
+    { han:'집중해 좀 더 Think fast', mean:'再專注一點 Think fast' },
+    { han:'이유 넌 이해 못 해', mean:'這理由你沒辦法理解' },
+    { han:"Don't stop 흔들린 채", mean:"Don't stop 就這樣被撼動著" },
+    { han:"무리해도 Can't touch that", mean:"就算硬撐也碰不到（Can't touch that）" },
+  ]},
+  { group:'aespa', song:'LEMONADE', year:2026, lines:[
+    { han:'겁 없이 Walk my way', mean:'毫無畏懼地 Walk my way' },
+    { han:'던져 On my stage', mean:'盡情拋出 On my stage' },
+    { han:"I'll make it LEMONADE", mean:'我會把它釀成 LEMONADE（英文 hook）' },
+  ]},
   { group:'NMIXX', song:'DASH', year:2024, lines:[
     { han:'날 막아선 barricade', mean:'擋住我的路障' },
     { han:'사뿐히 즈려밟고 가', mean:'輕盈地踩過去（化用名詩《진달래꽃》）' },
@@ -188,6 +199,18 @@ const songs = [
       ] },
     { han:'이미 넌 불러본 멜로디', mean:'你早已唱過的旋律' },
   ]},
+  { group:'NMIXX', song:'O.O', year:2022, lines:[
+    { han:'0과 1의 미로가 보여?', mean:'看得見 0 與 1 的迷宮嗎？（0 唸 영、1 唸 일）' },
+    { han:'진짜 시작은 지금부터', mean:'真正的開始就從現在起' },
+    { han:'날 꼭 잡아 잡아', mean:'緊緊抓住我' },
+    { han:'너와 나를 믿어', mean:'相信你和我' },
+  ]},
+  { group:'NMIXX', song:'DICE', year:2022, lines:[
+    { han:'판도를 뒤집어 완전히', mean:'徹底翻轉整個局勢' },
+    { han:'운명은 이 손안에', mean:'命運就握在這手中' },
+    { han:'눈앞에 열린 세상의', mean:'在眼前展開的世界' },
+    { han:'우리를 기대해', mean:'敬請期待我們' },
+  ]},
   { group:'ITZY', song:'WANNABE', year:2020, lines:[
     { han:'잔소리는 Stop it 알아서 할게', mean:'嘮叨 stop it，我自己會搞定',
       pron:'잔소리는 Stop it 아라서 할께',
@@ -200,6 +223,16 @@ const songs = [
     { han:'난 그냥 내가 되고 싶어', mean:'我只想成為我自己' },
     { han:'굳이 뭔가 될 필요는 없어', mean:'不需要非得成為什麼' },
     { han:'난 그냥 나일 때 완벽하니까', mean:'因為我做自己的時候最完美' },
+  ]},
+  { group:'ITZY', song:'Motto', year:2026, lines:[
+    { han:'너를 향해 멈추지 않아', mean:'朝著你前進，絕不停下' },
+    { han:'두 눈을 감아', mean:'閉上雙眼' },
+    { han:'날 이끌어 날 일으켜', mean:'引領著我、扶我起身' },
+  ]},
+  { group:'ITZY', song:'Girls Will Be Girls', year:2025, lines:[
+    { han:'두 손에 꽉 움켜쥔 내 모든 걸', mean:'雙手緊緊握住的我的一切' },
+    { han:'너의 손을 대신 hold', mean:'代替你握住那雙手' },
+    { han:'이건 우리라는 syndrome', mean:'這是名為「我們」的 syndrome' },
   ]},
 ];
 
