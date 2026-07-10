@@ -183,7 +183,15 @@ const songs = [
   { group:'NMIXX', song:'Blue Valentine', year:2025, lines:[
     { han:'식어버린 너의 색은 blue', mean:'你那冷卻下來的顏色是 blue' },
     { han:'파랗게 멍이 든 my heart', mean:'瘀青成一片藍的 my heart' },
-    { han:'붉게 타오르다 한순간에 식어가', mean:'火紅地燃燒，又一瞬間冷卻' },
+    { han:'붉게 타오르다 한순간에 식어가', mean:'火紅地燃燒，又一瞬間冷卻',
+      // 人工 override：引擎會把 붉게 誤標成 북께（겹받침 ㄺ 無條件→ㄱ），
+      // 但用言(形容詞 붉다)的 ㄺ 遇 ㄱ 應唸 [ㄹ]→불께，故整句人工指定正確唸法
+      pron:'불께 타오르다 한순가네 시거가',
+      changes:[
+        { from:'붉게', to:'불께', rule:'겹받침發音＋緊音化', desc:'形容詞「붉다」的겹받침 ㄺ 遇 ㄱ 時，ㄺ 唸 [ㄹ]、後面的 ㄱ 繃成緊音 ㄲ → 불께（名詞如 닭과 例外唸 [닥꽈]，這裡붉다是用言不套用）' },
+        { from:'간에', to:'가네', rule:'連音', desc:'받침 ㄴ 滑到下一個字當開頭' },
+        { from:'식어', to:'시거', rule:'連音', desc:'받침 ㄱ 滑到下一個字當開頭' },
+      ] },
     { han:'깊게 새긴 상처 비친 red blood', mean:'深深刻下的傷口映出 red blood' },
     { han:'식어도 타오르는 얼음 속 불꽃', mean:'就算冷卻仍在燃燒，冰裡的火花' },
     { han:"You'll always be my blue valentine", mean:'你永遠是我的 blue valentine（英文 hook）' },
