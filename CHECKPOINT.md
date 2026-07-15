@@ -1,11 +1,11 @@
 # CHECKPOINT
 
-Updated: 2026-07-15T19:00:12+08:00
+Updated: 2026-07-15T19:19:23+08:00
 Task Lead: Echo
-Status: awaiting_pm_publish_approval
+Status: complete
 Branch: main
 Last verified implementation commit: 9a41e64
-Last published commit: e3e51c7
+Last published commit: 5c0229b
 
 ## PM requested
 
@@ -40,12 +40,16 @@ Last published commit: e3e51c7
 - Browser 390×844：三聲線各點完 21 母音，共 63 次；console error／warning 0，無水平溢出。
 - Browser 390×844：七個 tab 全可切換；Sarah／Olivia／Emily 選單與 v2.4.0 狀態正確。
 - Browser 1280×720：無水平溢出，v2.4.0 與內建聲線狀態正確。
+- GitHub 遠端 `main`：`5c0229b`，與本機 v2.4.0 發布 commit 一致。
+- 公開 GitHub Pages 首頁：HTTP 200，顯示 v2.4.0 並載入 `audio/manifest.js`。
+- 公開 manifest：v2.4.0、134 段文字、402 檔、162 核心預快取檔。
+- 公開 MP3 抽驗：Sarah 5,551 bytes、Olivia 6,413 bytes、Emily 5,885 bytes，皆 HTTP 200／`audio/mp3`。
 
 ## Current state
 
-- v2.4.0 已同步至正式 repo 並建立本機功能 commit `9a41e64`；`main` 尚未 push。
-- 正式 repo 原位完整測試全部通過，working tree 只剩本次 SSOT 文件更新。
-- 尚未部署 Cloudflare Worker、尚未 push、公開 GitHub Pages 仍是 v2.3.0。
+- v2.4.0 功能 commit `9a41e64` 與發布前文件 commit `5c0229b` 已 push 至 `origin/main`。
+- 正式 repo 原位完整測試與公開 GitHub Pages 驗證全部通過。
+- 公開站已是 v2.4.0；Cloudflare Worker 未改動也不需重部署。
 - Cloudflare Worker 可以維持現況，v2.4.0 不需要新增或搬移任何 secret。
 
 ## Decisions and assumptions
@@ -57,10 +61,10 @@ Last published commit: e3e51c7
 
 ## Next actions
 
-1. PM 確認後 push `main`。
-2. Echo 驗證 GitHub Pages v2.4.0、三聲線靜態資源與 iPhone PWA 更新。
+1. PM 在 iPhone Safari／主畫面 PWA 按「檢查 App 更新」並試聽三聲線。
+2. 若仍看到舊版，可關閉主畫面 App 後重開，再按一次更新。
 
 ## Risks / blockers
 
-- 需要 PM 明確授權 v2.4.0 push；目前沒有程式 blocker。
+- 沒有程式或發布 blocker。
 - GitHub Pages 第一次載入未使用的長句需要網路；162 個核心教材音檔會隨 PWA 預快取。

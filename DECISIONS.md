@@ -20,7 +20,9 @@
 | 2026-07-15 | v2.4.0 固定教材改用 Supertonic 3 預生成 MP3 | AI Studio 實際 Free Tier 只有 3 RPM／10 RPD，21 個母音無法靠逐鍵 API 穩定播放 | PM＋Echo |
 | 2026-07-15 | Gemini 降為自由句選用模式，內建教材預設不送出文字 | 避免額度用完、改善隱私並確保 iPhone 點按穩定 | Echo（實作決策） |
 | 2026-07-15 | v2.4.0 完成本機驗收後仍不自行部署／push | 新版公開發布與 Cloudflare 變更需 PM 另行確認 | Echo（權限邊界） |
+| 2026-07-15 | PM 確認 push v2.4.0 | 授權範圍為 GitHub `main` 與其 GitHub Pages 自動發布；Worker 無變更不重部署 | PM |
+| 2026-07-15 | v2.4.0 公開驗收通過 | 首頁、134 段 manifest、402 檔清單與三聲線 MP3 抽驗皆 HTTP 200 | Echo（驗收結果） |
 
 ## 待 PM 決定
 
-- 本機驗收完成後，是否部署／push v2.4.0。
+- 無。

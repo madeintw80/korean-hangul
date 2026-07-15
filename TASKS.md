@@ -6,7 +6,7 @@
 
 ## Todo（依優先順序）
 
-1. [ ] PM 授權後 push v2.4.0，驗證 GitHub Pages 與 iPhone PWA 更新。
+1. [ ] PM 使用 iPhone Safari／主畫面 PWA 更新至 v2.4.0 並試聽三聲線。
 
 ## Done
 
@@ -28,6 +28,8 @@
 - [x] PM 決定 Sarah／Olivia／Emily 三個免費聲線全部上架。
 - [x] Echo 產生 134 段固定教材 × 3 聲線，共 402 個 44.1 kHz mono MP3。
 - [x] Echo 將內建聲線改為預設，Gemini 降為每日限額的自由句選用模式。
+- [x] PM 明確授權 push v2.4.0。
+- [x] Echo push `main`，驗證 GitHub Pages v2.4.0、manifest 與三聲線 MP3 皆 HTTP 200。
 
 ## Backlog / 之後再說
 
