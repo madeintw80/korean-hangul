@@ -715,6 +715,21 @@ function speakSeqOneSystem(text, rate, done) {
    3. 建立各分頁內容
    --------------------------------------------------------------------- */
 
+// 讓原本以 div 製作的發音卡也能被鍵盤與輔助科技操作。
+function makeInteractive(element, action, label) {
+  element.setAttribute('role', 'button');
+  element.setAttribute('tabindex', '0');
+  if (label) element.setAttribute('aria-label', label);
+  element.onclick = action;
+  element.onkeydown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      action(event);
+    }
+  };
+  return element;
+}
+
 // 小工具：建一張會發音的字母卡
 function makeCard(item) {
   const card = document.createElement('div');
@@ -722,8 +737,7 @@ function makeCard(item) {
   let inner = `<div class="han">${item.h}</div><div class="rom">${item.r}</div>`;
   if (item.hint) inner += `<div class="hint">${item.hint}</div>`;
   card.innerHTML = inner;
-  card.onclick = () => speak(item.s);
-  return card;
+  return makeInteractive(card, () => speak(item.s), `播放 ${item.h}，${item.r}`);
 }
 
 // 小工具：建一個「分組標題 + 卡片格線」
@@ -769,9 +783,9 @@ function renderBatchim() {
                       <div class="rom">收尾音 ${b.r}｜注音 ${b.zhu}</div>
                       <div class="ex">例：<b>${b.ex}</b> ${b.exr}（${b.exm}）</div>`;
     // 點上半部唸代表音，點例字唸例字
-    card.onclick = (e) => speak(b.s);
+    makeInteractive(card, () => speak(b.s), `播放收尾音 ${b.h}`);
     const exEl = card.querySelector('.ex');
-    exEl.onclick = (e) => { e.stopPropagation(); speak(b.ex); };
+    makeInteractive(exEl, (e) => { e.stopPropagation(); speak(b.ex); }, `播放例字 ${b.ex}`);
     grid.appendChild(card);
   });
   root.appendChild(grid);
@@ -970,7 +984,7 @@ function renderIdols() {
     card.innerHTML = `<div class="name">${g.name}</div>
                       <div class="han">${g.han}</div>
                       <div class="rom">${g.rom}</div>`;
-    card.onclick = () => speak(g.han);
+    makeInteractive(card, () => speak(g.han), `播放團體名稱 ${g.name}`);
     grid.appendChild(card);
   });
   root.appendChild(grid);
@@ -987,7 +1001,7 @@ function renderIdols() {
     card.innerHTML = `<div class="han">${p.han}</div>
                       <div class="rom">${p.rom}</div>
                       <div class="mean">${p.mean}</div>`;
-    card.onclick = () => speak(p.han);
+    makeInteractive(card, () => speak(p.han), `播放短句 ${p.han}`);
     grid2.appendChild(card);
   });
   root.appendChild(grid2);
@@ -1169,11 +1183,16 @@ function renderPasteMode(root) {
    --------------------------------------------------------------------- */
 function setupTabs() {
   const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(tab => tab.setAttribute('aria-selected', String(tab.classList.contains('active'))));
   tabs.forEach(tab => {
     tab.onclick = () => {
       // 切換按鈕 active
-      tabs.forEach(t => t.classList.remove('active'));
+      tabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
       tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
       // 切換內容顯示
       const target = tab.dataset.target;
       document.querySelectorAll('.tab-content').forEach(c => {

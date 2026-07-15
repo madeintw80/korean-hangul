@@ -1,4 +1,4 @@
-# 한글 練習 — 用 K-pop 學韓文字母發音
+# 한글 Studio — 用 K-pop 學韓文字母發音
 
 純前端 PWA（vanilla JS、無框架、無 build step），用瀏覽器內建 Web Speech API 發音，
 不需後端、不需金鑰。
@@ -23,3 +23,9 @@
 - 改版規則：每次更新需同步調整 `sw.js` 的 `CACHE` 版本與 `index.html` footer 版本號，
   使用者端才會抓到新版
 - `generate_icons.py` 是 dev-time 圖示產生工具，與站點執行無關
+
+## UI
+
+- v2.1.0 起採 `K-pop Editorial Studio` 視覺：黑／乳白／電光粉、高對比雜誌排版。
+- 正式站仍是 vanilla JS 靜態 PWA，沒有新增 framework 或 build step。
+- 手機以單欄練習為主；桌面改為學習區＋發音控制台雙欄。
