@@ -28,7 +28,7 @@
     </div>
     <div class="hero-stats" aria-label="學習內容摘要">
       <div class="stat"><small>Practice tracks</small><strong>07<span> SETS</span></strong></div>
-      <div class="stat pink"><small>Current issue</small><strong>2.3<span> SOUND</span></strong></div>
+      <div class="stat pink"><small>Current issue</small><strong>2.4<span> VOICES</span></strong></div>
     </div>
   </section>
 
@@ -94,10 +94,16 @@
         <div class="controls" id="ttsModeRow">
           <label for="ttsMode"><small>OUTPUT</small>發音模式</label>
           <select id="ttsMode" class="voice-select">
-            <option value="cloud">Gemini 真人聲線（免費）</option>
-            <option value="system">裝置最佳聲線</option>
+            <option value="static">內建自然女聲（免費／不限次數）</option>
+            <option value="cloud">Gemini 自由句（每日限額）</option>
+            <option value="system">iPhone／裝置聲線</option>
           </select>
-          <p class="cloud-note">雲端模式會把韓文送到 Google 產生音訊；失敗會自動改用裝置聲線。</p>
+          <p class="cloud-note">內建教材不送出文字；只有主動切到 Gemini，才會把韓文送到 Google。免費額度用完會改用裝置聲線。</p>
+        </div>
+        <div class="controls" id="naturalVoiceRow">
+          <label for="naturalVoiceSelect"><small>NATURAL VOICE</small>內建女聲</label>
+          <select id="naturalVoiceSelect" class="voice-select"></select>
+          <p class="cloud-note">Sarah 沉穩、Olivia 自信、Emily 柔和；三個都可隨時切換。</p>
         </div>
         <div class="controls">
           <label for="voiceSelect"><small>BACKUP VOICE</small>裝置備援聲線</label>
@@ -119,8 +125,9 @@
     </aside>
   </div>
 
-  <footer><strong>한글 Studio v2.3.0</strong><span>跟妮妮說「韓文 Day N」解鎖每日課程</span></footer>
+  <footer><strong>한글 Studio v2.4.0</strong><span>跟妮妮說「韓文 Day N」解鎖每日課程</span></footer>
 </div>
+<script src="audio/manifest.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -3,7 +3,10 @@
    ⚠️ 改版規則：每次更新檔案，把 CACHE 版本號 +1（例 v2.0.1 → v2.0.2）
       這樣使用者的瀏覽器才會抓到新版（對應 App Versioning Rule）
    ===================================================================== */
-const CACHE = 'hangul-v2.3.0';
+importScripts('./audio/manifest.js');
+
+const CACHE = 'hangul-v2.4.0';
+const CORE_AUDIO = (self.HANGUL_AUDIO && self.HANGUL_AUDIO.coreFiles || []).map(path => './' + path);
 
 // 要預先快取的檔案（相對路徑，配合 GitHub Pages 子目錄）
 const ASSETS = [
@@ -11,9 +14,11 @@ const ASSETS = [
   './index.html',
   './style.css',
   './app.js',
+  './audio/manifest.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  ...CORE_AUDIO,
 ];
 
 // 安裝：把檔案存進快取
@@ -43,6 +48,19 @@ self.addEventListener('message', (e) => {
 
 // 攔截請求：先找快取，沒有再連網路（cache-first）
 self.addEventListener('fetch', (e) => {
+  const url = new URL(e.request.url);
+  if (url.origin === self.location.origin && url.pathname.includes('/audio/')) {
+    e.respondWith(
+      caches.match(e.request).then(hit => hit || fetch(e.request).then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then(cache => cache.put(e.request, copy));
+        }
+        return response;
+      }))
+    );
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(hit => hit || fetch(e.request))
   );

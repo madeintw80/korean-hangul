@@ -547,27 +547,34 @@ let currentRate = 1.0;    // 整句預設自然語速；需要拆音時另有 0.
 let seqToken = 0;         // 逐字播放的「世代」編號：發新動作就 +1，舊隊伍自動停
 
 /* ---------------------------------------------------------------------
-   2.5 雲端真人發音（Cloudflare Worker + Gemini TTS）
-   - 預設用真人語音；抓不到（沒網路 / worker 掛）自動退回裝置韓文聲線
+   2.5 自然發音（內建 Supertonic 3 + 選用 Gemini TTS）
+   - 固定教材預設用三套內建 MP3，不受 Gemini 每日額度影響
+   - 使用者切到 Gemini 自由句時，抓不到才退回裝置韓文聲線
    - ⚠️ iPhone Safari 對 <audio> 在「非點擊當下」播放會擋掉（要抓雲端音檔約 1 秒，
      抓完已脫離手勢），所以改用 Web Audio API（AudioContext）：第一次點擊時 resume
      解鎖一次，之後就能自由播放，不受手勢限制
-   - 同一句只 decode 一次，存進 bufCache，省流量也更快
+   - Gemini 同一句只 decode 一次，存進 bufCache，省流量也更快
    --------------------------------------------------------------------- */
+const STATIC_TTS = window.HANGUL_AUDIO || null;
+const STATIC_TTS_ENABLED = Boolean(STATIC_TTS && STATIC_TTS.texts && STATIC_TTS.voices);
 const TTS_WORKER = 'https://hangul-tts.madeintw80.workers.dev';
 const CLOUD_TTS_ENABLED = true;
-const TTS_PROVIDER_VERSION = 'gemini-3.1-v1';
+const TTS_PROVIDER_VERSION = 'static-3voice-v1';
 const savedProviderVersion = localStorage.getItem('ttsProviderVersion');
-let ttsMode = CLOUD_TTS_ENABLED ? (localStorage.getItem('ttsMode') || 'cloud') : 'system';  // 'cloud'=真人 / 'system'=裝置
-if (CLOUD_TTS_ENABLED && savedProviderVersion !== TTS_PROVIDER_VERSION) {
-  // 新供應商第一次上線時讓所有裝置試用；之後尊重使用者自己選的模式。
-  ttsMode = 'cloud';
+let ttsMode = localStorage.getItem('ttsMode') || (STATIC_TTS_ENABLED ? 'static' : 'system');
+let naturalVoice = localStorage.getItem('naturalVoice') || (STATIC_TTS && STATIC_TTS.defaultVoice) || 'sarah';
+if (!['static', 'cloud', 'system'].includes(ttsMode)) ttsMode = STATIC_TTS_ENABLED ? 'static' : 'system';
+if (STATIC_TTS_ENABLED && !STATIC_TTS.voices[naturalVoice]) naturalVoice = STATIC_TTS.defaultVoice;
+if (savedProviderVersion !== TTS_PROVIDER_VERSION) {
+  // 新版改以內建音檔為預設，避免 Gemini 免費額度讓教材按鍵失聲。
+  ttsMode = STATIC_TTS_ENABLED ? 'static' : 'system';
   localStorage.setItem('ttsMode', ttsMode);
   localStorage.setItem('ttsProviderVersion', TTS_PROVIDER_VERSION);
 }
 const bufCache = new Map();     // rate + text → 已 decode 的 AudioBuffer（同句不重抓）
 let audioCtx = null;            // Web Audio 播放引擎
 let curSource = null;           // 目前在播的音源，停止時要 stop 它
+let curAudio = null;            // 內建 MP3 用原生 Audio 播放，iPhone 可保留音高調整語速
 let cloudTTSAvailable = null;   // null=尚未呼叫、true=可用、false=已退回裝置聲線
 
 // 取得（或建立）AudioContext
@@ -579,6 +586,33 @@ function getAudioCtx() {
 // 解鎖音訊：iPhone 規定「播放必須源自使用者手勢」，第一次點擊就 resume 一次
 function unlockAudio() {
   try { const ctx = getAudioCtx(); if (ctx.state === 'suspended') ctx.resume(); } catch (e) {}
+}
+
+function getStaticAudioPath(text) {
+  if (!STATIC_TTS_ENABLED) return null;
+  const entry = STATIC_TTS.texts[String(text).trim()];
+  return entry ? entry[naturalVoice] || null : null;
+}
+
+// 內建教材音檔在點擊當下直接交給 <audio>，iPhone 不會因等待 API 回應而封鎖播放。
+function playStatic(text, rate, myToken) {
+  return new Promise((resolve, reject) => {
+    const path = getStaticAudioPath(text);
+    if (!path) { reject(new Error('static audio unavailable')); return; }
+    if (myToken !== undefined && myToken !== seqToken) { resolve(); return; }
+
+    const audio = new Audio(path);
+    const done = () => { if (curAudio === audio) curAudio = null; resolve(); };
+    audio.preload = 'auto';
+    audio.playbackRate = Math.min(1.2, Math.max(0.6, Number(rate) || 1));
+    audio.preservesPitch = true;
+    audio.webkitPreservesPitch = true;
+    audio.onended = done;
+    audio.onerror = () => { if (curAudio === audio) curAudio = null; reject(new Error('static audio failed')); };
+    curAudio = audio;
+    const started = audio.play();
+    if (started && typeof started.catch === 'function') started.catch(audio.onerror);
+  });
 }
 
 // 抓某句的音檔並 decode 成 AudioBuffer（先查快取，沒有才打 worker）
@@ -662,19 +696,39 @@ function populateVoiceSelect() {
   });
 }
 
+function populateNaturalVoiceSelect() {
+  const sel = document.getElementById('naturalVoiceSelect');
+  if (!sel || !STATIC_TTS_ENABLED) return;
+  sel.innerHTML = '';
+  Object.entries(STATIC_TTS.voices).forEach(([id, voice]) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = voice.label + ' · ' + voice.tone;
+    opt.selected = id === naturalVoice;
+    sel.appendChild(opt);
+  });
+}
+
 function updateVoiceStatus() {
   const el = document.getElementById('voiceStatus');
   const preview = document.getElementById('voicePreview');
   if (!el) return;
+  if (ttsMode === 'static' && STATIC_TTS_ENABLED) {
+    const voice = STATIC_TTS.voices[naturalVoice];
+    el.className = 'voice-status ok';
+    el.textContent = `🎙️ ${voice.label} 內建自然女聲｜免費・不限次數・核心教材可離線`;
+    if (preview) preview.disabled = false;
+    return;
+  }
   if (ttsMode === 'cloud' && cloudTTSAvailable === false) {
     el.className = 'voice-status warn';
-    el.textContent = '⚠️ 免費雲端語音暫時忙碌，已自動改用 iPhone／裝置聲線';
+    el.textContent = '⚠️ Gemini 免費額度可能已用完，這句已改用 iPhone／裝置聲線';
     if (preview) preview.disabled = false;
     return;
   }
   if (ttsMode === 'cloud') {
     el.className = 'voice-status ok';
-    el.textContent = '🎙️ Gemini 韓文真人聲線（免費雲端）';
+    el.textContent = '☁️ Gemini 自由句聲線｜免費額度每日有限';
     if (preview) preview.disabled = false;
     return;
   }
@@ -697,16 +751,19 @@ function updateVoiceStatus() {
 function stopSpeak() {
   seqToken++;
   if ('speechSynthesis' in window) speechSynthesis.cancel();
+  if (curAudio) { try { curAudio.pause(); curAudio.currentTime = 0; } catch (e) {} curAudio = null; }
   if (curSource) { try { curSource.onended = null; curSource.stop(); } catch (e) {} curSource = null; }  // 停掉真人語音
   document.querySelectorAll('.w-chip.speaking').forEach(e => e.classList.remove('speaking'));
 }
 
 // 唸出韓文文字（rate 可另外指定，例如慢速跟讀）
-// 真人模式：走雲端 worker，失敗自動退回系統語音
+// 教材模式：先播內建自然聲線；沒有預製音檔的自訂內容才退回裝置聲線。
 function speak(text, rate) {
   stopSpeak();
   const r = rate || currentRate;
-  if (ttsMode === 'cloud') {
+  if (ttsMode === 'static') {
+    playStatic(text, r).catch(() => speakSystem(text, r));
+  } else if (ttsMode === 'cloud') {
     playCloud(text, r).catch(() => speakSystem(text, r));
   } else {
     speakSystem(text, r);
@@ -728,7 +785,7 @@ function speakSystem(text, rate) {
 function speakSeq(items, rate, gapMs) {
   stopSpeak();
   const myToken = ++seqToken;   // 記住自己的世代；中途有新動作就停
-  // 真人模式：先在背景把每個字的音檔抓好（填快取），播放時才不會一字一卡
+  // Gemini 模式才預抓；內建音檔由瀏覽器與 Service Worker 自己快取。
   if (ttsMode === 'cloud') items.forEach(it => fetchTTSBuffer(it.text, rate).catch(() => {}));
   let i = 0;
   const next = () => {
@@ -740,7 +797,9 @@ function speakSeq(items, rate, gapMs) {
     document.querySelectorAll('.w-chip.speaking').forEach(e => e.classList.remove('speaking'));
     if (it.el) it.el.classList.add('speaking');
     const advance = () => { if (myToken === seqToken) setTimeout(next, gapMs); };
-    if (ttsMode === 'cloud') {
+    if (ttsMode === 'static') {
+      playStatic(it.text, rate, myToken).then(advance).catch(() => speakSeqOneSystem(it.text, rate, advance));
+    } else if (ttsMode === 'cloud') {
       playCloud(it.text, rate, myToken).then(advance).catch(() => speakSeqOneSystem(it.text, rate, advance));
     } else {
       speakSeqOneSystem(it.text, rate, advance);
@@ -1267,6 +1326,7 @@ function init() {
   document.addEventListener('pointerdown', unlockAudio, { passive: true });
 
   // 語音
+  populateNaturalVoiceSelect();
   if ('speechSynthesis' in window) {
     speechSynthesis.onvoiceschanged = loadVoices;
     loadVoices();
@@ -1304,7 +1364,19 @@ function init() {
     };
   }
 
-  // 發音模式：雲端 worker / 裝置最佳聲線
+  const naturalVoiceSel = document.getElementById('naturalVoiceSelect');
+  if (naturalVoiceSel) {
+    naturalVoiceSel.value = naturalVoice;
+    naturalVoiceSel.onchange = () => {
+      naturalVoice = naturalVoiceSel.value;
+      localStorage.setItem('naturalVoice', naturalVoice);
+      updateVoiceStatus();
+      stopSpeak();
+      playStatic(STATIC_TTS.previewText, 1.0).catch(() => speakSystem(STATIC_TTS.previewText, 1.0));
+    };
+  }
+
+  // 發音模式：內建三聲線 / Gemini 自由句 / 裝置最佳聲線
   const ttsModeRow = document.getElementById('ttsModeRow');
   const ttsModeSel = document.getElementById('ttsMode');
   if (!CLOUD_TTS_ENABLED) {
@@ -1322,7 +1394,10 @@ function init() {
   // 用完整句、正常速度試聽，避免單音節或過慢語速把好聲線也聽成機器音。
   const voicePreview = document.getElementById('voicePreview');
   if (voicePreview) {
-    voicePreview.onclick = () => speak('안녕하세요. 오늘도 같이 한국어를 연습해 볼까요?', 1.0);
+    voicePreview.onclick = () => speak(
+      (STATIC_TTS && STATIC_TTS.previewText) || '안녕하세요. 오늘도 같이 한국어를 연습해 볼까요?',
+      1.0
+    );
   }
 
   // 語速滑桿
