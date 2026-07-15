@@ -2,13 +2,11 @@
 
 ## In progress
 
-- 無；本機實作完成，等待 PM 授權帳號與對外動作。
+- Push v2.3.0，驗證 GitHub Pages 與 iPhone 尺寸 UI。
 
 ## Todo（依優先順序）
 
-1. [ ] 建立 AI Studio Free project／Auth key，確認未連結 Cloud Billing。
-2. [ ] 設定 Cloudflare `GEMINI_API_KEY` encrypted secret，部署並驗證新版 Worker。
-3. [ ] PM 授權後 push v2.3.0，驗證 GitHub Pages 與 iPhone PWA 真人語音。
+1. [ ] Push v2.3.0，驗證 GitHub Pages 與 iPhone PWA 真人語音。
 
 ## Done
 
@@ -23,6 +21,9 @@
 - [x] Echo 建立功能 commit `555a0de`；未 push。
 - [x] Echo 將 Cloudflare Worker 改接免費 Gemini 3.1 Flash TTS，加入 WAV、語速指令與安全 fallback。
 - [x] Echo 新增 Worker mock 測試並建立本機 commit `bf28d38`；未部署、未 push。
+- [x] Echo 建立獨立 AI Studio Free project／API key，解除 Cloud Billing 連結並確認 Free tier。
+- [x] Echo 將 key 存為 Cloudflare `GEMINI_API_KEY` encrypted secret，部署 Worker v2.3.0。
+- [x] 線上健康檢查與完整韓文 WAV 測試通過：Gemini provider、24 kHz、4.44 秒。
 
 ## Backlog / 之後再說
 

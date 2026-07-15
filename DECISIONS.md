@@ -14,8 +14,9 @@
 | 2026-07-15 | Gemini API project 維持 Free、不綁 Cloud Billing | 超額時寧可 fallback，也不要產生意外帳單 | PM＋Echo |
 | 2026-07-15 | API key 只存 Cloudflare encrypted secret | 防止 key 出現在前端、Git 或聊天記錄 | Echo（安全決策） |
 | 2026-07-15 | v2.3.0 本機完成後暫不部署／push | 建 key、跨服務傳遞 secret、部署 Worker 與公開發布仍需 PM 明確授權 | Echo（權限邊界） |
+| 2026-07-15 | PM 授權 Free key、Cloudflare encrypted secret、Worker deploy 與 push v2.3.0 | 授權範圍明確包含 Google AI Studio、`hangul-tts` 與 GitHub `main` | PM |
+| 2026-07-15 | Worker 驗收通過後發布 v2.3.0 | 健康端點與實際韓文 WAV 均確認 Gemini provider、24 kHz 與完整長度 | Echo（驗收結果） |
 
 ## 待 PM 決定
 
-- 是否授權 Echo 在 Google AI Studio 建立 Free API key，並存入 Cloudflare `hangul-tts` encrypted secret。
-- Worker 驗證後是否 push v2.3.0 並觸發 GitHub Pages 發布。
+- iPhone 實機試聽後，是否保留 Gemini 預設 voice `Kore`。
