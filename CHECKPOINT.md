@@ -1,10 +1,10 @@
 # CHECKPOINT
 
-Updated: 2026-07-15T12:48:00+08:00
+Updated: 2026-07-15T13:02:00+08:00
 Task Lead: Echo
-Status: ready_to_commit
+Status: complete
 Branch: main
-Last verified commit: 340a8ad
+Last verified implementation commit: 63836d4
 
 ## PM requested
 
@@ -17,7 +17,8 @@ Last verified commit: 340a8ad
 
 ## Current state
 
-- A 版視覺已整合回既有 vanilla JS PWA，原有發音、測驗、拼字、歌詞與離線功能均保留。
+- A 版視覺已整合回既有 vanilla JS PWA 並 push 至 `origin/main`，原有發音、測驗、拼字、歌詞與離線功能均保留。
+- 公開站 `https://madeintw80.github.io/korean-hangul/` 已回傳 HTTP 200，標題與 footer 均為 v2.1.0。
 
 ## Verification
 
@@ -35,8 +36,7 @@ Last verified commit: 340a8ad
 
 ## Next actions
 
-1. Commit、push、驗證公開站。
-2. 請 Batnini 補做 `brain/BRAIN.md` 治理同步。
+1. 請 Batnini 補做 `brain/BRAIN.md` 治理同步；本次產品實作已完成。
 
 ## Risks / blockers
 
