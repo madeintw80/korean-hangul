@@ -1,10 +1,11 @@
 # CHECKPOINT
 
-Updated: 2026-07-15T17:02:17+08:00
+Updated: 2026-07-15T17:14:25+08:00
 Task Lead: Echo
-Status: in_progress
+Status: complete
 Branch: main
 Last verified implementation commit: bf28d38
+Last published commit: e3e51c7
 
 ## PM requested
 
@@ -20,14 +21,14 @@ Last verified implementation commit: bf28d38
 - Gemini 依自然語速指令重新演繹，不使用會連音高一起改變的 Web Audio 硬降速。
 - 前端核對 `X-TTS-Provider`；舊 MeloTTS、免費額度用完或網路失敗都自動退回裝置聲線。
 - 新增 Worker mock 測試，涵蓋 CORS、輸入限制、缺 key、API request、PCM → WAV 與 provider header。
-- 已建立本機功能 commit `bf28d38`；尚未 push。
+- 已建立功能 commit `bf28d38`，連同 v2.3.0 文件更新 push 至 `origin/main`。
 - 已建立 Google AI Studio 專案 `korean-hangul-tts-free`，解除 Cloud Billing 連結並確認 AI Studio 顯示 Free tier。
 - 已建立 Gemini API key，僅存入 Cloudflare `hangul-tts` 的 `GEMINI_API_KEY` encrypted secret；key 未寫入 repo 或前端。
 - Cloudflare Worker 已部署 v2.3.0 Gemini 程式碼；Active / Latest version 為 `4f9e947f`。
 
 ## Current state
 
-- 本機 `main` 已完成 v2.3.0；公開 GitHub Pages 仍是 v2.1.0，等待本回合 push。
+- `main` 與 `origin/main` 已完成 v2.3.0；公開 GitHub Pages 已更新並通過 HTTP 200 驗證。
 - 線上 `hangul-tts` Worker 已是 Gemini 3.1 Flash TTS，encrypted secret 已生效。
 - Gemini Pro／Google AI Pro 是消費者訂閱，Gemini API 的 Free／Paid tier 另行管理；本案不依賴 Pro 訂閱扣抵 API。
 
@@ -41,6 +42,7 @@ Last verified implementation commit: bf28d38
 - 390×844 模擬：無水平溢出，免費與隱私提示可見，模式切換正常。
 - 線上健康檢查：HTTP 200、`provider=gemini-3.1-flash-tts-preview`、`keyReady=true`。
 - 線上韓文音訊：HTTP 200、`audio/wav`、RIFF/WAVE、24 kHz、213,164 bytes、4.44 秒，provider header 正確。
+- 公開 GitHub Pages：HTTP 200、HTML 顯示 `v2.3.0` 且包含 Gemini 語音標示。
 
 ## Decisions and assumptions
 
@@ -51,9 +53,7 @@ Last verified implementation commit: bf28d38
 
 ## Next actions
 
-1. Push `main` 發布 v2.3.0。
-2. 驗證 GitHub Pages 版本、Gemini 語音狀態與 iPhone 尺寸 UI。
-3. PM 用 iPhone Safari／主畫面 PWA 實機試聽，再依回饋決定是否更換預設 voice。
+1. PM 用 iPhone Safari／主畫面 PWA 實機試聽，再依回饋決定是否更換預設 voice。
 
 ## Risks / blockers
 

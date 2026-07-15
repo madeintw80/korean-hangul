@@ -2,11 +2,11 @@
 
 ## In progress
 
-- Push v2.3.0，驗證 GitHub Pages 與 iPhone 尺寸 UI。
+- 無。
 
 ## Todo（依優先順序）
 
-1. [ ] Push v2.3.0，驗證 GitHub Pages 與 iPhone PWA 真人語音。
+1. [ ] PM 使用 iPhone Safari／主畫面 PWA 實機試聽，回報是否偏好其他 Gemini voice。
 
 ## Done
 
@@ -24,6 +24,7 @@
 - [x] Echo 建立獨立 AI Studio Free project／API key，解除 Cloud Billing 連結並確認 Free tier。
 - [x] Echo 將 key 存為 Cloudflare `GEMINI_API_KEY` encrypted secret，部署 Worker v2.3.0。
 - [x] 線上健康檢查與完整韓文 WAV 測試通過：Gemini provider、24 kHz、4.44 秒。
+- [x] Echo push `main` 並驗證公開 GitHub Pages 為 v2.3.0、HTTP 200、Gemini 標示已上線。
 
 ## Backlog / 之後再說
 
