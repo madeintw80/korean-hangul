@@ -18,10 +18,10 @@
 const vowelGroups = [
   { title: '基本母音', items: [
     { h:'ㅏ', r:'a',  s:'아', hint:'ㄚ' },
-    { h:'ㅓ', r:'eo', s:'어', hint:'ㄜ(嘴張大)' },
+    { h:'ㅓ', r:'eo', s:'어', hint:'ㄜ↔ㄛ之間（嘴放鬆張開）' },
     { h:'ㅗ', r:'o',  s:'오', hint:'ㄛ(嘴圓)' },
     { h:'ㅜ', r:'u',  s:'우', hint:'ㄨ' },
-    { h:'ㅡ', r:'eu', s:'으', hint:'≈ㄜ(扁嘴)' },
+    { h:'ㅡ', r:'eu', s:'으', hint:'華語無對應音：近ㄜ，嘴角拉平' },
     { h:'ㅣ', r:'i',  s:'이', hint:'ㄧ' },
   ]},
   { title: 'Y 母音（前面多一個 y 音）', items: [
@@ -39,11 +39,11 @@ const vowelGroups = [
   { title: 'W 複合母音（前面多一個 w 音）', items: [
     { h:'ㅘ', r:'wa',  s:'와', hint:'ㄨㄚ' },
     { h:'ㅙ', r:'wae', s:'왜', hint:'ㄨㄝ' },
-    { h:'ㅚ', r:'oe',  s:'외', hint:'ㄨㄝ' },
+    { h:'ㅚ', r:'oe',  s:'외', hint:'現代首爾音多近ㄨㄝ' },
     { h:'ㅝ', r:'wo',  s:'워', hint:'ㄨㄛ' },
     { h:'ㅞ', r:'we',  s:'웨', hint:'ㄨㄝ' },
     { h:'ㅟ', r:'wi',  s:'위', hint:'ㄨㄧ' },
-    { h:'ㅢ', r:'ui',  s:'의', hint:'≈ㄜㄧ' },
+    { h:'ㅢ', r:'ui',  s:'의', hint:'先ㅡ再ㅣ；非首音節常可唸ㅣ' },
   ]},
 ];
 
@@ -53,19 +53,19 @@ const consonantGroups = [
     { h:'ㄱ', r:'g/k', s:'가', hint:'ㄍ／가' },
     { h:'ㄴ', r:'n',   s:'나', hint:'ㄋ／나' },
     { h:'ㄷ', r:'d/t', s:'다', hint:'ㄉ／다' },
-    { h:'ㄹ', r:'r/l', s:'라', hint:'ㄌ／라(舌輕彈)' },
+    { h:'ㄹ', r:'r/l', s:'라', hint:'近ㄌ，但舌尖只輕彈一下' },
     { h:'ㅁ', r:'m',   s:'마', hint:'ㄇ／마' },
     { h:'ㅂ', r:'b/p', s:'바', hint:'ㄅ／바' },
     { h:'ㅅ', r:'s',   s:'사', hint:'ㄙ／사(ㅣ前像ㄒ)' },
     { h:'ㅇ', r:'不發音/ng', s:'아', hint:'開頭不發音' },
-    { h:'ㅈ', r:'j',   s:'자', hint:'ㄐ／자' },
+    { h:'ㅈ', r:'j',   s:'자', hint:'近ㄐ（不要多出ㄧ）' },
     { h:'ㅎ', r:'h',   s:'하', hint:'ㄏ／하' },
   ]},
   { title: '送氣音（用力吐一口氣）', items: [
     { h:'ㅋ', r:'k',  s:'카', hint:'ㄎ（ㄱ吐氣）' },
     { h:'ㅌ', r:'t',  s:'타', hint:'ㄊ（ㄷ吐氣）' },
     { h:'ㅍ', r:'p',  s:'파', hint:'ㄆ（ㅂ吐氣）' },
-    { h:'ㅊ', r:'ch', s:'차', hint:'ㄘ（ㅈ吐氣）' },
+    { h:'ㅊ', r:'ch', s:'차', hint:'近ㄑ（ㅈ送氣，不要多出ㄧ）' },
   ]},
   { title: '緊音（繃緊喉嚨、短促）', items: [
     { h:'ㄲ', r:'kk', s:'까', hint:'用力ㄍ' },
@@ -78,12 +78,12 @@ const consonantGroups = [
 
 // 받침（收尾音）— 7 個代表音 + 真實例字
 const batchim = [
-  { h:'ㄱ', r:'k',  zhu:'ㄍ(擋住)', s:'악', ex:'책', exr:'chaek', exm:'書' },
+  { h:'ㄱ', r:'k',  zhu:'ㄍ（卡住不放氣）', s:'악', ex:'책', exr:'chaek', exm:'書' },
   { h:'ㄴ', r:'n',  zhu:'ㄣ',       s:'안', ex:'손', exr:'son',   exm:'手' },
-  { h:'ㄷ', r:'t',  zhu:'ㄊ(擋住)', s:'앋', ex:'옷', exr:'ot',    exm:'衣服' },
-  { h:'ㄹ', r:'l',  zhu:'ㄌ',       s:'알', ex:'물', exr:'mul',   exm:'水' },
-  { h:'ㅁ', r:'m',  zhu:'ㄇ(閉嘴)', s:'암', ex:'밤', exr:'bam',   exm:'夜晚' },
-  { h:'ㅂ', r:'p',  zhu:'ㄅ(閉唇)', s:'압', ex:'밥', exr:'bap',   exm:'飯' },
+  { h:'ㄷ', r:'t',  zhu:'ㄉ（舌尖卡住不放氣）', s:'앋', ex:'옷', exr:'ot',    exm:'衣服' },
+  { h:'ㄹ', r:'l',  zhu:'ㄌ（舌尖頂住）',       s:'알', ex:'물', exr:'mul',   exm:'水' },
+  { h:'ㅁ', r:'m',  zhu:'ㄇ（閉嘴）', s:'암', ex:'밤', exr:'bam',   exm:'夜晚' },
+  { h:'ㅂ', r:'p',  zhu:'ㄅ（閉唇不放氣）', s:'압', ex:'밥', exr:'bap',   exm:'飯' },
   { h:'ㅇ', r:'ng', zhu:'ㄥ',       s:'앙', ex:'강', exr:'gang',  exm:'江' },
 ];
 
@@ -346,6 +346,16 @@ function applyPronWord(word) {
     if (before !== after) changes.push({ from: before, to: after, rule, desc });
   };
 
+  /* === Pass 0：母音本身的強制讀法 ===
+     표준 발음법 제5항 다만 3：字面初聲不是 ㅇ 時，ㅢ 必須唸 ㅣ（희망→히망、띄어→띠어）。
+     非首音節 의→이、助詞 의→에 只是「允許讀法」，需要詞法判斷，這裡不擅自改。 */
+  for (let i = 0; i < syl.length; i++) {
+    if (syl[i].jung !== 'ㅢ' || syl[i].cho === 'ㅇ') continue;
+    const before = sylStr(syl[i]);
+    syl[i].jung = 'ㅣ';
+    record([i], before, 'ㅢ簡化', '子音初聲後的 ㅢ 必須唸 ㅣ');
+  }
+
   /* === Pass A：要用「原始받침」判斷的規則（由左到右）=== */
   for (let i = 0; i < syl.length - 1; i++) {
     const a = syl[i], b = syl[i + 1];
@@ -502,22 +512,21 @@ function romWord(word) {
 }
 
 // 注音對照（台灣人最快上手的近似音）
-const ZHU_CHO = { 'ㄱ':'ㄍ','ㄲ':'ㄍ','ㄴ':'ㄋ','ㄷ':'ㄉ','ㄸ':'ㄉ','ㄹ':'ㄌ','ㅁ':'ㄇ','ㅂ':'ㄅ','ㅃ':'ㄅ','ㅅ':'ㄙ','ㅆ':'ㄙ','ㅇ':'','ㅈ':'ㄐ','ㅉ':'ㄐ','ㅊ':'ㄘ','ㅋ':'ㄎ','ㅌ':'ㄊ','ㅍ':'ㄆ','ㅎ':'ㄏ' };
+const ZHU_CHO = { 'ㄱ':'ㄍ','ㄲ':'ㄍ','ㄴ':'ㄋ','ㄷ':'ㄉ','ㄸ':'ㄉ','ㄹ':'ㄌ','ㅁ':'ㄇ','ㅂ':'ㄅ','ㅃ':'ㄅ','ㅅ':'ㄙ','ㅆ':'ㄙ','ㅇ':'','ㅈ':'ㄐ','ㅉ':'ㄐ','ㅊ':'ㄑ','ㅋ':'ㄎ','ㅌ':'ㄊ','ㅍ':'ㄆ','ㅎ':'ㄏ' };
 const ZHU_JUNG = { 'ㅏ':'ㄚ','ㅐ':'ㄝ','ㅑ':'ㄧㄚ','ㅒ':'ㄧㄝ','ㅓ':'ㄜ','ㅔ':'ㄝ','ㅕ':'ㄧㄜ','ㅖ':'ㄧㄝ','ㅗ':'ㄛ','ㅘ':'ㄨㄚ','ㅙ':'ㄨㄝ','ㅚ':'ㄨㄝ','ㅛ':'ㄧㄛ','ㅜ':'ㄨ','ㅝ':'ㄨㄛ','ㅞ':'ㄨㄝ','ㅟ':'ㄨㄧ','ㅠ':'ㄧㄨ','ㅡ':'ㄜ','ㅢ':'ㄜㄧ','ㅣ':'ㄧ' };
-const ZHU_JONG = { '':'', 'ㄱ':'(ㄍ)','ㄴ':'ㄣ','ㄷ':'(ㄊ)','ㄹ':'(ㄌ)','ㅁ':'(ㄇ)','ㅂ':'(ㄅ)','ㅇ':'ㄥ' };
+const ZHU_JONG = { '':'', 'ㄱ':'(ㄍ)','ㄴ':'ㄣ','ㄷ':'(ㄉ)','ㄹ':'(ㄌ)','ㅁ':'(ㄇ)','ㅂ':'(ㄅ)','ㅇ':'ㄥ' };
 const TENSE_SET = new Set(['ㄲ','ㄸ','ㅃ','ㅆ','ㅉ']);
-const I_VOWELS  = new Set(['ㅣ','ㅑ','ㅒ','ㅕ','ㅖ','ㅛ','ㅠ']);
+const I_VOWELS  = new Set(['ㅣ','ㅑ','ㅒ','ㅕ','ㅖ','ㅛ','ㅠ','ㅟ','ㅢ']);
 
-// 一個音節 → 注音（緊音加 •；ㅅ/ㅊ 在 ㅣ 系前改 ㄒ/ㄑ；收尾 ㄣ/ㄥ 自然併進韻母）
+// 一個音節 → 注音（緊音加 •；ㅅ 在 ㅣ 系前近 ㄒ；ㅈ/ㅊ 一律用較接近的 ㄐ/ㄑ）
 function zhuSyl(d) {
   let cho = ZHU_CHO[d.cho];
   if (I_VOWELS.has(d.jung)) {
     if (d.cho === 'ㅅ' || d.cho === 'ㅆ') cho = 'ㄒ';
-    if (d.cho === 'ㅊ') cho = 'ㄑ';
   }
   let fin = ZHU_JUNG[d.jung] + (ZHU_JONG[d.jong] ?? '');
-  // 韻母合併：唸起來更像台灣注音的拼法（간→ㄍㄢ、강→ㄍㄤ、건→ㄍㄣ、공→ㄍㄨㄥ）
-  fin = fin.replace('ㄚㄣ','ㄢ').replace('ㄚㄥ','ㄤ').replace('ㄜㄣ','ㄣ').replace('ㄜㄥ','ㄥ').replace('ㄛㄥ','ㄨㄥ');
+  // 只合併不會吃掉關鍵母音的組合。ㅓ/ㅡ 沒有精準國語音，保留 ㄜ（언→ㄜㄣ、응→ㄜㄥ）。
+  fin = fin.replace('ㄚㄣ','ㄢ').replace('ㄚㄥ','ㄤ').replace('ㄛㄥ','ㄨㄥ');
   return (TENSE_SET.has(d.cho) ? '•' : '') + cho + fin;
 }
 
@@ -534,7 +543,7 @@ function zhuWord(word) {
    --------------------------------------------------------------------- */
 let koVoice = null;       // 目前選用的韓文語音
 let koVoices = [];        // 裝置上所有韓文語音
-let currentRate = 0.85;   // 語速（初學者調慢）
+let currentRate = 1.0;    // 整句預設自然語速；需要拆音時另有 0.6x 慢速鍵
 let seqToken = 0;         // 逐字播放的「世代」編號：發新動作就 +1，舊隊伍自動停
 
 /* ---------------------------------------------------------------------
@@ -597,14 +606,22 @@ function playCloud(text, rate, myToken) {
 function loadVoices() {
   const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
   koVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('ko'));
-  // 自動挑最自然的：上次選過的 > Google > Natural/Siri/Yuna > 第一個
+  // 自動挑最自然的：保留使用者選擇；新使用者優先 Natural/Neural，再選 Google。
   const saved = localStorage.getItem('koVoiceName');
   koVoice = koVoices.find(v => v.name === saved)
-         || koVoices.find(v => /google/i.test(v.name))
-         || koVoices.find(v => /natural|siri|yuna|sora/i.test(v.name))
-         || koVoices[0] || null;
+         || [...koVoices].sort((a, b) => voiceQualityScore(b) - voiceQualityScore(a))[0]
+         || null;
   populateVoiceSelect();
   updateVoiceStatus();
+}
+
+// 名稱是 Web Speech 唯一可攜的品質線索；不假裝知道瀏覽器未揭露的模型版本。
+function voiceQualityScore(voice) {
+  const name = (voice && voice.name) || '';
+  if (/dragonhd|natural|neural|premium|enhanced/i.test(name)) return 400;
+  if (/google/i.test(name)) return 300;
+  if (/siri|sunhi|injoon|yuna|sora/i.test(name)) return 200;
+  return 100;
 }
 
 // 把裝置上所有韓文語音填進下拉選單，讓使用者自己挑最順耳的
@@ -617,7 +634,8 @@ function populateVoiceSelect() {
   koVoices.forEach(v => {
     const opt = document.createElement('option');
     opt.value = v.name;
-    opt.textContent = (/google/i.test(v.name) ? '⭐ ' : '') + v.name;  // Google 標星號
+    const recommended = voiceQualityScore(v) >= 300;
+    opt.textContent = (recommended ? '⭐ ' : '') + v.name + (v.localService ? ' · 裝置' : ' · 線上');
     if (koVoice && v.name === koVoice.name) opt.selected = true;
     sel.appendChild(opt);
   });
@@ -625,21 +643,26 @@ function populateVoiceSelect() {
 
 function updateVoiceStatus() {
   const el = document.getElementById('voiceStatus');
+  const preview = document.getElementById('voicePreview');
   if (!el) return;
   if (ttsMode === 'cloud') {           // 真人模式：直接顯示已啟用
     el.className = 'voice-status ok';
     el.textContent = '🎙️ 真人發音已啟用（雲端）';
+    if (preview) preview.disabled = false;
     return;
   }
   if (!('speechSynthesis' in window)) {
     el.className = 'voice-status warn';
     el.textContent = '⚠️ 此瀏覽器不支援語音，建議用 Chrome / Edge / Safari';
+    if (preview) preview.disabled = true;
   } else if (koVoice) {
     el.className = 'voice-status ok';
-    el.textContent = '✅ 系統語音就緒：' + koVoice.name;
+    el.textContent = (voiceQualityScore(koVoice) >= 300 ? '🎙️ 推薦聲線：' : '✅ 裝置聲線：') + koVoice.name;
+    if (preview) preview.disabled = false;
   } else {
     el.className = 'voice-status warn';
     el.textContent = '⚠️ 沒找到韓文語音 → 連網路用 Chrome/Edge/Safari 最穩，或裝系統韓文語音包';
+    if (preview) preview.disabled = true;
   }
 }
 
@@ -1058,7 +1081,7 @@ function makeLyricCard(line, showMean) {
     card.appendChild(pr);
   }
 
-  // ③ 注音（•=緊音要用力；(ㄍ)=收尾擋住不爆開）＋ ④ 羅馬拼音
+  // ③ 注音（•=緊音要用力；(ㄍ/ㄉ/ㄅ)=收尾擋住不爆開）＋ ④ 羅馬拼音
   const zhu = a.tokens.map(t => t.isKo ? zhuWord(t.koPron || t.p) : t.w).join('　');
   card.appendChild(el('div', 'zhu-row', '🇹🇼 ' + zhu));
   const rom = a.tokens.map(t => t.isKo ? romWord(t.koPron || t.p) : t.w).join('  ');
@@ -1253,11 +1276,11 @@ function init() {
     };
   }
 
-  // 發音模式：真人（雲端 worker）/ 系統 Yuna
+  // 發音模式：雲端 worker / 裝置最佳聲線
   const ttsModeRow = document.getElementById('ttsModeRow');
   const ttsModeSel = document.getElementById('ttsMode');
   if (!CLOUD_TTS_ENABLED) {
-    if (ttsModeRow) ttsModeRow.style.display = 'none';   // 真人停用 → 藏起選單，固定用系統 Yuna
+    if (ttsModeRow) ttsModeRow.style.display = 'none';   // 真人停用 → 藏起選單，固定用裝置最佳聲線
   } else if (ttsModeSel) {
     ttsModeSel.value = ttsMode;
     ttsModeSel.onchange = () => {
@@ -1268,12 +1291,18 @@ function init() {
     };
   }
 
+  // 用完整句、正常速度試聽，避免單音節或過慢語速把好聲線也聽成機器音。
+  const voicePreview = document.getElementById('voicePreview');
+  if (voicePreview) {
+    voicePreview.onclick = () => speak('안녕하세요. 오늘도 같이 한국어를 연습해 볼까요?', 1.0);
+  }
+
   // 語速滑桿
   const rate = document.getElementById('rate');
   const rateVal = document.getElementById('rateVal');
   rate.oninput = () => {
     currentRate = parseFloat(rate.value);
-    rateVal.textContent = currentRate.toFixed(2) + 'x';
+    rateVal.textContent = currentRate.toFixed(2) + 'x' + (currentRate >= 0.95 && currentRate <= 1.05 ? '（自然）' : '');
   };
 }
 

@@ -28,7 +28,7 @@
     </div>
     <div class="hero-stats" aria-label="學習內容摘要">
       <div class="stat"><small>Practice tracks</small><strong>07<span> SETS</span></strong></div>
-      <div class="stat pink"><small>Current issue</small><strong>2.1<span> UI</span></strong></div>
+      <div class="stat pink"><small>Current issue</small><strong>2.2<span> SOUND</span></strong></div>
     </div>
   </section>
 
@@ -52,6 +52,10 @@
       </nav>
 
       <main class="practice-content">
+        <div class="pronunciation-note" role="note">
+          <strong>注音是口型起點，不是韓語標準音。</strong>
+          <span>ㅓ／ㅡ／ㅢ 在國語裡沒有精準對應；（ㄍ／ㄉ／ㄅ）表示收尾卡住、不爆破；• 表示緊音。</span>
+        </div>
         <section id="tab-vowels" class="tab-content active" role="tabpanel" aria-labelledby="track-vowels"></section>
         <section id="tab-consonants" class="tab-content" role="tabpanel" aria-labelledby="track-consonants"></section>
         <section id="tab-batchim" class="tab-content" role="tabpanel" aria-labelledby="track-batchim"></section>
@@ -91,16 +95,19 @@
           <label for="ttsMode"><small>OUTPUT</small>發音模式</label>
           <select id="ttsMode" class="voice-select">
             <option value="cloud">真人（雲端）</option>
-            <option value="system">系統 Yuna</option>
+            <option value="system">裝置最佳聲線</option>
           </select>
         </div>
         <div class="controls">
           <label for="voiceSelect"><small>VOICE</small>韓文語音</label>
           <select id="voiceSelect" class="voice-select"></select>
         </div>
+        <div class="controls">
+          <button id="voicePreview" class="sound-preview-btn" type="button">▶ 試聽自然語速</button>
+        </div>
         <div class="controls speed-control">
-          <label for="rate"><small>TEMPO</small>語速 <b id="rateVal">0.85x</b></label>
-          <input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="0.85">
+          <label for="rate"><small>TEMPO</small>語速 <b id="rateVal">1.00x（自然）</b></label>
+          <input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="1">
         </div>
       </section>
 
@@ -111,7 +118,7 @@
     </aside>
   </div>
 
-  <footer><strong>한글 Studio v2.1.0</strong><span>跟妮妮說「韓文 Day N」解鎖每日課程</span></footer>
+  <footer><strong>한글 Studio v2.2.0</strong><span>跟妮妮說「韓文 Day N」解鎖每日課程</span></footer>
 </div>
 <script src="app.js"></script>
 </body>
