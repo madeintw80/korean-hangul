@@ -6,7 +6,7 @@
 
 ## Todo（依優先順序）
 
-1. [ ] PM 使用 iPhone Safari／主畫面 PWA 實機試聽，回報是否偏好其他 Gemini voice。
+1. [ ] PM 授權後 push v2.4.0，驗證 GitHub Pages 與 iPhone PWA 更新。
 
 ## Done
 
@@ -25,6 +25,9 @@
 - [x] Echo 將 key 存為 Cloudflare `GEMINI_API_KEY` encrypted secret，部署 Worker v2.3.0。
 - [x] 線上健康檢查與完整韓文 WAV 測試通過：Gemini provider、24 kHz、4.44 秒。
 - [x] Echo push `main` 並驗證公開 GitHub Pages 為 v2.3.0、HTTP 200、Gemini 標示已上線。
+- [x] PM 決定 Sarah／Olivia／Emily 三個免費聲線全部上架。
+- [x] Echo 產生 134 段固定教材 × 3 聲線，共 402 個 44.1 kHz mono MP3。
+- [x] Echo 將內建聲線改為預設，Gemini 降為每日限額的自由句選用模式。
 
 ## Backlog / 之後再說
 

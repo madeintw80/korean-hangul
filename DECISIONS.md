@@ -16,7 +16,11 @@
 | 2026-07-15 | v2.3.0 本機完成後暫不部署／push | 建 key、跨服務傳遞 secret、部署 Worker 與公開發布仍需 PM 明確授權 | Echo（權限邊界） |
 | 2026-07-15 | PM 授權 Free key、Cloudflare encrypted secret、Worker deploy 與 push v2.3.0 | 授權範圍明確包含 Google AI Studio、`hangul-tts` 與 GitHub `main` | PM |
 | 2026-07-15 | Worker 驗收通過後發布 v2.3.0 | 健康端點與實際韓文 WAV 均確認 Gemini provider、24 kHz 與完整長度 | Echo（驗收結果） |
+| 2026-07-15 | Sarah／Olivia／Emily 三個聲線全部放進 App | PM 不想只選一個，希望可以隨時切換 | PM |
+| 2026-07-15 | v2.4.0 固定教材改用 Supertonic 3 預生成 MP3 | AI Studio 實際 Free Tier 只有 3 RPM／10 RPD，21 個母音無法靠逐鍵 API 穩定播放 | PM＋Echo |
+| 2026-07-15 | Gemini 降為自由句選用模式，內建教材預設不送出文字 | 避免額度用完、改善隱私並確保 iPhone 點按穩定 | Echo（實作決策） |
+| 2026-07-15 | v2.4.0 完成本機驗收後仍不自行部署／push | 新版公開發布與 Cloudflare 變更需 PM 另行確認 | Echo（權限邊界） |
 
 ## 待 PM 決定
 
-- iPhone 實機試聽後，是否保留 Gemini 預設 voice `Kore`。
+- 本機驗收完成後，是否部署／push v2.4.0。
