@@ -9,8 +9,13 @@
 | 2026-07-15 | 零金鑰模式優先 Natural／Neural／Google 聲線，整句預設 1.00x | 過慢的 0.85x 會增加合成感；Chrome 實測可取得 Google 韓文聲線 | Echo（實作決策） |
 | 2026-07-15 | 注音明確定位為近似提示，以韓國標準發音與真人音檔優先 | ㅓ／ㅡ／ㅢ、三組塞音與收尾音無法用國語注音一對一表示 | Echo（教學決策） |
 | 2026-07-15 | v2.2.0 先完成本機 commit，不 push | 本回合未取得新的對外發布授權 | Echo（權限邊界） |
+| 2026-07-15 | v2.3.0 採 Gemini 3.1 Flash TTS Free Tier＋Cloudflare Worker | 韓文支援、iPhone 可播、真人感可用 prompt 控制，且目前 Free Tier 輸入／輸出免費 | PM＋Echo |
+| 2026-07-15 | Gemini Pro 訂閱不視為 Gemini API 額度 | Gemini App 訂閱與 Developer API billing tier 分開，避免誤判會由月費吸收 API 成本 | Echo（官方帳務查證） |
+| 2026-07-15 | Gemini API project 維持 Free、不綁 Cloud Billing | 超額時寧可 fallback，也不要產生意外帳單 | PM＋Echo |
+| 2026-07-15 | API key 只存 Cloudflare encrypted secret | 防止 key 出現在前端、Git 或聊天記錄 | Echo（安全決策） |
+| 2026-07-15 | v2.3.0 本機完成後暫不部署／push | 建 key、跨服務傳遞 secret、部署 Worker 與公開發布仍需 PM 明確授權 | Echo（權限邊界） |
 
 ## 待 PM 決定
 
-- 是否 push v2.2.0 並觸發 GitHub Pages 發布。
-- 是否另建需金鑰的跨裝置高擬真雲端 TTS。
+- 是否授權 Echo 在 Google AI Studio 建立 Free API key，並存入 Cloudflare `hangul-tts` encrypted secret。
+- Worker 驗證後是否 push v2.3.0 並觸發 GitHub Pages 發布。

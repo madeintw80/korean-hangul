@@ -1,49 +1,57 @@
 # CHECKPOINT
 
-Updated: 2026-07-15T13:16:00+08:00
+Updated: 2026-07-15T13:45:00+08:00
 Task Lead: Echo
-Status: complete
+Status: action_required
 Branch: main
-Last verified implementation commit: 555a0de
+Last verified implementation commit: bf28d38
 
 ## PM requested
 
-- 改善韓文語音的真人感。
-- 全面檢查並修正台灣注音輔助，參考權威韓語發音資料與實際教學用法。
+- 改善韓文語音真人感並全面校正台灣注音輔助。
+- iPhone 必須能使用；雲端語音要免費。
+- PM 接受使用 Gemini，並告知已有 Gemini Pro／Google AI Pro 訂閱。
 
-## Completed
+## Completed locally
 
-- 已確認 Cloudflare MeloTTS 整句輸出仍被截斷，暫不可重新啟用。
-- 裝置聲線改為 Natural／Neural／Premium 優先，其次 Google；整句預設改為 `1.00x`，新增完整句試聽鍵。
-- 注音修正收尾 ㄷ、ㅊ、ㅅ＋ㅟ／ㅢ、`ㄜㄣ／ㄜㄥ` 誤合併，並加入標準發音法第 5 條的 ㅢ 強制讀法。
-- 新增 `pronunciation.test.js`，涵蓋 21 母音、19 子音、變音案例、注音案例與 3,192 種組合。
-- 已建立功能 commit `555a0de`。
+- v2.2.0：完成裝置最佳聲線、自然語速、完整句試聽與注音／發音規則校正。
+- v2.3.0：Cloudflare Worker 改接 `gemini-3.1-flash-tts-preview`，輸出 iPhone 可解碼的 24 kHz mono WAV。
+- 免費方案使用獨立 AI Studio Free API project，不綁 Cloud Billing；API key 只允許放 Cloudflare encrypted secret。
+- Gemini 依自然語速指令重新演繹，不使用會連音高一起改變的 Web Audio 硬降速。
+- 前端核對 `X-TTS-Provider`；舊 MeloTTS、免費額度用完或網路失敗都自動退回裝置聲線。
+- 新增 Worker mock 測試，涵蓋 CORS、輸入限制、缺 key、API request、PCM → WAV 與 provider header。
+- 已建立本機功能 commit `bf28d38`；尚未 push、部署或處理任何帳號／key。
 
 ## Current state
 
-- 本機 `main` 已完成 v2.2.0 語音／注音改善；尚未 push，公開站仍是 v2.1.0。
+- 本機 `main` 已完成 v2.3.0；公開 GitHub Pages 仍是 v2.1.0。
+- 線上 `hangul-tts` Worker 仍是舊 MeloTTS；v2.3 前端在 Worker 更新前會安全 fallback，不會播放截斷音訊。
+- Gemini Pro／Google AI Pro 是消費者訂閱，Gemini API 的 Free／Paid tier 另行管理；本案不依賴 Pro 訂閱扣抵 API。
 
 ## Verification
 
-- 前置基準：Chrome 顯示 `Google 한국의`；in-app Browser 無韓文系統 voice，fallback 狀態正確。
-- Cloudflare 測試句：`lang=ko` 約 0.85 秒、`lang=KR` 約 0.86 秒，兩者都不足以承載完整句子。
-- `node --check app.js`、`pronunciation.test.js`、manifest／SW assets／版本同步／`git diff --check`：PASS。
-- Chrome：推薦 `Google 한국의 · 線上`、試聽鍵可觸發、console error/warn 0；無 voice 環境會停用試聽。
-- 390×844、1280×720：無水平溢出；桌面維持雙欄。
-- 七個 tab、測驗四選一與鎖定、拼字 56 鍵與預設 `가`、貼歌詞三組注音：PASS。
+- `node --check app.js`：PASS。
+- `pronunciation.test.js`：21 母音、19 子音、11 組變音、15 組注音、3,192 組合 PASS。
+- `cf-tts-worker/worker.test.mjs`：PASS。
+- v2.3.0 footer／issue／service worker cache、cloud mode、provider guard、自然語速：PASS。
+- Browser：Gemini 模式預設啟用；舊 Worker 約 6 秒後被拒絕並顯示 iPhone／裝置 fallback；console error／warning 0。
+- 390×844 模擬：無水平溢出，免費與隱私提示可見，模式切換正常。
 
 ## Decisions and assumptions
 
-- 不搬入 Next/Vinext；正式站維持 vanilla JS PWA。
-- 本回合可修改與 commit；未取得新的 push／GitHub Pages 發布授權。
-- 注音定位為「台灣初學者近似提示」，韓國標準發音與實際聲音優先。
+- 使用 Gemini Developer API Free Tier，不連結 billing account，避免意外帳單。
+- API key 絕不進 repo／前端／聊天；只放 Cloudflare `GEMINI_API_KEY` encrypted secret。
+- 部署順序固定為 Worker → 健康／音訊驗證 → App push，避免公開站先連到舊 provider。
+- Gemini TTS 仍是 Preview，必須永久保留 Web Speech fallback。
 
 ## Next actions
 
-1. PM 若要公開 v2.2.0，再明確授權 push／GitHub Pages 發布。
-2. 若要 iPhone 也固定有高擬真聲線，另行選擇 Google Cloud／Azure 等需金鑰的 TTS 供應商。
+1. PM 明確授權帳號與對外動作後，在 Google AI Studio 建立 Free project／Auth key。
+2. 把 key 存進 Cloudflare `hangul-tts` 的 encrypted secret，部署 Worker 並驗證完整韓文音訊。
+3. PM 授權 push 後發布 v2.3.0，再用 iPhone Safari／主畫面 PWA 實機試聽。
 
 ## Risks / blockers
 
-- Web Speech 聲線仍依裝置與瀏覽器而異；Chrome 本機有 Google 韓文聲線，iPhone 可能仍只有 Yuna。
-- 跨裝置高擬真雲端 TTS 仍需新供應商、金鑰與部署授權。
+- 尚未取得建立 Google API key、將 key 傳入 Cloudflare secret、部署 Worker 與 push 的明確授權。
+- 無真實 API key，因此本機只能 mock 驗證 Gemini 成功路徑；真人聲線音色仍需部署後由 PM 實際試聽。
+- Free Tier 內容可能被 Google 用於改善產品；App 已在 UI 提示不要輸入私人或機密內容。
