@@ -1,62 +1,158 @@
 /* =====================================================================
-   Cloudflare Worker — 韓文真人語音「中轉站」
+   Cloudflare Worker — 韓文 Gemini 真人語音中轉站
    ---------------------------------------------------------------------
-   作用：前端網頁把要唸的韓文丟過來，這支 Worker 呼叫 Cloudflare
-        Workers AI 的 MeloTTS 模型，回傳 MP3 音檔。
-   為什麼要這支：金鑰 / AI 權限藏在 Cloudflare 內部（env.AI binding），
-        不會外露到前端原始碼，安全。
-   ---------------------------------------------------------------------
-   用法（前端）：GET https://<你的worker網址>/?text=안녕하세요
-   回傳：audio/mpeg（MP3 音檔）
+   - Gemini API key 只放在 Cloudflare secret：GEMINI_API_KEY
+   - 回傳 iPhone Safari / Web Audio 可解碼的 24 kHz mono WAV
+   - 免費額度或網路失敗時，前端會自動退回裝置韓文聲線
    ===================================================================== */
+
+const MODEL = 'gemini-3.1-flash-tts-preview';
+const VOICE = 'Kore';
+const MAX_TEXT_LENGTH = 300;
+const SAMPLE_RATE = 24000;
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true; // 允許直接開測試網址。
+  return origin === 'https://madeintw80.github.io'
+    || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+}
+
+function corsHeaders(origin) {
+  return {
+    'Access-Control-Allow-Origin': origin || 'https://madeintw80.github.io',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Expose-Headers': 'X-TTS-Provider',
+    Vary: 'Origin',
+  };
+}
+
+function textResponse(message, status, cors) {
+  return new Response(message, {
+    status,
+    headers: { ...cors, 'Content-Type': 'text/plain; charset=utf-8' },
+  });
+}
+
+function clampRate(raw) {
+  const value = Number(raw);
+  return Number.isFinite(value) ? Math.min(1.2, Math.max(0.5, value)) : 1;
+}
+
+function rateDirection(rate) {
+  if (rate <= 0.7) return '아주 천천히, 음절을 또렷하게 구분하되 자연스러운 높낮이를 유지하세요.';
+  if (rate < 0.95) return '조금 천천히, 학습자가 따라 하기 좋은 속도로 읽으세요.';
+  if (rate > 1.05) return '조금 빠르고 경쾌한 일상 대화 속도로 읽으세요.';
+  return '평소의 자연스러운 일상 대화 속도로 읽으세요.';
+}
+
+function makePrompt(text, rate) {
+  return [
+    '# AUDIO PROFILE',
+    '따뜻하고 친근한 한국인 발음 선생님. 자연스러운 한국 표준어를 사용합니다.',
+    '# DIRECTOR NOTES',
+    rateDirection(rate),
+    '기계적으로 한 글자씩 끊지 말고 실제 대화처럼 자연스럽게 연결하세요.',
+    '설명, 번역, 인사말 또는 다른 문장을 추가하지 마세요.',
+    '# TRANSCRIPT',
+    text,
+  ].join('\n');
+}
+
+function pcmToWav(pcm, sampleRate = SAMPLE_RATE) {
+  const wav = new ArrayBuffer(44 + pcm.length);
+  const view = new DataView(wav);
+  const writeAscii = (offset, value) => {
+    for (let i = 0; i < value.length; i += 1) view.setUint8(offset + i, value.charCodeAt(i));
+  };
+
+  writeAscii(0, 'RIFF');
+  view.setUint32(4, 36 + pcm.length, true);
+  writeAscii(8, 'WAVE');
+  writeAscii(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); // PCM
+  view.setUint16(22, 1, true); // mono
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeAscii(36, 'data');
+  view.setUint32(40, pcm.length, true);
+  new Uint8Array(wav, 44).set(pcm);
+  return wav;
+}
+
+function decodeBase64(value) {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
 
 export default {
   async fetch(request, env) {
-    // ---- CORS：允許 GitHub Pages 的前端跨網域呼叫這支 Worker ----
-    const cors = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    };
-    // 瀏覽器送出正式請求前會先送一個 OPTIONS「預檢」，直接放行
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: cors });
-    }
+    const origin = request.headers.get('Origin') || '';
+    const allowedOrigin = isAllowedOrigin(origin);
+    const cors = corsHeaders(allowedOrigin ? origin : '');
 
-    // ---- 取出要唸的文字 ----
+    if (!allowedOrigin) return textResponse('不允許的來源', 403, cors);
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+    if (request.method !== 'GET') return textResponse('只接受 GET', 405, cors);
+
     const url = new URL(request.url);
-    const text = url.searchParams.get('text');
-    // 韓文語言代碼：先用 'ko'。若部署後沒聲音，改成 'kr' 或 'KR' 再部署一次
-    const lang = url.searchParams.get('lang') || 'ko';
-
-    if (!text) {
-      return new Response('缺少 text 參數', { status: 400, headers: cors });
+    if (url.searchParams.get('health') === '1') {
+      return new Response(JSON.stringify({ ok: true, provider: MODEL, keyReady: Boolean(env.GEMINI_API_KEY) }), {
+        headers: { ...cors, 'Content-Type': 'application/json; charset=utf-8' },
+      });
     }
+
+    const text = (url.searchParams.get('text') || '').trim();
+    const rate = clampRate(url.searchParams.get('rate'));
+    if (!text) return textResponse('缺少 text 參數', 400, cors);
+    if (text.length > MAX_TEXT_LENGTH) return textResponse(`文字不可超過 ${MAX_TEXT_LENGTH} 字`, 413, cors);
+    if (!env.GEMINI_API_KEY) return textResponse('雲端語音尚未完成設定', 503, cors);
 
     try {
-      // ---- 呼叫 MeloTTS，拿到 base64 編碼的 MP3 ----
-      const res = await env.AI.run('@cf/myshell-ai/melotts', {
-        prompt: text,
-        lang: lang,
-      });
+      const apiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': env.GEMINI_API_KEY,
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: makePrompt(text, rate) }] }],
+            generationConfig: {
+              responseModalities: ['AUDIO'],
+              speechConfig: {
+                voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE } },
+              },
+            },
+          }),
+        },
+      );
 
-      // base64 字串 → 二進位 bytes（瀏覽器才能當音檔播）
-      const binary = Uint8Array.from(atob(res.audio), (c) => c.charCodeAt(0));
+      if (!apiResponse.ok) return textResponse('雲端語音暫時忙碌', 503, cors);
 
-      return new Response(binary, {
+      const payload = await apiResponse.json();
+      const parts = payload.candidates?.[0]?.content?.parts || [];
+      const audioPart = parts.find((part) => part.inlineData?.data);
+      if (!audioPart) return textResponse('雲端語音沒有回傳音訊', 502, cors);
+
+      const wav = pcmToWav(decodeBase64(audioPart.inlineData.data));
+      return new Response(wav, {
         headers: {
           ...cors,
-          'Content-Type': 'audio/mpeg',
-          // 讓瀏覽器把同一句的音檔快取一天，少打 API、省額度
-          'Cache-Control': 'public, max-age=86400',
+          'Content-Type': 'audio/wav',
+          'Content-Length': String(wav.byteLength),
+          'Cache-Control': 'private, max-age=86400',
+          'X-TTS-Provider': MODEL,
         },
       });
-    } catch (err) {
-      // 出錯就回 500 + 原因，方便除錯
-      return new Response('TTS 失敗：' + (err && err.message ? err.message : err), {
-        status: 500,
-        headers: cors,
-      });
+    } catch (_error) {
+      return textResponse('雲端語音暫時無法使用', 503, cors);
     }
   },
 };

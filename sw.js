@@ -3,7 +3,7 @@
    ⚠️ 改版規則：每次更新檔案，把 CACHE 版本號 +1（例 v2.0.1 → v2.0.2）
       這樣使用者的瀏覽器才會抓到新版（對應 App Versioning Rule）
    ===================================================================== */
-const CACHE = 'hangul-v2.2.0';
+const CACHE = 'hangul-v2.3.0';
 
 // 要預先快取的檔案（相對路徑，配合 GitHub Pages 子目錄）
 const ASSETS = [

@@ -1,91 +1,92 @@
-# 한글 TTS — Cloudflare Worker 部署 Guide
+# 한글 TTS — 免費 Gemini + Cloudflare Worker 設定
 
-> 給 Wei 一步一步跟著做。**全程用 web dashboard**，不需要裝任何工具。
-> ⏱️ 預估 10 分鐘（你 BroTrip 做過一次，這次更簡單，不用 KV）
+> 目標：iPhone／電腦都使用同一個自然韓文聲線；免費額度用完或服務暫停時，App 自動改用裝置聲線。
 >
-> 📅 對齊 CF dashboard 2025 改版後介面（Workers 在 Compute）
-> 🔑 你的 subdomain：`madeintw80.workers.dev`（BroTrip 那次確認過）
+> Gemini Pro／Google AI Pro 訂閱與 Gemini API 帳務是兩套系統。本專案使用獨立的 **Free API project**，不綁 Cloud Billing，避免意外扣款。
 
----
+## 安全原則
 
-## Step 1：建 Worker（3 分鐘）
+- API key 不貼進聊天、不寫進 `worker.js`、不 commit 到 Git。
+- API key 只存成 Cloudflare 的 encrypted secret：`GEMINI_API_KEY`。
+- Google AI Studio 的 project 必須顯示 `Free`；不要按 `Set up billing`。
+- App 前端只知道 Worker URL，看不到 Gemini API key。
 
-1. 登入 https://dash.cloudflare.com
-2. 左側選單 → **Compute** → **Workers & Pages**
-3. 按右上 **「+ Create」** → 選 **「Start with Hello World!」**（或 Create Worker）
-4. **Worker name** 輸入：`hangul-tts`
-   - ⚠️ 這名字會變成你的 URL：`https://hangul-tts.madeintw80.workers.dev`
-5. 按 **「Deploy」**（先把預設 Hello World 部署起來，確認能跑）
-6. 部署完按 **「Continue to project」** / **「View code」** 進 Worker 詳細頁
+## Step 1：建立免費 Gemini API key
 
----
+1. 用要管理此 App 的 Google 帳號登入 [Google AI Studio API Keys](https://aistudio.google.com/apikey)。
+2. 建立獨立 project，建議名稱：`korean-hangul-tts-free`。
+3. 建立新的 API key。新 key 應使用 Google 目前預設的 Auth key 類型。
+4. 確認 project 的 `Plan`／`Billing Tier` 顯示 **Free**。
+5. 暫時複製 key，完成 Step 2 後不要再貼到其他地方。
 
-## Step 2：綁定 Workers AI 給 Worker（2 分鐘）⭐ 最關鍵
+> Google 官方說明：新帳號從 Free Tier 開始；要升 Paid Tier 必須另外連結 billing account。
+>
+> https://ai.google.dev/gemini-api/docs/billing/
 
-讓 Worker 內部能呼叫 AI 模型（MeloTTS）。這步對應 BroTrip 那次綁 KV，只是這次綁的是 **Workers AI**。
+## Step 2：把 key 存進 Cloudflare secret
 
-1. 在 Worker 詳細頁 → **Settings**（設定）tab
-2. 找到 **「Bindings」** 區 → 按 **「+ Add」** / **「Add binding」**
-3. Type（類型）選 **「Workers AI」**
-4. **Variable name**：輸入 `AI`（**全大寫兩個字母，一字不差**）
-   - ⚠️ 超關鍵：code 內就靠 `env.AI` 找模型。名字不是 `AI` 就會報錯
-5. 按 **Save / Deploy**
-6. 看到 Bindings 區出現一筆 `AI → Workers AI` 就 OK
+1. 登入 [Cloudflare Dashboard](https://dash.cloudflare.com)。
+2. 進入 **Compute → Workers & Pages → `hangul-tts`**。
+3. 進入 **Settings → Variables and Secrets**。
+4. 新增 secret：
+   - Name：`GEMINI_API_KEY`
+   - Value：貼上 Step 1 的 API key
+   - 類型務必選 **Secret／Encrypt**，不要選一般明文 variable。
+5. 儲存並 Deploy。
 
----
+舊的 `AI → Workers AI` binding 已不再使用，可移除；保留也不影響新版 Worker。
 
-## Step 3：貼 Worker code（3 分鐘）
+## Step 3：更新 Worker code
 
-1. 在 Worker 詳細頁 → 按 **「Edit code」**（藍色按鈕）→ 進線上 editor（開新 tab）
-2. 左邊看到預設檔 `worker.js`（Hello World 內容）
-3. **點 editor → Ctrl+A 全選 → Delete 全部刪掉**
-4. 打開這個資料夾的 [worker.js](./worker.js)，**整段複製 → 貼進 editor**
-5. 按右上 **「Deploy」**
-6. 等綠色 ✅（約 10 秒）
+1. 在 `hangul-tts` Worker 按 **Edit code**。
+2. 用本資料夾的 [`worker.js`](./worker.js) 完整取代線上內容。
+3. 按 **Deploy**，等待成功訊息。
 
----
+新版 Worker 使用 `gemini-3.1-flash-tts-preview`，把 Gemini 回傳的 PCM 包成 24 kHz mono WAV，讓 iPhone Safari 可透過 Web Audio 播放。
 
-## Step 4：驗證部署成功（2 分鐘）
+## Step 4：驗證
 
-開瀏覽器（手機/電腦都行）貼這個網址：
+先開健康檢查：
 
-```
-https://hangul-tts.madeintw80.workers.dev/?text=안녕하세요
-```
-
-- ✅ **成功**：瀏覽器會**下載或播放一個 MP3**（聽到「안녕하세요」就成功了！）
-- ❌ 看到「TTS 失敗」+ 一段文字 → 多半是 lang 代碼問題，把錯誤訊息截圖給 Wei，改一個字重部署即可
-- ❌ 看到「Worker threw exception」/ 1101 → AI binding 沒綁好，回 Step 2 確認變數名是 `AI`
-
----
-
-## Step 5：把 URL 給 Wei
-
-把 base URL（**去掉 `/?text=...`**）給我：
-
-```
-https://hangul-tts.madeintw80.workers.dev
+```text
+https://hangul-tts.madeintw80.workers.dev/?health=1
 ```
 
-我會把 App 的發音改成走這支 Worker（同時保留系統 Yuna 當備援）+ 加「同句快取」省額度，然後 push。完成！
+成功應看到：
 
----
+```json
+{"ok":true,"provider":"gemini-3.1-flash-tts-preview","keyReady":true}
+```
 
-## 🆘 卡住
+再開音訊測試：
 
-| 問題 | 解法 |
-|------|------|
-| 找不到 Workers & Pages | 左側 **Build → Compute** 分類底下 |
-| Bindings 區找不到 Workers AI 選項 | 截圖給 Wei；有些介面在「Variables and Secrets」附近 |
-| 要我填信用卡 | **不要填**！Workers Free + Workers AI Free 純註冊不需卡，你不小心進到付費頁了 |
-| Deploy 紅字錯誤 | code 沒整段貼乾淨，確認 100% 等於 worker.js、開頭是 `export default {` |
-| `/?text=` 沒聲音只下載檔 | 正常！下載的就是 MP3，用播放器打開能聽。能下載=成功 |
+```text
+https://hangul-tts.madeintw80.workers.dev/?text=안녕하세요&rate=1
+```
 
----
+成功時會播放或下載 WAV，內容是完整的「안녕하세요」。慢速測試可把 `rate=1` 改為 `rate=0.6`。
 
-## 💰 費用
+## 上線順序
 
-- Workers Free：每天 **100k requests**
-- Workers AI Free：每天有免費 neuron 額度，學韓文點幾下根本碰不到
-- MeloTTS：$0.0002/分鐘音檔（學習用幾乎 = 0）
-- 真的超量 = bug 或被攻擊，告訴 Wei 立刻處理
+1. 先部署 Worker 並完成上方兩項驗證。
+2. 再 push App 的 v2.3.0。
+
+前端會核對 Worker 回傳的 `X-TTS-Provider`。如果仍是舊 MeloTTS，會拒絕截斷音訊並安全退回 iPhone／裝置聲線。
+
+## 免費額度與隱私
+
+- Cloudflare Workers Free：每天 100,000 requests。
+- Gemini 3.1 Flash TTS Preview：官方目前標示 Free Tier 的文字輸入與音訊輸出皆免費。
+- 免費額度到頂時不會由本 App 自動升級付費；Worker 會失敗，App 立即改用裝置聲線。
+- Free Tier 送出的韓文可能被 Google 用於改善產品，因此不要輸入私人或機密內容。
+- Preview 模型與免費規則未來可能調整；App 已保留裝置 fallback，服務變動時仍能發音。
+
+## 故障排除
+
+| 畫面／結果 | 處理方式 |
+|---|---|
+| `keyReady:false` | Cloudflare secret 名稱不是 `GEMINI_API_KEY`，或尚未 Deploy |
+| `雲端語音尚未完成設定` | 回 Step 2 新增 secret |
+| `雲端語音暫時忙碌` | 到 AI Studio 確認 Free project 的 quota；App 會自動用裝置聲線 |
+| iPhone 第一次沒聲音 | 關閉靜音模式後再點一次；首次必須由使用者點擊解鎖音訊 |
+| 懷疑 key 外洩 | 在 AI Studio 建新 key → 更新 Cloudflare secret → Deploy → 停用舊 key |

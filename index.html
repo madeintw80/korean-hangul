@@ -28,7 +28,7 @@
     </div>
     <div class="hero-stats" aria-label="學習內容摘要">
       <div class="stat"><small>Practice tracks</small><strong>07<span> SETS</span></strong></div>
-      <div class="stat pink"><small>Current issue</small><strong>2.2<span> SOUND</span></strong></div>
+      <div class="stat pink"><small>Current issue</small><strong>2.3<span> SOUND</span></strong></div>
     </div>
   </section>
 
@@ -94,12 +94,13 @@
         <div class="controls" id="ttsModeRow">
           <label for="ttsMode"><small>OUTPUT</small>發音模式</label>
           <select id="ttsMode" class="voice-select">
-            <option value="cloud">真人（雲端）</option>
+            <option value="cloud">Gemini 真人聲線（免費）</option>
             <option value="system">裝置最佳聲線</option>
           </select>
+          <p class="cloud-note">雲端模式會把韓文送到 Google 產生音訊；失敗會自動改用裝置聲線。</p>
         </div>
         <div class="controls">
-          <label for="voiceSelect"><small>VOICE</small>韓文語音</label>
+          <label for="voiceSelect"><small>BACKUP VOICE</small>裝置備援聲線</label>
           <select id="voiceSelect" class="voice-select"></select>
         </div>
         <div class="controls">
@@ -118,7 +119,7 @@
     </aside>
   </div>
 
-  <footer><strong>한글 Studio v2.2.0</strong><span>跟妮妮說「韓文 Day N」解鎖每日課程</span></footer>
+  <footer><strong>한글 Studio v2.3.0</strong><span>跟妮妮說「韓文 Day N」解鎖每日課程</span></footer>
 </div>
 <script src="app.js"></script>
 </body>

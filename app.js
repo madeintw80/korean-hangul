@@ -547,21 +547,28 @@ let currentRate = 1.0;    // 整句預設自然語速；需要拆音時另有 0.
 let seqToken = 0;         // 逐字播放的「世代」編號：發新動作就 +1，舊隊伍自動停
 
 /* ---------------------------------------------------------------------
-   2.5 雲端真人發音（Cloudflare Worker + MeloTTS）
-   - 預設用真人語音；抓不到（沒網路 / worker 掛）自動退回系統 Yuna
+   2.5 雲端真人發音（Cloudflare Worker + Gemini TTS）
+   - 預設用真人語音；抓不到（沒網路 / worker 掛）自動退回裝置韓文聲線
    - ⚠️ iPhone Safari 對 <audio> 在「非點擊當下」播放會擋掉（要抓雲端音檔約 1 秒，
      抓完已脫離手勢），所以改用 Web Audio API（AudioContext）：第一次點擊時 resume
      解鎖一次，之後就能自由播放，不受手勢限制
    - 同一句只 decode 一次，存進 bufCache，省流量也更快
    --------------------------------------------------------------------- */
 const TTS_WORKER = 'https://hangul-tts.madeintw80.workers.dev';
-// ⚠️ 真人語音暫時停用：Cloudflare MeloTTS 唸韓文會截斷（英文正常）。整套基礎建設
-//    （worker + AudioContext 播放層）保留，之後改接 Google TTS 時把這開關打開即可
-const CLOUD_TTS_ENABLED = false;
-let ttsMode = CLOUD_TTS_ENABLED ? (localStorage.getItem('ttsMode') || 'cloud') : 'system';  // 'cloud'=真人 / 'system'=系統 Yuna
-const bufCache = new Map();     // text → 已 decode 的 AudioBuffer（同句不重抓）
+const CLOUD_TTS_ENABLED = true;
+const TTS_PROVIDER_VERSION = 'gemini-3.1-v1';
+const savedProviderVersion = localStorage.getItem('ttsProviderVersion');
+let ttsMode = CLOUD_TTS_ENABLED ? (localStorage.getItem('ttsMode') || 'cloud') : 'system';  // 'cloud'=真人 / 'system'=裝置
+if (CLOUD_TTS_ENABLED && savedProviderVersion !== TTS_PROVIDER_VERSION) {
+  // 新供應商第一次上線時讓所有裝置試用；之後尊重使用者自己選的模式。
+  ttsMode = 'cloud';
+  localStorage.setItem('ttsMode', ttsMode);
+  localStorage.setItem('ttsProviderVersion', TTS_PROVIDER_VERSION);
+}
+const bufCache = new Map();     // rate + text → 已 decode 的 AudioBuffer（同句不重抓）
 let audioCtx = null;            // Web Audio 播放引擎
 let curSource = null;           // 目前在播的音源，停止時要 stop 它
+let cloudTTSAvailable = null;   // null=尚未呼叫、true=可用、false=已退回裝置聲線
 
 // 取得（或建立）AudioContext
 function getAudioCtx() {
@@ -575,26 +582,40 @@ function unlockAudio() {
 }
 
 // 抓某句的音檔並 decode 成 AudioBuffer（先查快取，沒有才打 worker）
-async function fetchTTSBuffer(text) {
-  if (bufCache.has(text)) return bufCache.get(text);
-  const res = await fetch(TTS_WORKER + '/?text=' + encodeURIComponent(text));
-  if (!res.ok) throw new Error('worker HTTP ' + res.status);
-  const buf = await getAudioCtx().decodeAudioData(await res.arrayBuffer());
-  bufCache.set(text, buf);
-  return buf;
+async function fetchTTSBuffer(text, rate) {
+  const requestedRate = Math.min(1.2, Math.max(0.5, Number(rate) || 1));
+  const cacheKey = requestedRate.toFixed(2) + ':' + text;
+  if (bufCache.has(cacheKey)) return bufCache.get(cacheKey);
+
+  try {
+    const params = new URLSearchParams({ text, rate: requestedRate.toFixed(2) });
+    const res = await fetch(TTS_WORKER + '/?' + params.toString());
+    const provider = res.headers.get('X-TTS-Provider') || '';
+    if (!res.ok || !provider.startsWith('gemini-3.1')) throw new Error('worker HTTP ' + res.status);
+    const buf = await getAudioCtx().decodeAudioData(await res.arrayBuffer());
+    bufCache.set(cacheKey, buf);
+    cloudTTSAvailable = true;
+    updateVoiceStatus();
+    return buf;
+  } catch (error) {
+    cloudTTSAvailable = false;
+    updateVoiceStatus();
+    throw error;
+  }
 }
 
 // 用真人語音播一句；回傳 Promise（播完才 resolve）。失敗 reject → 呼叫端退回系統語音
 // myToken：給逐字播放用的「世代」檢查，中途被打斷就不播
 function playCloud(text, rate, myToken) {
   return new Promise((resolve, reject) => {
-    fetchTTSBuffer(text).then(buf => {
+    fetchTTSBuffer(text, rate).then(buf => {
       if (myToken !== undefined && myToken !== seqToken) { resolve(); return; }  // 已被打斷
       const ctx = getAudioCtx();
       if (ctx.state === 'suspended') ctx.resume();    // 保險再解鎖一次
       const src = ctx.createBufferSource();
       src.buffer = buf;
-      src.playbackRate.value = rate || 1;             // 語速（1 = 原速）
+      // 語速已交給 Gemini 自然演繹，避免 Web Audio 加減速造成聲調一起變形。
+      src.playbackRate.value = 1;
       src.connect(ctx.destination);
       curSource = src;
       src.onended = resolve;
@@ -645,9 +666,15 @@ function updateVoiceStatus() {
   const el = document.getElementById('voiceStatus');
   const preview = document.getElementById('voicePreview');
   if (!el) return;
-  if (ttsMode === 'cloud') {           // 真人模式：直接顯示已啟用
+  if (ttsMode === 'cloud' && cloudTTSAvailable === false) {
+    el.className = 'voice-status warn';
+    el.textContent = '⚠️ 免費雲端語音暫時忙碌，已自動改用 iPhone／裝置聲線';
+    if (preview) preview.disabled = false;
+    return;
+  }
+  if (ttsMode === 'cloud') {
     el.className = 'voice-status ok';
-    el.textContent = '🎙️ 真人發音已啟用（雲端）';
+    el.textContent = '🎙️ Gemini 韓文真人聲線（免費雲端）';
     if (preview) preview.disabled = false;
     return;
   }
@@ -702,7 +729,7 @@ function speakSeq(items, rate, gapMs) {
   stopSpeak();
   const myToken = ++seqToken;   // 記住自己的世代；中途有新動作就停
   // 真人模式：先在背景把每個字的音檔抓好（填快取），播放時才不會一字一卡
-  if (ttsMode === 'cloud') items.forEach(it => fetchTTSBuffer(it.text).catch(() => {}));
+  if (ttsMode === 'cloud') items.forEach(it => fetchTTSBuffer(it.text, rate).catch(() => {}));
   let i = 0;
   const next = () => {
     if (myToken !== seqToken || i >= items.length) {
@@ -1272,7 +1299,8 @@ function init() {
       koVoice = koVoices.find(v => v.name === voiceSel.value) || koVoice;
       localStorage.setItem('koVoiceName', voiceSel.value);  // 記住，下次自動用
       updateVoiceStatus();
-      speak('안녕하세요');   // 換 voice 馬上聽一句
+      stopSpeak();
+      speakSystem('안녕하세요', 1.0);   // 直接試聽剛選的裝置備援聲線
     };
   }
 
