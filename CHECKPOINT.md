@@ -1,11 +1,11 @@
 # CHECKPOINT
 
-Updated: 2026-07-16T13:38:18+08:00
+Updated: 2026-07-16T13:48:13+08:00
 Task Lead: Echo
 Status: complete
 Branch: main
 Last verified implementation commit: c7a3cde
-Last published commit: 5f655a2
+Last published commit: 6f010fe
 
 ## PM requested
 
@@ -32,23 +32,27 @@ Last published commit: 5f655a2
 - `cf-tts-worker/worker.test.mjs`：PASS。
 - Browser 390×844：七個 tab 均可切換；4 首新增 NMIXX 歌曲各顯示 2 張句卡；新增句離線整句播放成功。
 - Browser 1280×720：頁寬 1265、小於 viewport 1280，無水平溢出；console error／warning 0。
+- 公開 GitHub Pages：首頁顯示 v2.5.0；歌詞頁有 9 首 NMIXX，`Love Me Like This` 兩張句卡與整句播放成功，console error／warning 0。
+- 公開 manifest：v2.5.0、139 段文字、417 個 MP3；favicon、Apple、512 與 maskable 圖示皆 HTTP 200。
+- 公開新句 MP3 抽驗：Sarah 17,363 bytes、Olivia 15,640 bytes、Emily 17,124 bytes，皆 HTTP 200／`audio/mp3`。
 
 ## Current state
 
-- v2.5.0 功能 commit `c7a3cde` 已寫入正式 repo；完成本收據後，本機 `main` 會比 `origin/main` 多 2 個 commit，工作樹乾淨。
-- 公開 GitHub Pages 仍是 v2.4.0；本回合沒有 push 或部署授權，因此沒有對外發布。
+- v2.5.0 功能 commit `c7a3cde` 與本機驗收收據 `6f010fe` 已 push 至 `origin/main`。
+- GitHub Pages 已公開 v2.5.0，首頁、歌詞、圖示與三聲線新 MP3 驗收通過。
+- Cloudflare Worker 未改動，也不需要重部署。
 
 ## Decisions and assumptions
 
 - 新增歌曲每首兩個短句，兼顧練習量與畫面長度。
 - 內建歌詞至少要含一個韓文字；混合韓英句保留，整句英文排除。
 - 圖示沿用既有 editorial 設計系統，以可重現的本機生成器產出，並保留獨立 maskable safe area。
-- 新版公開發布需 PM 明確授權，不沿用先前版本的一次性 push 授權。
+- PM 已明確授權直接 push v2.5.0；授權包含 GitHub `main` 與 GitHub Pages 自動發布，不包含無變更的 Cloudflare Worker。
 
 ## Next actions
 
-1. PM 檢視客製圖示與新歌詞。
-2. 若要公開 v2.5.0，PM 需另行明確確認 push；發布後再做 GitHub Pages 與 iPhone PWA 驗收。
+1. PM 在 iPhone Safari／主畫面 PWA 按「檢查 App 更新」，檢視新歌詞與客製圖示。
+2. 若主畫面仍保留舊圖示，移除舊捷徑再重新加入。
 
 ## Risks / blockers
 

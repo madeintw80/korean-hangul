@@ -6,8 +6,7 @@
 
 ## Todo（依優先順序）
 
-1. [ ] PM 決定是否公開發布本機已完成的 v2.5.0。
-2. [ ] 發布後若 iPhone 仍顯示舊圖示，移除舊主畫面捷徑再重新加入。
+1. [ ] PM 在 iPhone 更新 PWA；若仍顯示舊圖示，移除舊主畫面捷徑再重新加入。
 
 ## Done
 
@@ -34,6 +33,8 @@
 - [x] Echo 新增 4 首 NMIXX、每首 2 句，共 8 句教材；NMIXX 內建歌曲增至 9 首。
 - [x] Echo 移除 3 句全英文歌詞與 9 個對應 MP3，並加入「內建歌詞必須含韓文」回歸測試。
 - [x] Echo 完成 editorial 客製 PWA／Apple／favicon／maskable 圖示與 v2.5.0 本機驗收；未 push。
+- [x] PM 明確授權直接 push v2.5.0。
+- [x] Echo push `main`，驗證 GitHub Pages v2.5.0、9 首 NMIXX、圖示與三聲線新 MP3 皆正常。
 
 ## Backlog / 之後再說
 
