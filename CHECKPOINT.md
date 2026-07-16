@@ -1,10 +1,10 @@
 # CHECKPOINT
 
-Updated: 2026-07-16T13:36:12+08:00
+Updated: 2026-07-16T13:38:18+08:00
 Task Lead: Echo
-Status: ready_for_review
+Status: complete
 Branch: main
-Last verified implementation commit: pending
+Last verified implementation commit: c7a3cde
 Last published commit: 5f655a2
 
 ## PM requested
@@ -35,8 +35,8 @@ Last published commit: 5f655a2
 
 ## Current state
 
-- v2.5.0 功能已在隔離工作副本完成並通過驗收，等待寫入正式 repo 與最後文件收據。
-- 公開 GitHub Pages 仍是 v2.4.0；本回合沒有 push 或部署授權，因此不會對外發布。
+- v2.5.0 功能 commit `c7a3cde` 已寫入正式 repo；完成本收據後，本機 `main` 會比 `origin/main` 多 2 個 commit，工作樹乾淨。
+- 公開 GitHub Pages 仍是 v2.4.0；本回合沒有 push 或部署授權，因此沒有對外發布。
 
 ## Decisions and assumptions
 
@@ -47,8 +47,8 @@ Last published commit: 5f655a2
 
 ## Next actions
 
-1. 建立功能 commit，寫入正式 repo，再以第二個文件 commit 留下完成收據。
-2. PM 檢視客製圖示與新歌詞；若要公開 v2.5.0，需另行明確確認 push。
+1. PM 檢視客製圖示與新歌詞。
+2. 若要公開 v2.5.0，PM 需另行明確確認 push；發布後再做 GitHub Pages 與 iPhone PWA 驗收。
 
 ## Risks / blockers
 
