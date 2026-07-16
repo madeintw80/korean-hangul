@@ -5,7 +5,7 @@
    ===================================================================== */
 importScripts('./audio/manifest.js');
 
-const CACHE = 'hangul-v2.4.0';
+const CACHE = 'hangul-v2.5.0';
 const CORE_AUDIO = (self.HANGUL_AUDIO && self.HANGUL_AUDIO.coreFiles || []).map(path => './' + path);
 
 // 要預先快取的檔案（相對路徑，配合 GitHub Pages 子目錄）
@@ -16,8 +16,11 @@ const ASSETS = [
   './app.js',
   './audio/manifest.js',
   './manifest.json',
+  './icons/favicon-32.png',
+  './icons/apple-touch-icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './icons/icon-maskable-512.png',
   ...CORE_AUDIO,
 ];
 

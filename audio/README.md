@@ -1,6 +1,8 @@
 # 內建韓文語音
 
-本資料夾收錄 korean-hangul v2.4.0 的固定教材音檔，讓母音、子音、收尾音、團名、常用句與既有歌詞不必逐次呼叫雲端 TTS。
+本資料夾收錄 korean-hangul v2.5.0 的固定教材音檔，讓母音、子音、收尾音、團名、常用句與既有歌詞不必逐次呼叫雲端 TTS。
+
+目前共有 139 段固定教材、三套聲線，共 417 個 MP3。
 
 - 產生工具：Supertonic 3 / `supertonic` Python package 1.3.1
 - 官方專案：https://github.com/supertone-inc/supertonic

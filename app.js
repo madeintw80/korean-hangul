@@ -134,7 +134,6 @@ const labExamples = [
    --------------------------------------------------------------------- */
 const songs = [
   { group:'aespa', song:'Next Level', year:2021, lines:[
-    { han:"I'm on the next level", mean:'我上到下一個層級（英文 hook）' },
     { han:'절대적 룰을 지켜', mean:'遵守絕對的規則',
       pron:'절때적 루를 지켜',
       changes:[
@@ -174,11 +173,26 @@ const songs = [
   { group:'aespa', song:'LEMONADE', year:2026, lines:[
     { han:'겁 없이 Walk my way', mean:'毫無畏懼地 Walk my way' },
     { han:'던져 On my stage', mean:'盡情拋出 On my stage' },
-    { han:"I'll make it LEMONADE", mean:'我會把它釀成 LEMONADE（英文 hook）' },
   ]},
   { group:'NMIXX', song:'DASH', year:2024, lines:[
     { han:'날 막아선 barricade', mean:'擋住我的路障' },
     { han:'사뿐히 즈려밟고 가', mean:'輕盈地踩過去（化用名詩《진달래꽃》）' },
+  ]},
+  { group:'NMIXX', song:'Love Me Like This', year:2023, lines:[
+    { han:'뛰는 심장 소릴 따라가', mean:'跟著跳動的心跳聲走' },
+    { han:'맘속 Fireworks', mean:'心中的煙火' },
+  ]},
+  { group:'NMIXX', song:'Soñar (Breaker)', year:2023, lines:[
+    { han:'하늘 위로 닻을 던져봐', mean:'試著把錨拋向天空' },
+    { han:'한 발만 내디뎌', mean:'只要踏出一步' },
+  ]},
+  { group:'NMIXX', song:'별별별 (See that?)', year:2024, lines:[
+    { han:'마음 안의 말 털어내 Voice up', mean:'把心裡的話全說出來，放大聲音' },
+    { han:'그래, 난 별별별', mean:'沒錯，我就是與眾不同' },
+  ]},
+  { group:'NMIXX', song:'KNOW ABOUT ME', year:2025, lines:[
+    { han:'날 믿고 다음 다음 Step을 밟아', mean:'相信我，踏出下一個、再下一個步伐' },
+    { han:'이젠 알아', mean:'現在我明白了' },
   ]},
   { group:'NMIXX', song:'Blue Valentine', year:2025, lines:[
     { han:'식어버린 너의 색은 blue', mean:'你那冷卻下來的顏色是 blue' },
@@ -194,7 +208,6 @@ const songs = [
       ] },
     { han:'깊게 새긴 상처 비친 red blood', mean:'深深刻下的傷口映出 red blood' },
     { han:'식어도 타오르는 얼음 속 불꽃', mean:'就算冷卻仍在燃燒，冰裡的火花' },
-    { han:"You'll always be my blue valentine", mean:'你永遠是我的 blue valentine（英文 hook）' },
   ]},
   { group:'NMIXX', song:'Heavy Serenade', year:2026, lines:[
     { han:'커진 심장 소릴 들어봐', mean:'聽聽我變大的心跳聲' },

@@ -1,0 +1,47 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.dirname(fileURLToPath(import.meta.url));
+const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
+const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+const generator = fs.readFileSync(path.join(root, 'generate_icons.py'), 'utf8');
+
+const expectedIcons = [
+  { src: 'icons/favicon-32.png', size: 32 },
+  { src: 'icons/apple-touch-icon-180.png', size: 180 },
+  { src: 'icons/icon-192.png', size: 192, purpose: 'any' },
+  { src: 'icons/icon-512.png', size: 512, purpose: 'any' },
+  { src: 'icons/icon-maskable-512.png', size: 512, purpose: 'maskable' },
+];
+
+function pngSize(filePath) {
+  const data = fs.readFileSync(filePath);
+  assert.deepEqual([...data.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+  return { width: data.readUInt32BE(16), height: data.readUInt32BE(20) };
+}
+
+for (const icon of expectedIcons) {
+  const dimensions = pngSize(path.join(root, icon.src));
+  assert.deepEqual(dimensions, { width: icon.size, height: icon.size });
+  assert.match(sw, new RegExp(icon.src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+}
+
+assert.deepEqual(
+  manifest.icons,
+  expectedIcons.slice(2).map(icon => ({
+    src: icon.src,
+    sizes: `${icon.size}x${icon.size}`,
+    type: 'image/png',
+    purpose: icon.purpose,
+  }))
+);
+assert.match(index, /icons\/favicon-32\.png/);
+assert.match(index, /icons\/apple-touch-icon-180\.png/);
+assert.match(index, /한글 Studio v2\.5\.0/);
+assert.match(sw, /hangul-v2\.5\.0/);
+assert.doesNotMatch(generator, /BASE\s*=\s*r?["']C:\\\\Users/i);
+
+console.log('PASS: favicon, Apple touch, PWA any, and maskable icons are wired for v2.5.0');

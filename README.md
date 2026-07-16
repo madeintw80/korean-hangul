@@ -15,7 +15,7 @@ vanilla JS PWA（無框架、無 build step），固定教材預設使用三套�
   也可以貼任何韓文歌詞自動拆解
 - **台灣注音輔助**：以韓國標準發音後的音節產生近似提示；清楚標出緊音與不爆破收尾，
   並提醒 ㅓ／ㅡ／ㅢ 等華語沒有精準對應的音仍要以韓文聲音與口型為準
-- **三套內建自然女聲**：Sarah／Olivia／Emily 可切換；134 段固定教材共 402 個 MP3，核心字母
+- **三套內建自然女聲**：Sarah／Olivia／Emily 可切換；139 段固定教材共 417 個 MP3，核心字母
   不受 Gemini 每分鐘／每日限額影響
 - **自由句雲端備援**：需要合成教材外的新句子時可手動切 Gemini；失敗會改用裝置聲線
 
@@ -35,6 +35,7 @@ vanilla JS PWA（無框架、無 build step），固定教材預設使用三套�
 - v2.2.0 起優先選 Natural／Neural／Google 韓文聲線，整句預設 1.00x 自然語速並提供試聽。
 - v2.3.0 起以免費 Gemini TTS 作為跨裝置預設，語速由模型自然演繹，避免硬降速造成音高變形。
 - v2.4.0 起改以 Sarah／Olivia／Emily 內建音檔為預設；Gemini 降為自由句選用模式。
+- v2.5.0 新增四首、共八句 NMIXX 教材；內建歌詞只保留含韓文的句子，並換成 editorial 風格的客製 PWA／Apple／maskable 圖示。
 - 正式站仍是 vanilla JS 靜態 PWA，沒有新增 framework 或 build step。
 - 手機以單欄練習為主；桌面改為學習區＋發音控制台雙欄。
 
@@ -51,3 +52,4 @@ vanilla JS PWA（無框架、無 build step），固定教材預設使用三套�
 - Worker 測試：`node cf-tts-worker/worker.test.mjs`
 - 發音／注音回歸：`node pronunciation.test.js`
 - 三聲線音檔覆蓋：`node audio-assets.test.mjs`
+- PWA 圖示／manifest：`node pwa-assets.test.mjs`
