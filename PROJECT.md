@@ -5,14 +5,17 @@
 
 ## 目標
 
-- 用 K-pop 女團、團名與歌詞幫初學者練韓文字母、發音與變音。
-- 成功標準：手機可快速練習、桌面可清楚瀏覽，發音與離線 PWA 穩定。
+- 用約 60 分鐘的順序課程，讓完全初學者先建立韓文 40 音、母子組合與七種代表收尾音的拼讀能力。
+- 課後以 K-pop 女團、團名與歌詞繼續練韓文字母、發音與變音。
+- 成功標準：手機能順著課程快速學習、桌面可清楚瀏覽完整組合表，發音、進度與離線 PWA 穩定。
 
 ## 架構
 
 - `index.html`：頁面骨架、學習分類、發音控制台。
 - `style.css`：responsive UI 與互動狀態。
 - `app.js`：資料、三聲線／Gemini／裝置發音、變音、測驗、歌詞與 DOM render。
+- `course-data.js`：九關 40 音課程、組合表分類、七種代表收尾音與 11 個複合收尾資料。
+- `course.js`：課程進度、19 × 21 組合表、收尾音教材與四種課程測驗。
 - `audio/`：Sarah／Olivia／Emily 固定教材 MP3 與唯一對應表 `manifest.js`。
 - `sw.js`／`manifest.json`：PWA、離線快取與更新。
 - 技術：vanilla HTML／CSS／JavaScript；Supertonic 3 預生成音檔；Cloudflare Worker 代理選用的 Gemini TTS；Web Speech API fallback。
@@ -25,8 +28,9 @@
 
 ## 測試
 
-- 靜態結構、三聲線 402 個 MP3 覆蓋與版本一致性檢查。
-- Browser smoke：390×844、1280×720、七個 tab、TTS 控制、測驗、歌詞、console error。
+- 靜態結構、三聲線 417 個 MP3 覆蓋與版本一致性檢查。
+- 課程資料：九關、399 個母子組合、七種代表收尾音、11 個複合收尾與四種測驗模式。
+- Browser smoke：390×844、1280×720、五個主學習區、工具箱七個 tab、TTS、進度、組合表、測驗與 console error。
 - PWA：manifest、service worker assets 與 CACHE 版本。
 
 ## 部署

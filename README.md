@@ -1,12 +1,18 @@
-# 한글 Studio — 用 K-pop 學韓文字母發音
+# 한글 Studio — 60 分鐘韓文速通＋K-pop 練習
 
 vanilla JS PWA（無框架、無 build step），固定教材預設使用三套內建 Supertonic 3 韓文女聲；
 自由句可手動切換 Gemini，無音檔或雲端不可用時再用 Web Speech API。
 
-**Demo**：https://madeintw80.github.io/korean-hangul/
+**公開 Demo（目前 v2.5.0）**：https://madeintw80.github.io/korean-hangul/
+
+> v3.0.0-preview 已在本機完成，尚未 push／發布；先由 PM 本機審閱。
 
 ## 功能
 
+- **60 分鐘 40 音課程**：九關依序學字塊、鬆音、緊音、送氣音與 ㅎ、鼻音／流音、基本／Y／複合母音，並保留學習進度
+- **母子組合表**：可依學習階段篩選，也能展開 19 子音 × 21 母音共 399 個音節；點格子或整列播放
+- **收尾音課程**：先理解 27 種寫法歸到 7 種代表音，再分開練 ㄴ／ㅁ／ㅇ 鼻音與 ㄹ 流音，並預覽 11 個複合收尾
+- **四種課程測驗**：組字、拆字、聽音、收尾；錯題會記入本機弱點紀錄
 - **母音 / 子音 / 收尾音（받침）**：分組字母卡，點卡片就唸（含羅馬拼音 + 注音提示）
 - **拼字實驗室**：子音＋母音（＋收尾）即時組字並發音，體驗 한글 組字邏輯
 - **聽音測驗**：聽 TTS 猜字母，自動排除同音干擾項（ㅐ/ㅔ、ㅙ/ㅚ/ㅞ 等不會同題出現）
@@ -36,6 +42,7 @@ vanilla JS PWA（無框架、無 build step），固定教材預設使用三套�
 - v2.3.0 起以免費 Gemini TTS 作為跨裝置預設，語速由模型自然演繹，避免硬降速造成音高變形。
 - v2.4.0 起改以 Sarah／Olivia／Emily 內建音檔為預設；Gemini 降為自由句選用模式。
 - v2.5.0 新增四首、共八句 NMIXX 教材；內建歌詞只保留含韓文的句子，並換成 editorial 風格的客製 PWA／Apple／maskable 圖示。
+- v3.0.0-preview 改為課程優先首頁，新增九關 40 音、完整母子組合表、七種收尾音章節、四種測驗與本機進度；原有功能完整保留在工具箱。
 - 正式站仍是 vanilla JS 靜態 PWA，沒有新增 framework 或 build step。
 - 手機以單欄練習為主；桌面改為學習區＋發音控制台雙欄。
 
@@ -53,3 +60,4 @@ vanilla JS PWA（無框架、無 build step），固定教材預設使用三套�
 - 發音／注音回歸：`node pronunciation.test.js`
 - 三聲線音檔覆蓋：`node audio-assets.test.mjs`
 - PWA 圖示／manifest：`node pwa-assets.test.mjs`
+- v3 課程資料與接線：`node course.test.mjs`

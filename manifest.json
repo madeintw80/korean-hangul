@@ -1,7 +1,7 @@
 {
-  "name": "한글 Studio — 用 K-pop 練韓文",
+  "name": "한글 Studio — 60 分鐘韓文速通",
   "short_name": "한글 Studio",
-  "description": "用 K-pop 女團學韓文字母、發音與歌詞跟讀",
+  "description": "從 40 音、母子組合到收尾音，用課程、表格與測驗真正學會拼讀韓文",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
