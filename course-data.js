@@ -1,6 +1,6 @@
 /* 한글 Studio v3 課程資料：內容與互動引擎分離，之後擴課不必改主程式。 */
 window.HANGUL_COURSE_DATA = {
-  version: '3.0.0-preview',
+  version: '3.0.2-preview',
   lessons: [
     {
       id: 'blocks', number: '01', minutes: 4, title: '先看懂韓文字塊',

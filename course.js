@@ -1,4 +1,4 @@
-/* 한글 Studio v3 課程互動：主線、組合表、收尾音與四種測驗。 */
+/* 한글 Studio v3 課程互動：主線、組合表、收尾音與三種朗讀測驗。 */
 (function () {
   'use strict';
 
@@ -8,7 +8,7 @@
   const STORAGE_KEY = 'hangulCourseV3';
   const DEFAULT_STATE = { completed: [], currentLesson: 'blocks', matrixGroup: 'basic', mistakes: {} };
   let state = loadState();
-  let currentQuizMode = 'compose';
+  let currentQuizMode = 'split';
   let courseQuiz = { answer: '', key: '', correct: 0, total: 0, locked: false, audio: '' };
 
   function loadState() {
@@ -297,10 +297,9 @@
   }
 
   const QUIZ_MODES = [
-    { id:'compose', label:'組字', kicker:'子音＋母音＝？' },
-    { id:'split', label:'拆字', kicker:'這個音節怎麼拆？' },
-    { id:'hear', label:'聽音', kicker:'聽音選出正確字' },
-    { id:'final', label:'收尾', kicker:'歸到哪個代表音？' },
+    { id:'split', label:'拆字', kicker:'聽音節，再把它拆開' },
+    { id:'hear', label:'聽音', kicker:'只聽聲音，選出正確字' },
+    { id:'final', label:'收尾', kicker:'聽單字，判斷代表收尾音' },
   ];
   const QUIZ_CONSONANTS = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅎ','ㄲ','ㅋ','ㅆ','ㅊ'];
   const QUIZ_VOWELS = ['ㅏ','ㅓ','ㅗ','ㅜ','ㅡ','ㅣ','ㅑ','ㅕ','ㅛ','ㅠ','ㅐ','ㅔ'];
@@ -348,32 +347,28 @@
 
     if (currentQuizMode === 'final') {
       const item = pick(FINAL_WORDS);
-      prompt = `<span class="quiz-word">${item.word}</span><small>最後歸到哪個代表收尾音？</small>`;
+      prompt = `<span class="quiz-word">${item.word}</span><small>先聽單字，最後歸到哪個代表收尾音？</small>`;
       answer = item.answer;
       options = uniqueOptions(answer, ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅇ']);
       key = `final:${item.word}`;
+      courseQuiz.audio = item.word;
     } else {
       const cho = pick(QUIZ_CONSONANTS);
       const jung = pick(QUIZ_VOWELS);
       const syllable = composeHangul(cho, jung, '');
-      if (currentQuizMode === 'compose') {
-        prompt = `<span class="quiz-formula">${cho} ＋ ${jung} ＝ ?</span><small>選出拼好的韓文字</small>`;
-        answer = syllable;
-        options = buildSyllableOptions(cho, jung, answer);
-      } else if (currentQuizMode === 'split') {
-        prompt = `<span class="quiz-word">${syllable}</span><small>把它拆回初聲與母音</small>`;
+      if (currentQuizMode === 'split') {
+        prompt = `<span class="quiz-word">${syllable}</span><small>先聽音節，再拆回初聲與母音</small>`;
         answer = `${cho} ＋ ${jung}`;
-        const candidates = [
-          `${pick(QUIZ_CONSONANTS)} ＋ ${jung}`, `${cho} ＋ ${pick(QUIZ_VOWELS)}`,
-          `${pick(QUIZ_CONSONANTS)} ＋ ${pick(QUIZ_VOWELS)}`,
-        ];
+        const candidates = [];
+        QUIZ_CONSONANTS.forEach(consonant => candidates.push(`${consonant} ＋ ${jung}`));
+        QUIZ_VOWELS.forEach(vowel => candidates.push(`${cho} ＋ ${vowel}`));
         options = uniqueOptions(answer, candidates);
+        courseQuiz.audio = syllable;
       } else {
         prompt = '<span class="quiz-listen">♪</span><small>先聽，再選出正確音節</small>';
         answer = syllable;
         options = buildSyllableOptions(cho, jung, answer);
         courseQuiz.audio = syllable;
-        setTimeout(() => speak(syllable), 0);
       }
       key = `${currentQuizMode}:${cho}:${jung}`;
     }
@@ -382,7 +377,7 @@
     courseQuiz.key = key;
     document.getElementById('courseQuizKicker').textContent = mode.kicker;
     document.getElementById('courseQuizPrompt').innerHTML = prompt;
-    document.getElementById('courseQuizReplay').hidden = currentQuizMode !== 'hear';
+    document.getElementById('courseQuizReplay').hidden = !courseQuiz.audio;
     document.getElementById('courseQuizFeedback').textContent = '';
     document.getElementById('courseQuizNext').hidden = true;
     const root = document.getElementById('courseQuizOptions');
@@ -395,6 +390,8 @@
       button.onclick = () => answerCourseQuestion(option, button);
       root.appendChild(button);
     });
+    // 每種題型都先朗讀韓文刺激，避免只靠視覺猜答案。
+    if (courseQuiz.audio) speak(courseQuiz.audio);
   }
 
   function answerCourseQuestion(choice, button) {

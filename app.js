@@ -1322,12 +1322,8 @@ function setupTabs() {
       document.querySelectorAll('.tab-content').forEach(c => {
         c.classList.toggle('active', c.id === target);
       });
-      // 切走時停掉正在唸的音（含逐字隊伍）+ 清掉測驗待跳題 timer（避免在別的分頁突然出題發聲）
+      // 切走時停掉正在唸的音（含逐字隊伍）。
       stopSpeak();
-      clearTimeout(quizTimer);
-      // 切到測驗分頁：還沒出過題 → 出第一題；上一題已作答（timer 被切頁清掉）→ 直接出新題
-      if (target === 'tab-quiz' && !quizAnswer) setQuizScope('vowel');
-      else if (target === 'tab-quiz' && quizLocked) newQuestion();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
   });
@@ -1349,23 +1345,10 @@ function init() {
     updateVoiceStatus();
   }
 
-  // 各分頁
-  renderVowels();
-  renderConsonants();
-  renderBatchim();
-  renderLab();
+  // K-pop 實戰只保留女團拼讀與歌詞拼音，避免與主課程重複。
   renderIdols();
   renderLyrics();
   setupTabs();
-
-  // 測驗範圍按鈕
-  document.querySelectorAll('.scope-btn').forEach(b => {
-    b.onclick = () => setQuizScope(b.dataset.scope);
-  });
-  document.getElementById('quizReplay').onclick = () => {
-    if (!quizAnswer) setQuizScope('vowel');
-    else speak(quizAnswer.s);
-  };
 
   // 語音選單：切換 voice + 記住選擇 + 立刻試聽
   const voiceSel = document.getElementById('voiceSelect');

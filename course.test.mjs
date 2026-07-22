@@ -11,7 +11,7 @@ const course = sandbox.window.HANGUL_COURSE_DATA;
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const courseJs = fs.readFileSync(path.join(root, 'course.js'), 'utf8');
 
-assert.equal(course.version, '3.0.0-preview');
+assert.equal(course.version, '3.0.2-preview');
 assert.equal(course.lessons.length, 9);
 assert.deepEqual(
   Array.from(course.lessons.find(lesson => lesson.id === 'aspirated').sounds, item => item.letter),
@@ -34,8 +34,17 @@ assert.equal(course.doubleBatchim.length, 11);
 for (const id of ['course-view', 'matrix-view', 'final-view', 'course-quiz-view', 'toolbox-view']) {
   assert.match(index, new RegExp(`id=["']${id}["']`));
 }
-for (const mode of ['compose', 'split', 'hear', 'final']) {
+for (const id of ['track-idols', 'track-lyrics', 'tab-idols', 'tab-lyrics']) {
+  assert.match(index, new RegExp(`id=["']${id}["']`));
+}
+for (const id of ['track-vowels', 'track-consonants', 'track-batchim', 'track-lab', 'track-quiz']) {
+  assert.doesNotMatch(index, new RegExp(`id=["']${id}["']`));
+}
+for (const mode of ['split', 'hear', 'final']) {
   assert.match(courseJs, new RegExp(`id:["']${mode}["']`));
 }
+assert.doesNotMatch(courseJs, /id:["']compose["']/);
+assert.match(courseJs, /courseQuiz\.audio = item\.word/);
+assert.match(courseJs, /if \(courseQuiz\.audio\) speak\(courseQuiz\.audio\)/);
 
-console.log('PASS: 9 lessons, 399 syllables, 7 final sounds, and 4 quiz modes are wired');
+console.log('PASS: 9 lessons, 399 syllables, 7 final sounds, and 3 narrated quiz modes are wired');

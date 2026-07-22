@@ -2,7 +2,7 @@
 
 ## In progress
 
-- PM 本機審閱 v3.0.0-preview 課程版；尚未 push／deploy。
+- PM 本機審閱 v3.0.2-preview 課程版；尚未 push／deploy。
 
 ## Todo（依優先順序）
 
@@ -36,7 +36,10 @@
 - [x] Echo 完成 editorial 客製 PWA／Apple／favicon／maskable 圖示與 v2.5.0 本機驗收；未 push。
 - [x] PM 明確授權直接 push v2.5.0。
 - [x] Echo push `main`，驗證 GitHub Pages v2.5.0、9 首 NMIXX、圖示與三聲線新 MP3 皆正常。
-- [x] Echo 完成 v3.0.0-preview：九關 40 音、399 母子組合、七種代表收尾音、鼻音／流音收尾章節、四種測驗與本機進度。
+- [x] Echo 完成 v3.0.0-preview：九關 40 音、399 母子組合、七種代表收尾音、鼻音／流音收尾章節與本機進度。
+- [x] Echo 依 PM 回饋移除簡單的組字測驗；拆字、聽音、收尾三種題型全部自動朗讀並可重播，版本更新為 v3.0.1-preview。
+- [x] PM 拍板工具箱只保留女團與歌詞拼音；Echo 將七頁工具箱收斂成兩頁「K-pop 實戰」，移除五個重複入口及其初始化接線。
+- [x] Echo 修正拆字干擾項重複問題，確保每題固定四個不同選項；版本更新為 v3.0.2-preview。
 - [x] Echo 完成 v3 桌機／手機 Browser smoke、既有工具箱七頁回歸與完整自動測試；僅本機、未 push／deploy。
 
 ## Backlog / 之後再說

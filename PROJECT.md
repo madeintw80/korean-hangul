@@ -15,7 +15,7 @@
 - `style.css`：responsive UI 與互動狀態。
 - `app.js`：資料、三聲線／Gemini／裝置發音、變音、測驗、歌詞與 DOM render。
 - `course-data.js`：九關 40 音課程、組合表分類、七種代表收尾音與 11 個複合收尾資料。
-- `course.js`：課程進度、19 × 21 組合表、收尾音教材與四種課程測驗。
+- `course.js`：課程進度、19 × 21 組合表、收尾音教材與三種自動朗讀測驗。
 - `audio/`：Sarah／Olivia／Emily 固定教材 MP3 與唯一對應表 `manifest.js`。
 - `sw.js`／`manifest.json`：PWA、離線快取與更新。
 - 技術：vanilla HTML／CSS／JavaScript；Supertonic 3 預生成音檔；Cloudflare Worker 代理選用的 Gemini TTS；Web Speech API fallback。
@@ -29,7 +29,7 @@
 ## 測試
 
 - 靜態結構、三聲線 417 個 MP3 覆蓋與版本一致性檢查。
-- 課程資料：九關、399 個母子組合、七種代表收尾音、11 個複合收尾與四種測驗模式。
+- 課程資料：九關、399 個母子組合、七種代表收尾音、11 個複合收尾與三種自動朗讀測驗模式。
 - Browser smoke：390×844、1280×720、五個主學習區、工具箱七個 tab、TTS、進度、組合表、測驗與 console error。
 - PWA：manifest、service worker assets 與 CACHE 版本。
 

@@ -40,7 +40,7 @@
     <button class="primary-tab" role="tab" aria-selected="false" data-view="matrix-view"><span>組合表</span><small>Matrix</small></button>
     <button class="primary-tab" role="tab" aria-selected="false" data-view="final-view"><span>收尾音</span><small>Batchim</small></button>
     <button class="primary-tab" role="tab" aria-selected="false" data-view="course-quiz-view"><span>測驗</span><small>Test</small></button>
-    <button class="primary-tab" role="tab" aria-selected="false" data-view="toolbox-view"><span>工具箱</span><small>Explore</small></button>
+    <button class="primary-tab" role="tab" aria-selected="false" data-view="toolbox-view"><span>K-pop 實戰</span><small>Practice</small></button>
   </nav>
 
   <section class="sound-ribbon" aria-label="發音設定">
@@ -110,13 +110,13 @@
       <header class="view-heading">
         <p class="eyebrow">PROVE IT / 04</p>
         <h2>不是看過，是要真的會讀</h2>
-        <p>組字、拆字、聽音與收尾四種題型會記錄你的弱點；切換題型就能立即開始。</p>
+        <p>保留拆字、聽音與收尾三種需要真正辨音的題型；每題會先念一次，也能隨時重播。</p>
       </header>
       <div id="courseQuizModes" class="filter-chips" aria-label="測驗類型"></div>
       <section class="course-quiz-card">
-        <div id="courseQuizKicker" class="quiz-kicker">組字測驗</div>
+        <div id="courseQuizKicker" class="quiz-kicker">拆字測驗</div>
         <div id="courseQuizPrompt" class="course-quiz-prompt"></div>
-        <button id="courseQuizReplay" class="mini-btn" type="button" hidden>🔊 再播一次</button>
+        <button id="courseQuizReplay" class="mini-btn" type="button" hidden>🔊 再聽一次</button>
         <div id="courseQuizOptions" class="course-quiz-options"></div>
         <div id="courseQuizFeedback" class="course-quiz-feedback" aria-live="polite"></div>
         <div class="course-quiz-footer"><span id="courseQuizScore">答對 0 ／ 共 0 題</span><button id="courseQuizNext" class="big-btn" type="button" hidden>下一題</button></div>
@@ -126,40 +126,26 @@
     <section id="toolbox-view" class="view-panel toolbox-view" role="tabpanel">
       <div class="studio-layout">
         <section class="main-stage">
-          <div class="section-head"><h2>自由練習<br>工具箱</h2><span>05 / EXPLORE</span></div>
-          <nav class="tabs" aria-label="練習分類" role="tablist">
-            <button id="track-vowels" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-vowels" data-target="tab-vowels"><span>母音</span><small>Vowels</small></button>
-            <button id="track-consonants" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-consonants" data-target="tab-consonants"><span>子音</span><small>Consonants</small></button>
-            <button id="track-batchim" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-batchim" data-target="tab-batchim"><span>收尾</span><small>Batchim</small></button>
-            <button id="track-lab" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-lab" data-target="tab-lab"><span>拼字</span><small>Build</small></button>
-            <button id="track-quiz" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-quiz" data-target="tab-quiz"><span>字母測驗</span><small>Quiz</small></button>
-            <button id="track-idols" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-idols" data-target="tab-idols"><span>女團</span><small>Idols</small></button>
+          <div class="section-head"><h2>K-pop<br>實戰</h2><span>05 / PRACTICE</span></div>
+          <nav class="tabs kpop-tabs" aria-label="K-pop 實戰分類" role="tablist">
+            <button id="track-idols" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-idols" data-target="tab-idols"><span>女團拼讀</span><small>Idols</small></button>
             <button id="track-lyrics" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-lyrics" data-target="tab-lyrics"><span>歌詞</span><small>Lyrics</small></button>
           </nav>
           <div class="practice-content">
             <div class="pronunciation-note" role="note"><strong>注音是口型起點，不是韓語標準音。</strong><span>ㅓ／ㅡ／ㅢ 在國語裡沒有精準對應；（ㄍ／ㄉ／ㄅ）表示收尾卡住、不爆破；• 表示緊音。</span></div>
-            <section id="tab-vowels" class="tab-content active" role="tabpanel" aria-labelledby="track-vowels"></section>
-            <section id="tab-consonants" class="tab-content" role="tabpanel" aria-labelledby="track-consonants"></section>
-            <section id="tab-batchim" class="tab-content" role="tabpanel" aria-labelledby="track-batchim"></section>
-            <section id="tab-lab" class="tab-content" role="tabpanel" aria-labelledby="track-lab"></section>
-            <section id="tab-quiz" class="tab-content" role="tabpanel" aria-labelledby="track-quiz">
-              <p class="tab-intro"><b>EAR TRAINING / CLASSIC</b><br>聽發音，從四個字母裡找出正確答案。</p>
-              <div class="quiz-scope"><button class="scope-btn active" data-scope="vowel">只考母音</button><button class="scope-btn" data-scope="consonant">只考子音</button><button class="scope-btn" data-scope="all">全部混合</button></div>
-              <div class="quiz-box"><button class="big-btn" id="quizReplay">再播一次</button><div class="quiz-options" id="quizOptions"></div><div id="quizFeedback" aria-live="polite"></div><div id="quizScore">答對 0 ／ 共 0 題</div></div>
-            </section>
-            <section id="tab-idols" class="tab-content" role="tabpanel" aria-labelledby="track-idols"></section>
+            <section id="tab-idols" class="tab-content active" role="tabpanel" aria-labelledby="track-idols"></section>
             <section id="tab-lyrics" class="tab-content" role="tabpanel" aria-labelledby="track-lyrics"></section>
           </div>
         </section>
-        <aside class="studio-sidebar" aria-label="工具箱說明">
-          <section class="editor-note"><p class="eyebrow">AFTER THE COURSE</p><h2>想練哪裡，<br>就直接點哪裡。</h2><p>主課程負責帶路；工具箱保留原本所有自由探索、拼字、女團和歌詞功能。</p></section>
+        <aside class="studio-sidebar" aria-label="K-pop 實戰說明">
+          <section class="editor-note"><p class="eyebrow">AFTER THE COURSE</p><h2>學完字母，<br>直接拿歌來讀。</h2><p>主課程負責帶路；這裡只留女團名稱與歌詞拼音，把剛學會的聲音放進真正喜歡的內容。</p></section>
           <section class="mixtape-card"><div class="mixtape-no">A1</div><div><small>K-POP REWARD</small><strong>選一句副歌<br>找出剛學會的音</strong></div></section>
         </aside>
       </div>
     </section>
   </main>
 
-  <footer><strong>한글 Studio v3.0.0-preview</strong><span>本機預覽版・尚未發布</span></footer>
+  <footer><strong>한글 Studio v3.0.2-preview</strong><span>本機預覽版・尚未發布</span></footer>
 </div>
 <script src="audio/manifest.js"></script>
 <script src="app.js"></script>
