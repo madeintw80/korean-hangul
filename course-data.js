@@ -1,6 +1,6 @@
 /* 한글 Studio v3 課程資料：內容與互動引擎分離，之後擴課不必改主程式。 */
 window.HANGUL_COURSE_DATA = {
-  version: '3.0.2-preview',
+  version: '3.1.0-preview',
   lessons: [
     {
       id: 'blocks', number: '01', minutes: 4, title: '先看懂韓文字塊',
@@ -122,4 +122,56 @@ window.HANGUL_COURSE_DATA = {
     { letter:'ㄹ', roman:'l', sample:'알', word:'말', mean:'話／馬', cue:'舌尖停住，接近 l' },
   ],
   doubleBatchim: ['ㄳ','ㄵ','ㄶ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅄ'],
+  soundChanges: [
+    {
+      id:'liaison', label:'連音', badge:'MOVE THE BATCHIM', title:'收尾往下一格滑', article:'標準發音法第 13、14 條',
+      summary:'後面音節用 ㅇ 承接母音時，前面的 받침 通常會移到下一格，照原本子音發音。雙收尾則常是一個留下、一個滑過去。',
+      cue:'先把下一格的 ㅇ 想成空位：看到母音，就檢查前面的收尾能不能搬過來。',
+      examples:[
+        { written:'먹어', pronounced:'머거', note:'ㄱ 滑到 어 前面' },
+        { written:'집에', pronounced:'지베', note:'ㅂ 滑到 에 前面' },
+        { written:'읽어', pronounced:'일거', note:'雙收尾 ㄺ：ㄹ 留下、ㄱ 滑過去' },
+        { written:'없어', pronounced:'업써', note:'雙收尾 ㅄ：ㅂ 留下、ㅅ 滑過去並成 ㅆ' },
+      ],
+    },
+    {
+      id:'nasal', label:'鼻音化', badge:'MAKE IT NASAL', title:'卡住的音改走鼻腔', article:'標準發音法第 18、19 條',
+      summary:'ㄱ／ㄷ／ㅂ 類收尾遇到後面的 ㄴ 或 ㅁ，會順著鼻音變成 ㅇ／ㄴ／ㅁ。',
+      cue:'後面出現 ㄴ、ㅁ 時先不要硬爆破；讓前面的收尾也一起變成鼻音。',
+      examples:[
+        { written:'국물', pronounced:'궁물', note:'ㄱ ＋ ㅁ → ㅇ ＋ ㅁ' },
+        { written:'먹는', pronounced:'멍는', note:'ㄱ ＋ ㄴ → ㅇ ＋ ㄴ' },
+        { written:'앞문', pronounced:'암문', note:'ㅂ 類收尾 ＋ ㅁ → ㅁ ＋ ㅁ' },
+      ],
+    },
+    {
+      id:'tense', label:'緊音化', badge:'TIGHTEN IT', title:'後面的音突然繃緊', article:'標準發音法第 23 條',
+      summary:'ㄱ／ㄷ／ㅂ 類收尾後面的 ㄱ、ㄷ、ㅂ、ㅅ、ㅈ，常會變成對應緊音。',
+      cue:'先把收尾卡住，再把下一個音短、緊地放出來；不是大聲，也不是多吐氣。',
+      examples:[
+        { written:'학교', pronounced:'학꾜', note:'ㄱ 收尾後的 ㄱ → ㄲ' },
+        { written:'먹다', pronounced:'먹따', note:'ㄱ 收尾後的 ㄷ → ㄸ' },
+        { written:'잡지', pronounced:'잡찌', note:'ㅂ 收尾後的 ㅈ → ㅉ' },
+      ],
+    },
+    {
+      id:'aspiration', label:'送氣化', badge:'ADD THE AIR', title:'遇到 ㅎ，合成送氣音', article:'標準發音法第 12 條',
+      summary:'ㄱ／ㄷ／ㅂ／ㅈ 類音和 ㅎ 相遇時，常合成 ㅋ／ㅌ／ㅍ／ㅊ；有些 ㅎ 遇母音則會脫落。',
+      cue:'看到 ㅎ 先檢查左右：它可能把鄰居推出一股氣，也可能自己消失。',
+      examples:[
+        { written:'좋다', pronounced:'조타', note:'ㅎ ＋ ㄷ → ㅌ' },
+        { written:'축하', pronounced:'추카', note:'ㄱ ＋ ㅎ → ㅋ' },
+        { written:'입학', pronounced:'이팍', note:'ㅂ ＋ ㅎ → ㅍ' },
+      ],
+    },
+    {
+      id:'palatal', label:'口蓋音化', badge:'MOVE FOR I', title:'ㄷ／ㅌ 遇 ㅣ，變成 ㅈ／ㅊ', article:'標準發音法第 17 條',
+      summary:'ㄷ、ㅌ 類收尾接上以 ㅣ 開始的助詞或接尾詞時，會往 ㅣ 的位置靠近，改念 ㅈ、ㅊ。',
+      cue:'看到「ㄷ／ㅌ 받침＋이」先別照普通連音念，優先檢查 ㅈ／ㅊ。',
+      examples:[
+        { written:'굳이', pronounced:'구지', note:'ㄷ ＋ 이 → 지' },
+        { written:'같이', pronounced:'가치', note:'ㅌ ＋ 이 → 치' },
+      ],
+    },
+  ],
 };

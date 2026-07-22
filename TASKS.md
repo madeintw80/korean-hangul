@@ -2,7 +2,7 @@
 
 ## In progress
 
-- 無。
+- [ ] Echo 完成 v3.1.0-preview 連音／基礎音變本機 Browser 驗收與 commit；不 push／deploy。
 
 ## Todo（依優先順序）
 
@@ -43,6 +43,8 @@
 - [x] PM 明確授權 v3.0.2 push／deploy；Echo push `main` 並觸發 GitHub Pages 發布。
 - [x] Echo 驗證公開版三種朗讀測驗、K-pop 兩頁、舊 PWA「立即更新」流程與乾淨頁面 console error／warning 0。
 - [x] Echo 將公開畫面改標 `PUBLIC PREVIEW`，發布 commit `b8cfb69` 已上線；Worker 無變更未重部署。
+- [x] Echo 新增連音、鼻音化、緊音化、送氣化、口蓋音化共 15 個例字與第四種全朗讀音變測驗。
+- [x] Echo 為 15 個音變例字補齊 Sarah／Olivia／Emily 共 45 個 MP3，manifest 更新為 154 段／462 檔並納入核心離線快取。
 
 ## Backlog / 之後再說
 

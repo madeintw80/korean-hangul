@@ -14,8 +14,8 @@
 - `index.html`：頁面骨架、學習分類、發音控制台。
 - `style.css`：responsive UI 與互動狀態。
 - `app.js`：資料、三聲線／Gemini／裝置發音、變音、測驗、歌詞與 DOM render。
-- `course-data.js`：九關 40 音課程、組合表分類、七種代表收尾音與 11 個複合收尾資料。
-- `course.js`：課程進度、19 × 21 組合表、收尾音教材與三種自動朗讀測驗。
+- `course-data.js`：九關 40 音課程、組合表分類、七種代表收尾音、11 個複合收尾與五類基礎音變資料。
+- `course.js`：課程進度、19 × 21 組合表、收尾音／音變教材與四種自動朗讀測驗。
 - `audio/`：Sarah／Olivia／Emily 固定教材 MP3 與唯一對應表 `manifest.js`。
 - `sw.js`／`manifest.json`：PWA、離線快取與更新。
 - 技術：vanilla HTML／CSS／JavaScript；Supertonic 3 預生成音檔；Cloudflare Worker 代理選用的 Gemini TTS；Web Speech API fallback。
@@ -28,9 +28,9 @@
 
 ## 測試
 
-- 靜態結構、三聲線 417 個 MP3 覆蓋與版本一致性檢查。
-- 課程資料：九關、399 個母子組合、七種代表收尾音、11 個複合收尾與三種自動朗讀測驗模式。
-- Browser smoke：390×844、1280×720、五個主學習區、工具箱七個 tab、TTS、進度、組合表、測驗與 console error。
+- 靜態結構、三聲線 462 個 MP3 覆蓋、核心離線快取與版本一致性檢查。
+- 課程資料：九關、399 個母子組合、七種代表收尾音、11 個複合收尾、五類基礎音變與四種自動朗讀測驗模式。
+- Browser smoke：390×844、1280×720、六個主學習區、K-pop 兩個 tab、TTS、進度、組合表、音變、測驗與 console error。
 - PWA：manifest、service worker assets 與 CACHE 版本。
 
 ## 部署
@@ -44,3 +44,8 @@
 - Gemini TTS 免費額度很低，只能當自由句選用功能；固定教材不得依賴逐次 API 呼叫。
 - 教材外的新文字沒有預生成檔案時，內建模式會改用裝置聲線。
 - Service worker 若未 bump CACHE，舊使用者可能看不到更新。
+
+## 固定教材語音更新規則
+
+- 新增或修改任何固定教材文字時，Sarah／Olivia／Emily 三套預生成 MP3、`audio/manifest.js`、Service Worker 核心快取與 `audio-assets.test.mjs` 必須同批更新。
+- 固定教材不可把 Web Speech／裝置聲線 fallback 當作完成；只有教材外的自由文字可以 fallback。

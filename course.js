@@ -1,4 +1,4 @@
-/* 한글 Studio v3 課程互動：主線、組合表、收尾音與三種朗讀測驗。 */
+/* 한글 Studio v3 課程互動：主線、組合表、收尾音、基礎音變與四種朗讀測驗。 */
 (function () {
   'use strict';
 
@@ -6,7 +6,7 @@
   if (!COURSE) return;
 
   const STORAGE_KEY = 'hangulCourseV3';
-  const DEFAULT_STATE = { completed: [], currentLesson: 'blocks', matrixGroup: 'basic', mistakes: {} };
+  const DEFAULT_STATE = { completed: [], currentLesson: 'blocks', matrixGroup: 'basic', soundChangeRule: 'liaison', mistakes: {} };
   let state = loadState();
   let currentQuizMode = 'split';
   let courseQuiz = { answer: '', key: '', correct: 0, total: 0, locked: false, audio: '' };
@@ -292,14 +292,61 @@
 
     const action = document.createElement('div');
     action.className = 'view-action';
-    action.innerHTML = '<button class="big-btn" type="button" data-open-view="course-quiz-view">挑戰收尾音測驗</button>';
+    action.innerHTML = '<button class="mini-btn" type="button" data-open-view="course-quiz-view">挑戰收尾音測驗</button><button class="big-btn" type="button" data-open-view="sound-change-view">下一步：連音與音變</button>';
     root.appendChild(action);
+  }
+
+  function setupSoundChangeCourse() {
+    const filters = document.getElementById('soundChangeFilters');
+    COURSE.soundChanges.forEach(rule => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `filter-chip${rule.id === state.soundChangeRule ? ' active' : ''}`;
+      button.textContent = rule.label;
+      button.dataset.rule = rule.id;
+      button.onclick = () => {
+        state.soundChangeRule = rule.id;
+        saveState();
+        filters.querySelectorAll('.filter-chip').forEach(item => item.classList.toggle('active', item === button));
+        renderSoundChangeCourse();
+      };
+      filters.appendChild(button);
+    });
+    renderSoundChangeCourse();
+  }
+
+  function renderSoundChangeCourse() {
+    const rule = COURSE.soundChanges.find(item => item.id === state.soundChangeRule) || COURSE.soundChanges[0];
+    const root = document.getElementById('soundChangeCourse');
+    root.innerHTML = `<header class="sound-change-head"><div><p class="eyebrow">${rule.badge}</p><h3>${rule.title}</h3><p>${rule.summary}</p></div><div class="sound-change-rule">${rule.article}</div></header>
+      <div class="sound-change-cue"><strong>耳朵提示：</strong>${rule.cue}</div>
+      <div class="sound-change-examples" id="soundChangeExamples"></div>
+      <div class="sound-change-now" id="soundChangeNow" aria-live="polite">點「標準發音」先聽整個單字，再用慢速確認實際念法。</div>
+      <footer class="sound-change-actions"><button class="mini-btn" id="soundChangePlayAll" type="button">▶ 連續聽這一組</button><button class="big-btn" id="soundChangeQuizStart" type="button">挑戰音變測驗</button></footer>`;
+    const examples = root.querySelector('#soundChangeExamples');
+    rule.examples.forEach(example => {
+      const card = document.createElement('article');
+      card.className = 'sound-change-card';
+      card.innerHTML = `<div class="sound-change-pair"><span>${example.written}</span><i aria-hidden="true">→</i><strong>${example.pronounced}</strong></div><p>${example.note}</p><div class="sound-change-card-actions"><button class="mini-btn standard" type="button">🔊 標準發音</button><button class="mini-btn slow" type="button">🐢 拆慢聽</button></div>`;
+      card.querySelector('.standard').onclick = () => {
+        speak(example.written);
+        root.querySelector('#soundChangeNow').textContent = `${example.written} 實際聽起來像 ${example.pronounced}｜${example.note}`;
+      };
+      card.querySelector('.slow').onclick = () => speak(example.written, 0.72);
+      examples.appendChild(card);
+    });
+    root.querySelector('#soundChangePlayAll').onclick = () => speakSeq(rule.examples.map(example => ({ text: example.written })), 0.78, 420);
+    root.querySelector('#soundChangeQuizStart').onclick = () => {
+      switchView('course-quiz-view');
+      setCourseQuizMode('sound');
+    };
   }
 
   const QUIZ_MODES = [
     { id:'split', label:'拆字', kicker:'聽音節，再把它拆開' },
     { id:'hear', label:'聽音', kicker:'只聽聲音，選出正確字' },
     { id:'final', label:'收尾', kicker:'聽單字，判斷代表收尾音' },
+    { id:'sound', label:'音變', kicker:'聽單字，選出實際念法' },
   ];
   const QUIZ_CONSONANTS = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅎ','ㄲ','ㅋ','ㅆ','ㅊ'];
   const QUIZ_VOWELS = ['ㅏ','ㅓ','ㅗ','ㅜ','ㅡ','ㅣ','ㅑ','ㅕ','ㅛ','ㅠ','ㅐ','ㅔ'];
@@ -308,6 +355,20 @@
     { word:'꽃', answer:'ㄷ' }, { word:'밥', answer:'ㅂ' }, { word:'앞', answer:'ㅂ' }, { word:'손', answer:'ㄴ' },
     { word:'밤', answer:'ㅁ' }, { word:'공', answer:'ㅇ' }, { word:'말', answer:'ㄹ' },
   ];
+  const SOUND_CHANGE_WORDS = COURSE.soundChanges.flatMap(rule => rule.examples.map(example => ({
+    ...example,
+    ruleId: rule.id,
+    ruleLabel: rule.label,
+  })));
+
+  function setCourseQuizMode(modeId) {
+    if (!QUIZ_MODES.some(mode => mode.id === modeId)) return;
+    currentQuizMode = modeId;
+    document.querySelectorAll('#courseQuizModes .filter-chip').forEach(button => {
+      button.classList.toggle('active', button.dataset.mode === modeId);
+    });
+    newCourseQuestion();
+  }
 
   function setupCourseQuiz() {
     const modes = document.getElementById('courseQuizModes');
@@ -316,11 +377,8 @@
       button.type = 'button';
       button.className = `filter-chip${mode.id === currentQuizMode ? ' active' : ''}`;
       button.textContent = mode.label;
-      button.onclick = () => {
-        currentQuizMode = mode.id;
-        modes.querySelectorAll('.filter-chip').forEach(item => item.classList.toggle('active', item === button));
-        newCourseQuestion();
-      };
+      button.dataset.mode = mode.id;
+      button.onclick = () => setCourseQuizMode(mode.id);
       modes.appendChild(button);
     });
     document.getElementById('courseQuizNext').onclick = newCourseQuestion;
@@ -339,13 +397,22 @@
   function newCourseQuestion() {
     courseQuiz.locked = false;
     courseQuiz.audio = '';
+    courseQuiz.explanation = '';
     const mode = QUIZ_MODES.find(item => item.id === currentQuizMode);
     let prompt = '';
     let answer = '';
     let options = [];
     let key = '';
 
-    if (currentQuizMode === 'final') {
+    if (currentQuizMode === 'sound') {
+      const item = pick(SOUND_CHANGE_WORDS);
+      prompt = `<span class="quiz-word">${item.written}</span><small>先聽標準發音，再選實際聽到的念法</small>`;
+      answer = item.pronounced;
+      options = uniqueOptions(answer, SOUND_CHANGE_WORDS.map(candidate => candidate.pronounced));
+      key = `sound:${item.written}`;
+      courseQuiz.audio = item.written;
+      courseQuiz.explanation = `${item.ruleLabel}：${item.note}`;
+    } else if (currentQuizMode === 'final') {
       const item = pick(FINAL_WORDS);
       prompt = `<span class="quiz-word">${item.word}</span><small>先聽單字，最後歸到哪個代表收尾音？</small>`;
       answer = item.answer;
@@ -409,7 +476,8 @@
     if (!correct) button.classList.add('wrong');
     const feedback = document.getElementById('courseQuizFeedback');
     feedback.className = `course-quiz-feedback ${correct ? 'good' : 'bad'}`;
-    feedback.textContent = correct ? `答對！${courseQuiz.answer}` : `這題要回到：${courseQuiz.answer}`;
+    const explanation = courseQuiz.explanation ? `｜${courseQuiz.explanation}` : '';
+    feedback.textContent = correct ? `答對！${courseQuiz.answer}${explanation}` : `這題要回到：${courseQuiz.answer}${explanation}`;
     document.getElementById('courseQuizScore').textContent = `答對 ${courseQuiz.correct} ／ 共 ${courseQuiz.total} 題 · 已記錄 ${Object.keys(state.mistakes).length} 個弱點`;
     document.getElementById('courseQuizNext').hidden = false;
   }
@@ -419,6 +487,7 @@
     setupCourse();
     setupMatrix();
     setupBatchimCourse();
+    setupSoundChangeCourse();
     setupCourseQuiz();
   }
 

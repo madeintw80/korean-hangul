@@ -11,7 +11,7 @@ const course = sandbox.window.HANGUL_COURSE_DATA;
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const courseJs = fs.readFileSync(path.join(root, 'course.js'), 'utf8');
 
-assert.equal(course.version, '3.0.2-preview');
+assert.equal(course.version, '3.1.0-preview');
 assert.equal(course.lessons.length, 9);
 assert.deepEqual(
   Array.from(course.lessons.find(lesson => lesson.id === 'aspirated').sounds, item => item.letter),
@@ -30,8 +30,16 @@ assert.equal(full.consonants.length * full.vowels.length, 399);
 assert.deepEqual(Array.from(course.batchimFamilies, family => family.sound), ['ㄱ', 'ㄷ', 'ㅂ']);
 assert.deepEqual(Array.from(course.resonantBatchim, item => item.letter), ['ㄴ', 'ㅁ', 'ㅇ', 'ㄹ']);
 assert.equal(course.doubleBatchim.length, 11);
+assert.deepEqual(Array.from(course.soundChanges, rule => rule.id), ['liaison', 'nasal', 'tense', 'aspiration', 'palatal']);
+assert.equal(course.soundChanges.flatMap(rule => rule.examples).length, 15);
+for (const rule of course.soundChanges) {
+  assert.ok(rule.examples.length >= 2, `${rule.label} 至少需要兩組例字`);
+  for (const example of rule.examples) {
+    assert.ok(example.written && example.pronounced && example.note, `${rule.label} 例字資料完整`);
+  }
+}
 
-for (const id of ['course-view', 'matrix-view', 'final-view', 'course-quiz-view', 'toolbox-view']) {
+for (const id of ['course-view', 'matrix-view', 'final-view', 'sound-change-view', 'course-quiz-view', 'toolbox-view']) {
   assert.match(index, new RegExp(`id=["']${id}["']`));
 }
 for (const id of ['track-idols', 'track-lyrics', 'tab-idols', 'tab-lyrics']) {
@@ -40,11 +48,12 @@ for (const id of ['track-idols', 'track-lyrics', 'tab-idols', 'tab-lyrics']) {
 for (const id of ['track-vowels', 'track-consonants', 'track-batchim', 'track-lab', 'track-quiz']) {
   assert.doesNotMatch(index, new RegExp(`id=["']${id}["']`));
 }
-for (const mode of ['split', 'hear', 'final']) {
+for (const mode of ['split', 'hear', 'final', 'sound']) {
   assert.match(courseJs, new RegExp(`id:["']${mode}["']`));
 }
 assert.doesNotMatch(courseJs, /id:["']compose["']/);
 assert.match(courseJs, /courseQuiz\.audio = item\.word/);
+assert.match(courseJs, /courseQuiz\.audio = item\.written/);
 assert.match(courseJs, /if \(courseQuiz\.audio\) speak\(courseQuiz\.audio\)/);
 
-console.log('PASS: 9 lessons, 399 syllables, 7 final sounds, and 3 narrated quiz modes are wired');
+console.log('PASS: 9 lessons, 399 syllables, 7 final sounds, 5 sound changes, and 4 narrated quiz modes are wired');

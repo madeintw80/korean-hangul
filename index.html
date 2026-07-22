@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>한글 Studio v3 Preview — 60 分鐘韓文速通</title>
-<meta name="description" content="約 60 分鐘學會韓文 40 音，再用母子組合表、收尾音與測驗練到真的會讀">
+<title>한글 Studio v3.1 Preview — 60 分鐘韓文速通</title>
+<meta name="description" content="約 60 分鐘學會韓文 40 音，再用母子組合表、收尾音、連音與基礎音變練到真的會讀">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#11100f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,14 +18,14 @@
 <div class="app-shell">
   <header class="masthead">
     <div class="brand" aria-label="한글 Studio"><strong>한글</strong><span>Studio</span></div>
-    <div class="issue">PUBLIC PREVIEW<br>COURSE v3 / TAIWAN</div>
+    <div class="issue">LOCAL PREVIEW<br>COURSE v3.1 / TAIWAN</div>
   </header>
 
   <section class="hero course-hero" aria-labelledby="hero-title">
     <div class="hero-copy">
       <p class="eyebrow">THE 60-MINUTE HANGUL START</p>
       <h1 id="hero-title">一小時<br><em>讀懂</em>韓文</h1>
-      <p class="today">先抓聲音家族，再把母音與子音拼起來。</p>
+      <p class="today">先抓聲音家族，再把母音、收尾與音變接起來。</p>
     </div>
     <div class="hero-stats" aria-label="課程內容摘要">
       <div class="stat"><small>Basic letters</small><strong>40<span> SOUNDS</span></strong></div>
@@ -33,12 +33,13 @@
     </div>
   </section>
 
-  <div class="ticker" aria-hidden="true"><span>SEE IT / HEAR IT / BUILD IT / TEST IT — 40 SOUNDS — SYLLABLE MATRIX — BATCHIM — SEE IT / HEAR IT / BUILD IT / TEST IT —&nbsp;</span></div>
+  <div class="ticker" aria-hidden="true"><span>SEE IT / HEAR IT / BUILD IT / TEST IT — 40 SOUNDS — SYLLABLE MATRIX — BATCHIM — SOUND CHANGES — SEE IT / HEAR IT / BUILD IT / TEST IT —&nbsp;</span></div>
 
   <nav class="primary-tabs" aria-label="主要學習區" role="tablist">
     <button class="primary-tab active" role="tab" aria-selected="true" data-view="course-view"><span>速通課程</span><small>Learn</small></button>
     <button class="primary-tab" role="tab" aria-selected="false" data-view="matrix-view"><span>組合表</span><small>Matrix</small></button>
     <button class="primary-tab" role="tab" aria-selected="false" data-view="final-view"><span>收尾音</span><small>Batchim</small></button>
+    <button class="primary-tab" role="tab" aria-selected="false" data-view="sound-change-view"><span>音變</span><small>Changes</small></button>
     <button class="primary-tab" role="tab" aria-selected="false" data-view="course-quiz-view"><span>測驗</span><small>Test</small></button>
     <button class="primary-tab" role="tab" aria-selected="false" data-view="toolbox-view"><span>K-pop 實戰</span><small>Practice</small></button>
   </nav>
@@ -106,11 +107,21 @@
       <div id="batchimCourse"></div>
     </section>
 
+    <section id="sound-change-view" class="view-panel" role="tabpanel">
+      <header class="view-heading">
+        <p class="eyebrow">MOVE THE SOUND / 04</p>
+        <h2>連音＋基礎音變</h2>
+        <p>韓文字沒有改，聲音會因為前後相遇而移動或變形。先從連音開始，再練鼻音化、緊音化、送氣化與口蓋音化。</p>
+      </header>
+      <div id="soundChangeFilters" class="filter-chips" aria-label="音變分類"></div>
+      <section id="soundChangeCourse" class="sound-change-stage" aria-live="polite"></section>
+    </section>
+
     <section id="course-quiz-view" class="view-panel" role="tabpanel">
       <header class="view-heading">
-        <p class="eyebrow">PROVE IT / 04</p>
+        <p class="eyebrow">PROVE IT / 05</p>
         <h2>不是看過，是要真的會讀</h2>
-        <p>保留拆字、聽音與收尾三種需要真正辨音的題型；每題會先念一次，也能隨時重播。</p>
+        <p>拆字、聽音、收尾與音變四種題型都會先念一次；音變題要選出真正聽到的念法，也能隨時重播。</p>
       </header>
       <div id="courseQuizModes" class="filter-chips" aria-label="測驗類型"></div>
       <section class="course-quiz-card">
@@ -126,7 +137,7 @@
     <section id="toolbox-view" class="view-panel toolbox-view" role="tabpanel">
       <div class="studio-layout">
         <section class="main-stage">
-          <div class="section-head"><h2>K-pop<br>實戰</h2><span>05 / PRACTICE</span></div>
+          <div class="section-head"><h2>K-pop<br>實戰</h2><span>06 / PRACTICE</span></div>
           <nav class="tabs kpop-tabs" aria-label="K-pop 實戰分類" role="tablist">
             <button id="track-idols" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-idols" data-target="tab-idols"><span>女團拼讀</span><small>Idols</small></button>
             <button id="track-lyrics" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-lyrics" data-target="tab-lyrics"><span>歌詞</span><small>Lyrics</small></button>
@@ -145,7 +156,7 @@
     </section>
   </main>
 
-  <footer><strong>한글 Studio v3.0.2-preview</strong><span>公開預覽版・持續優化中</span></footer>
+  <footer><strong>한글 Studio v3.1.0-preview</strong><span>本機預覽版・尚未發布</span></footer>
 </div>
 <script src="audio/manifest.js"></script>
 <script src="app.js"></script>

@@ -34,6 +34,19 @@ const pronunciationCases = {
   '희망': '히망',
   '띄어쓰기': '띠어쓰기',
   '주의': '주의',
+  '먹어': '머거',
+  '집에': '지베',
+  '읽어': '일거',
+  '없어': '업써',
+  '국물': '궁물',
+  '먹는': '멍는',
+  '앞문': '암문',
+  '먹다': '먹따',
+  '잡지': '잡찌',
+  '좋다': '조타',
+  '축하': '추카',
+  '입학': '이팍',
+  '같이': '가치',
 };
 
 for (const [written, expected] of Object.entries(pronunciationCases)) {
@@ -75,4 +88,4 @@ assert.ok(evaluate(`voiceQualityScore({ name: 'Google 한국의' })`) > evaluate
 assert.ok(evaluate(`voiceQualityScore({ name: 'Yuna' })`) > evaluate(`voiceQualityScore({ name: 'Basic Korean' })`));
 assert.equal(evaluate(`voiceQualityScore({ name: 'Microsoft InJoon' })`), evaluate(`voiceQualityScore({ name: 'Yuna' })`));
 
-console.log('PASS: 21 母音、19 子音、11 組變音、15 組注音與 3,192 組合覆蓋');
+console.log(`PASS: 21 母音、19 子音、${Object.keys(pronunciationCases).length} 組變音、15 組注音與 3,192 組合覆蓋`);
