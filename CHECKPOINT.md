@@ -1,11 +1,11 @@
 # CHECKPOINT
 
-Updated: 2026-07-22T16:15:07+08:00
+Updated: 2026-07-22T16:31:06+08:00
 Task Lead: Echo
-Status: ready_for_review
+Status: complete
 Branch: main
-Last verified implementation commit: 7afe249
-Last published commit: 6f010fe
+Last verified implementation commit: b8cfb69
+Last published commit: b8cfb69
 
 ## PM requested
 
@@ -16,8 +16,9 @@ Last published commit: 6f010fe
 - 先做本機版本給 PM 看，不 push／deploy。
 - 課程測驗移除過於簡單的組字；保留拆字、聽音、收尾，而且每題都要念。
 - 工具箱只保留女團拼讀與歌詞拼音，其餘重複入口移除。
+- PM 明確授權將 v3.0.2 push 到 GitHub `main` 並由 GitHub Pages 公開發布。
 
-## Completed locally
+## Completed
 
 - 首頁改為五個主學習區：速通課程、組合表、收尾音、測驗、K-pop 實戰。
 - 新增九關、總計約 60 分鐘的 40 音課程與 localStorage 進度；聲音家族依 PM 決策重新分組。
@@ -38,12 +39,15 @@ Last published commit: 6f010fe
 - Browser 一般視窗：K-pop 實戰只剩女團拼讀與歌詞兩頁，舊入口數量 0；16 首歌可選、預設歌詞五張句卡正常。
 - Browser 390×844：整頁寬度 375、小於 390 viewport；K-pop 兩頁各占一欄，沒有整頁水平溢出。
 - Browser 重整：第一關完成進度仍為 11%；console error／warning 0。
+- GitHub Pages 公開檔案驗證：首頁、`course.js`、`sw.js` 皆為 v3.0.2；HTTP 200，Service Worker cache 為 `hangul-v3.0.2-preview-public`。
+- 公開版 Browser 驗證：拆字、聽音、收尾皆為四個不同選項且有重播；K-pop 僅女團／歌詞兩頁，16 首歌與預設五張歌詞卡正常；乾淨頁面 console error／warning 0。
+- 舊版 PWA 升級驗證：公開頁顯示「有新版本」後按「立即更新」，可切換到 v3.0.2 並重新載入完整內容。
 
 ## Current state
 
-- v3.0.2-preview 已完成本機實作與驗收，功能 commit 為 `7afe249`；網址維持 `http://127.0.0.1:8877/`。
-- Chrome 已保留本機預覽分頁；預覽伺服器 PID 54164 正在背景執行。
-- 沒有 push、沒有 GitHub Pages 發布、沒有 Cloudflare Worker 變更。
+- v3.0.2-preview 已發布至 https://madeintw80.github.io/korean-hangul/ ，公開畫面標示為 `PUBLIC PREVIEW`。
+- 已驗證的公開內容 commit 為 `b8cfb69`；後續僅追加協作文件發布收據。
+- 本次沒有 Cloudflare Worker 程式或設定變更，因此未重部署 Worker。
 
 ## Decisions and assumptions
 
@@ -51,13 +55,12 @@ Last published commit: 6f010fe
 - ㅎ 與 ㅋ／ㅌ／ㅍ／ㅊ 同章教氣流，但文字明確避免宣稱 ㅎ 是某個鬆音的正式送氣對應。
 - 收尾先教 27 種寫法歸納成七種代表音；複合收尾先辨認，不在第一輪強迫背所有規則。
 - 參考影片只採教學節奏與資訊架構，教材文字與畫面為原創，未複製影片內容。
-- 本回合權限僅含本機修改、測試與 commit，不含 push／deploy。
+- PM 已把權限擴充為 GitHub `main` push 與 GitHub Pages 自動發布；Cloudflare Worker 不在本次授權與變更範圍。
 - 工具箱確實有重複：母音／子音／收尾／拼字／字母測驗已由主流程取代；依 PM 拍板全部移除，只留有獨立實戰價值的女團／歌詞。
 
 ## Next actions
 
-1. PM 打開 `http://127.0.0.1:8877/` 實際走一次三種測驗與 K-pop 實戰。
-2. PM 回覆要調整的內容／畫面，或另行授權 push／deploy。
+1. PM 打開公開網址實際使用；若舊版 PWA 顯示更新提示，按「立即更新」。
 
 ## Risks / blockers
 

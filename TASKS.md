@@ -2,12 +2,11 @@
 
 ## In progress
 
-- PM 本機審閱 v3.0.2-preview 課程版；尚未 push／deploy。
+- 無。
 
 ## Todo（依優先順序）
 
-1. [ ] PM 依本機預覽決定 v3 要調整、保留或授權公開發布。
-2. [ ] PM 在 iPhone 更新目前公開的 v2.5.0 PWA；若仍顯示舊圖示，移除舊主畫面捷徑再重新加入。
+1. [ ] PM 在 iPhone 更新公開的 v3.0.2-preview PWA；看到更新提示時按「立即更新」，若仍顯示舊圖示再移除舊主畫面捷徑並重新加入。
 
 ## Done
 
@@ -41,6 +40,9 @@
 - [x] PM 拍板工具箱只保留女團與歌詞拼音；Echo 將七頁工具箱收斂成兩頁「K-pop 實戰」，移除五個重複入口及其初始化接線。
 - [x] Echo 修正拆字干擾項重複問題，確保每題固定四個不同選項；版本更新為 v3.0.2-preview。
 - [x] Echo 完成 v3 桌機／手機 Browser smoke、既有工具箱七頁回歸與完整自動測試；僅本機、未 push／deploy。
+- [x] PM 明確授權 v3.0.2 push／deploy；Echo push `main` 並觸發 GitHub Pages 發布。
+- [x] Echo 驗證公開版三種朗讀測驗、K-pop 兩頁、舊 PWA「立即更新」流程與乾淨頁面 console error／warning 0。
+- [x] Echo 將公開畫面改標 `PUBLIC PREVIEW`，發布 commit `b8cfb69` 已上線；Worker 無變更未重部署。
 
 ## Backlog / 之後再說
 
