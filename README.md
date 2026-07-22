@@ -3,9 +3,9 @@
 vanilla JS PWA（無框架、無 build step），固定教材預設使用三套內建 Supertonic 3 韓文女聲；
 自由句可手動切換 Gemini，無音檔或雲端不可用時再用 Web Speech API。
 
-**公開 Demo（目前 v2.5.0）**：https://madeintw80.github.io/korean-hangul/
+**公開 Demo（目前 v3.0.2-preview）**：https://madeintw80.github.io/korean-hangul/
 
-> v3.0.2-preview 已在本機完成，尚未 push／發布；先由 PM 本機審閱。
+> v3.0.2-preview 已發布至 GitHub Pages；舊版 PWA 使用者看到更新提示時，按「立即更新」即可切換。
 
 ## 功能
 
