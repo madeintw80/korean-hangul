@@ -41,6 +41,7 @@
 | 2026-07-22 | 固定教材內容與三套離線語音必須同批更新 | 只新增文字會讓 Sarah／Olivia／Emily 漏音並落到不一致的裝置聲線；往後 MP3、manifest、核心快取與覆蓋測試均為完成條件 | PM＋Echo |
 | 2026-07-22 | v3.1.0-preview 僅做本機版本，不自行 push／deploy | 本回合沒有新的公開發布授權；先讓 PM 本機驗收 | Echo（權限邊界） |
 | 2026-07-22 | PM 授權 push／deploy v3.1.0-preview | 授權範圍為 GitHub `main` 與 GitHub Pages 自動發布；Cloudflare Worker 無變更、不重部署 | PM |
+| 2026-07-22 | v3.1.0-preview 公開驗收通過 | 首頁顯示 PUBLIC PREVIEW；manifest 為 154 段／462 個 MP3／207 個核心檔；三套新音變語音皆 HTTP 200 | Echo（驗收結果） |
 
 ## 待 PM 決定
 

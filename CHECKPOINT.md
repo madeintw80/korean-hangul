@@ -1,11 +1,11 @@
 # CHECKPOINT
 
-Updated: 2026-07-22T18:19:51+08:00
+Updated: 2026-07-22T18:30:09+08:00
 Task Lead: Echo
-Status: ready_for_review
+Status: complete
 Branch: main
 Last verified implementation commit: 6065e00
-Last published commit: b8cfb69
+Last published commit: c2db777
 
 ## PM requested
 
@@ -52,8 +52,9 @@ Last published commit: b8cfb69
 
 ## Current state
 
-- v3.1.0-preview 已完成本機實作與驗收，implementation commit 為 `6065e00`。
-- 公開版仍是 v3.0.2-preview，已驗證的公開內容 commit 為 `b8cfb69`；v3.1 尚未 push／deploy。
+- v3.1.0-preview 已發布至 https://madeintw80.github.io/korean-hangul/ ，implementation commit 為 `6065e00`，公開版 commit 為 `c2db777`。
+- 公開首頁已顯示 `PUBLIC PREVIEW`；Service Worker cache 為 `hangul-v3.1.0-preview-public`。
+- 公開 manifest 為 154 段／462 個 MP3／207 個核心快取檔；Sarah／Olivia／Emily 新音變 MP3 均為 HTTP 200、`audio/mp3`。
 - 本次沒有 Cloudflare Worker 程式或設定變更，因此未重部署 Worker。
 
 ## Decisions and assumptions
@@ -65,15 +66,14 @@ Last published commit: b8cfb69
 - PM 已把權限擴充為 GitHub `main` push 與 GitHub Pages 自動發布；Cloudflare Worker 不在本次授權與變更範圍。
 - 工具箱確實有重複：母音／子音／收尾／拼字／字母測驗已由主流程取代；依 PM 拍板全部移除，只留有獨立實戰價值的女團／歌詞。
 - 固定教材不能以裝置聲線 fallback 視為完成；任何教材文字變更都要同步更新三聲線 MP3、manifest、核心快取與覆蓋測試。
+- PM 已授權 v3.1 push／GitHub Pages 發布；Cloudflare Worker 無變更、不重部署。
 
 ## Next actions
 
-1. PM 在目前保留的 `http://localhost:8877/?verify=v310-audio-final` 分頁試用連音／音變與三套聲線。
-2. PM 驗收後再決定是否授權 push／發布 v3.1.0-preview。
+1. PM 打開公開網址試用連音／音變與三套聲線；舊 PWA 若顯示更新提示，按「立即更新」。
 
 ## Risks / blockers
 
 - 沒有程式 blocker。
 - 完整 399 格需要在表格容器內橫向捲動，手機版已避免讓整頁一起橫移。
 - v3 尚未做真人教學影片或逐口型動畫；目前以聲音、家族比較與互動表格帶學。
-- v3.1 目前僅在本機；公開 GitHub Pages 不會看到音變入口與 45 個新 MP3。
