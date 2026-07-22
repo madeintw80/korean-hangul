@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Echo 完成 v3.1.0-preview 連音／基礎音變本機 Browser 驗收與 commit；不 push／deploy。
+- 無。
 
 ## Todo（依優先順序）
 
@@ -45,6 +45,7 @@
 - [x] Echo 將公開畫面改標 `PUBLIC PREVIEW`，發布 commit `b8cfb69` 已上線；Worker 無變更未重部署。
 - [x] Echo 新增連音、鼻音化、緊音化、送氣化、口蓋音化共 15 個例字與第四種全朗讀音變測驗。
 - [x] Echo 為 15 個音變例字補齊 Sarah／Olivia／Emily 共 45 個 MP3，manifest 更新為 154 段／462 檔並納入核心離線快取。
+- [x] Echo 完成 v3.1.0-preview 桌機／390×844 Browser 驗收與全部自動測試，建立 implementation commit `6065e00`；僅本機、未 push／deploy。
 
 ## Backlog / 之後再說
 
