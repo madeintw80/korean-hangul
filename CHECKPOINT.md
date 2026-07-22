@@ -1,10 +1,10 @@
 # CHECKPOINT
 
-Updated: 2026-07-22T16:14:16+08:00
+Updated: 2026-07-22T16:15:07+08:00
 Task Lead: Echo
 Status: ready_for_review
 Branch: main
-Last verified implementation commit: b732eea
+Last verified implementation commit: 7afe249
 Last published commit: 6f010fe
 
 ## PM requested
@@ -41,7 +41,7 @@ Last published commit: 6f010fe
 
 ## Current state
 
-- v3.0.2-preview 已完成本機實作與驗收；網址維持 `http://127.0.0.1:8877/`。
+- v3.0.2-preview 已完成本機實作與驗收，功能 commit 為 `7afe249`；網址維持 `http://127.0.0.1:8877/`。
 - Chrome 已保留本機預覽分頁；預覽伺服器 PID 54164 正在背景執行。
 - 沒有 push、沒有 GitHub Pages 發布、沒有 Cloudflare Worker 變更。
 
