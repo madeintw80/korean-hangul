@@ -46,6 +46,7 @@
 - [x] Echo 新增連音、鼻音化、緊音化、送氣化、口蓋音化共 15 個例字與第四種全朗讀音變測驗。
 - [x] Echo 為 15 個音變例字補齊 Sarah／Olivia／Emily 共 45 個 MP3，manifest 更新為 154 段／462 檔並納入核心離線快取。
 - [x] Echo 完成 v3.1.0-preview 桌機／390×844 Browser 驗收與全部自動測試，建立 implementation commit `6065e00`；僅本機、未 push／deploy。
+- [x] PM 明確授權 push／deploy v3.1.0-preview；Echo 已將本機 commits push 至 GitHub `main`。
 
 ## Backlog / 之後再說
 
