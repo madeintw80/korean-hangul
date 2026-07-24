@@ -1,10 +1,10 @@
 # CHECKPOINT
 
-Updated: 2026-07-24T13:48:00+08:00
+Updated: 2026-07-24T13:48:46+08:00
 Task Lead: Echo
-Status: in_progress
+Status: complete
 Branch: main
-Last verified implementation commit: ab054ec
+Last verified implementation commit: 8b2995f
 Last published commit: c2db777
 
 ## PM requested
@@ -26,6 +26,10 @@ Last published commit: c2db777
 
 ## Completed
 
+- v3.2.1 音變篇新增第六類「流音化」，依標準發音法第 20 條說明 ㄴ 在 ㄹ 前後通常變成 ㄹ。
+- 新增 `난로→날로`、`신라→실라`、`칼날→칼랄`、`물난리→물랄리`，同時涵蓋 ㄴ＋ㄹ 與 ㄹ＋ㄴ 兩個方向；四組自動納入音變測驗題庫。
+- 四個新例字已補齊 Sarah／Olivia／Emily 共 12 個 MP3；manifest 更新為 178 段／534 個 MP3／279 個核心快取檔。
+- 首頁、Service Worker cache 與靜態資產 query 更新為 `v3.2.1-preview`，維持 `LOCAL PREVIEW`。
 - v3.2 收尾音篇改為七張單收音卡：ㄱ／ㄴ／ㅁ／ㅇ／ㄹ／ㄷ／ㅂ 都可先播放獨立音節，再播放例字。
 - 11 種雙收音依字尾／子音前的五個代表音分組，另加入八組母音前連音與 `읽고`、`밟다` 兩個高頻例外。
 - 雙收音教材依韓國國立國語院標準發音法第 10、11、13、14 條整理；ㄶ／ㅀ 的 ㅎ 脫落與送氣另有明確提示。
@@ -46,6 +50,10 @@ Last published commit: c2db777
 
 ## Verification
 
+- `audio-assets.test.mjs`：178 段 × 3 聲線＝534 個 MP3 PASS；四個流音化例字三聲線與核心快取覆蓋全部通過。
+- `course.test.mjs`：六類音變、19 個音變例字與四種朗讀測驗模式 PASS；其餘 syntax、發音、PWA、Worker 測試全部 PASS。
+- Browser 一般視窗：流音化分類、規則文字與四組例字均可見；`난로` 使用 Sarah／Olivia／Emily 各試播成功，console warning／error 0。
+- Browser 390×844：流音化標題可見；`clientWidth`／`scrollWidth`／`bodyWidth` 均為 375，無整頁水平溢出。
 - `node --check app.js`、`course-data.js`、`course.js`、`sw.js`：PASS。
 - `pronunciation.test.js`：21 母音、19 子音、24 組變音、15 組注音與 3,192 組合 PASS。
 - `audio-assets.test.mjs`：174 段 × 3 聲線＝522 個 MP3 PASS；21 個雙收音教材播放文字三聲線與核心快取覆蓋全部通過。
@@ -66,7 +74,7 @@ Last published commit: c2db777
 
 ## Current state
 
-- v3.2.0-preview 已完成本機 implementation commit `ab054ec`；尚未 push／deploy。
+- v3.2.1-preview 已完成本機 implementation commit `8b2995f`；尚未 push／deploy。
 - 公開版仍是 v3.1.0-preview：https://madeintw80.github.io/korean-hangul/ ，公開版 commit 為 `c2db777`。
 - 公開首頁已顯示 `PUBLIC PREVIEW`；Service Worker cache 為 `hangul-v3.1.0-preview-public`。
 - 公開 manifest 為 154 段／462 個 MP3／207 個核心快取檔；Sarah／Olivia／Emily 新音變 MP3 均為 HTTP 200、`audio/mp3`。
@@ -81,11 +89,11 @@ Last published commit: c2db777
 - PM 已把權限擴充為 GitHub `main` push 與 GitHub Pages 自動發布；Cloudflare Worker 不在本次授權與變更範圍。
 - 工具箱確實有重複：母音／子音／收尾／拼字／字母測驗已由主流程取代；依 PM 拍板全部移除，只留有獨立實戰價值的女團／歌詞。
 - 固定教材不能以裝置聲線 fallback 視為完成；任何教材文字變更都要同步更新三聲線 MP3、manifest、核心快取與覆蓋測試。
-- PM 先前授權只涵蓋 v3.1 push／GitHub Pages 發布；v3.2 尚未取得新的 push／deploy 授權。
+- PM 先前授權只涵蓋 v3.1 push／GitHub Pages 發布；v3.2.1 尚未取得新的 push／deploy 授權。
 
 ## Next actions
 
-1. PM 開啟本機 v3.2 收尾音篇試用七個單獨音、雙收音規則與三套聲線，再決定是否發布。
+1. PM 開啟本機 v3.2.1 試用單／雙收音、流音化與三套聲線，再決定是否發布。
 
 ## Risks / blockers
 
