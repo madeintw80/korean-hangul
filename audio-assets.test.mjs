@@ -18,6 +18,11 @@ const consonantSamples = [
 const batchimSamples = [
   '악','책','안','손','앋','옷','알','물','암','밤','압','밥','앙','강',
 ];
+const doubleBatchimSamples = [
+  '넋','앉다','많다','닭','삶','여덟','외곬','핥다','싫다','없다','읊다',
+  '넋이','앉아','닭을','젊어','읊어','없어','많아','싫어',
+  '읽고','밟다',
+];
 const nmixxSamples = [
   '뛰는 심장 소릴 따라가',
   '맘속 Fireworks',
@@ -36,11 +41,11 @@ const soundChangeSamples = [
   '굳이','같이',
 ];
 
-assert.equal(manifest.version, '3.1.0-preview');
+assert.equal(manifest.version, '3.2.0-preview');
 assert.deepEqual(Object.keys(manifest.voices), ['sarah', 'olivia', 'emily']);
-assert.equal(Object.keys(manifest.texts).length, 154);
+assert.equal(Object.keys(manifest.texts).length, 174);
 assert.equal(manifest.files.length, Object.keys(manifest.texts).length * 3);
-assert.equal(manifest.coreFiles.length, 69 * 3);
+assert.equal(manifest.coreFiles.length, 89 * 3);
 
 for (const text of [...vowelSamples, ...consonantSamples, ...batchimSamples, manifest.previewText]) {
   assert.ok(manifest.texts[text], `missing core text: ${text}`);
@@ -57,6 +62,14 @@ for (const text of soundChangeSamples) {
   assert.deepEqual(Object.keys(manifest.texts[text]), ['sarah', 'olivia', 'emily']);
   for (const relPath of Object.values(manifest.texts[text])) {
     assert.ok(manifest.coreFiles.includes(relPath), `sound-change audio is not in core cache: ${relPath}`);
+  }
+}
+
+for (const text of doubleBatchimSamples) {
+  assert.ok(manifest.texts[text], `missing double-batchim text: ${text}`);
+  assert.deepEqual(Object.keys(manifest.texts[text]), ['sarah', 'olivia', 'emily']);
+  for (const relPath of Object.values(manifest.texts[text])) {
+    assert.ok(manifest.coreFiles.includes(relPath), `double-batchim audio is not in core cache: ${relPath}`);
   }
 }
 
@@ -93,7 +106,7 @@ for (const removedText of [
 }
 
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-assert.match(sw, /hangul-v3\.1\.0-preview-public/);
+assert.match(sw, /hangul-v3\.2\.0-preview-local/);
 assert.match(sw, /CORE_AUDIO/);
 
 console.log(`PASS: ${Object.keys(manifest.texts).length} texts × 3 voices = ${manifest.files.length} MP3 files`);

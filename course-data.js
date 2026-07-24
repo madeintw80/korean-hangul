@@ -1,6 +1,6 @@
 /* 한글 Studio v3 課程資料：內容與互動引擎分離，之後擴課不必改主程式。 */
 window.HANGUL_COURSE_DATA = {
-  version: '3.1.0-preview',
+  version: '3.2.0-preview',
   lessons: [
     {
       id: 'blocks', number: '01', minutes: 4, title: '先看懂韓文字塊',
@@ -110,18 +110,68 @@ window.HANGUL_COURSE_DATA = {
     { id:'resonants', label:'鼻／流音', consonants:['ㄴ','ㅁ','ㅇ','ㄹ'], vowels:['ㅏ','ㅓ','ㅗ','ㅜ','ㅡ','ㅣ'] },
     { id:'all', label:'完整 399', consonants:['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'], vowels:['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'] },
   ],
-  batchimFamilies: [
-    { id:'k', title:'ㄱ 家族', sound:'ㄱ', tone:'喉後卡住，不爆破', spellings:['ㄱ','ㄲ','ㅋ'], samples:['악','밖','부엌'] },
-    { id:'t', title:'ㄷ 家族', sound:'ㄷ', tone:'舌尖卡住，不爆破', spellings:['ㄷ','ㅅ','ㅆ','ㅈ','ㅊ','ㅌ','ㅎ'], samples:['옷','낮','꽃'] },
-    { id:'p', title:'ㅂ 家族', sound:'ㅂ', tone:'雙唇閉住，不爆破', spellings:['ㅂ','ㅍ'], samples:['밥','앞'] },
+  // 依發音位置排序；每一張都先聽單獨音節，再進入有意思的例字。
+  singleBatchim: [
+    { id:'k', sound:'ㄱ', roman:'k', standalone:'악', cue:'舌根抵住軟顎，氣流停住，不把 k 爆出來。', spellings:['ㄱ','ㄲ','ㅋ'], example:{ word:'책', mean:'書' } },
+    { id:'n', sound:'ㄴ', roman:'n', standalone:'안', cue:'舌尖頂住齒齦，讓鼻音 n 留在下面。', spellings:['ㄴ'], example:{ word:'손', mean:'手' } },
+    { id:'m', sound:'ㅁ', roman:'m', standalone:'암', cue:'雙唇閉合，讓鼻音 m 留在下面。', spellings:['ㅁ'], example:{ word:'밤', mean:'夜晚' } },
+    { id:'ng', sound:'ㅇ', roman:'ng', standalone:'앙', cue:'舌根抬起、聲音走鼻腔；ㅇ 放在下面才念 ng。', spellings:['ㅇ'], example:{ word:'강', mean:'江／河' } },
+    { id:'l', sound:'ㄹ', roman:'l', standalone:'알', cue:'舌尖貼住齒齦就停下，接近英文 l，不要捲成「兒」。', spellings:['ㄹ'], example:{ word:'물', mean:'水' } },
+    { id:'t', sound:'ㄷ', roman:'t', standalone:'앋', cue:'舌尖抵住齒齦，氣流停住，不把 t 爆出來。', spellings:['ㄷ','ㅅ','ㅆ','ㅈ','ㅊ','ㅌ','ㅎ'], example:{ word:'옷', mean:'衣服' } },
+    { id:'p', sound:'ㅂ', roman:'p', standalone:'압', cue:'雙唇閉住，氣流停住，不把 p 爆出來。', spellings:['ㅂ','ㅍ'], example:{ word:'밥', mean:'飯' } },
   ],
-  resonantBatchim: [
-    { letter:'ㄴ', roman:'n', sample:'안', word:'손', mean:'手', cue:'舌尖頂住，鼻音還在' },
-    { letter:'ㅁ', roman:'m', sample:'암', word:'밤', mean:'夜晚', cue:'雙唇閉合，鼻音還在' },
-    { letter:'ㅇ', roman:'ng', sample:'앙', word:'공', mean:'球／零', cue:'放下面才念 ng' },
-    { letter:'ㄹ', roman:'l', sample:'알', word:'말', mean:'話／馬', cue:'舌尖停住，接近 l' },
+  doubleBatchimGroups: [
+    {
+      sound:'ㄱ', label:'留下 ㄱ 音',
+      items:[
+        { letters:'ㄳ', word:'넋', pronounced:'넉', mean:'靈魂' },
+        { letters:'ㄺ', word:'닭', pronounced:'닥', mean:'雞' },
+      ],
+    },
+    {
+      sound:'ㄴ', label:'留下 ㄴ 音',
+      items:[
+        { letters:'ㄵ', word:'앉다', pronounced:'안따', mean:'坐' },
+        { letters:'ㄶ', word:'많다', pronounced:'만타', mean:'多；ㅎ 讓 ㄷ 送氣' },
+      ],
+    },
+    {
+      sound:'ㅁ', label:'留下 ㅁ 音',
+      items:[
+        { letters:'ㄻ', word:'삶', pronounced:'삼', mean:'人生' },
+      ],
+    },
+    {
+      sound:'ㄹ', label:'留下 ㄹ 音',
+      items:[
+        { letters:'ㄼ', word:'여덟', pronounced:'여덜', mean:'八' },
+        { letters:'ㄽ', word:'외곬', pronounced:'외골', mean:'單一路向' },
+        { letters:'ㄾ', word:'핥다', pronounced:'할따', mean:'舔' },
+        { letters:'ㅀ', word:'싫다', pronounced:'실타', mean:'討厭；ㅎ 讓 ㄷ 送氣' },
+      ],
+    },
+    {
+      sound:'ㅂ', label:'留下 ㅂ 音',
+      items:[
+        { letters:'ㅄ', word:'없다', pronounced:'업따', mean:'沒有' },
+        { letters:'ㄿ', word:'읊다', pronounced:'읍따', mean:'吟誦' },
+      ],
+    },
   ],
-  doubleBatchim: ['ㄳ','ㄵ','ㄶ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅄ'],
+  doubleBatchimLiaison: [
+    { letters:'ㄳ', word:'넋이', pronounced:'넉씨', note:'ㄱ 留下，ㅅ 移到下一格並念緊音' },
+    { letters:'ㄵ', word:'앉아', pronounced:'안자', note:'ㄴ 留下，ㅈ 移到下一格' },
+    { letters:'ㄺ', word:'닭을', pronounced:'달글', note:'ㄹ 留下，ㄱ 移到下一格' },
+    { letters:'ㄻ', word:'젊어', pronounced:'절머', note:'ㄹ 留下，ㅁ 移到下一格' },
+    { letters:'ㄿ', word:'읊어', pronounced:'을퍼', note:'ㄹ 留下，ㅍ 移到下一格' },
+    { letters:'ㅄ', word:'없어', pronounced:'업써', note:'ㅂ 留下，ㅅ 移到下一格並念緊音' },
+    { letters:'ㄶ', word:'많아', pronounced:'마나', note:'ㅎ 消失，ㄴ 接到下一格' },
+    { letters:'ㅀ', word:'싫어', pronounced:'시러', note:'ㅎ 消失，ㄹ 接到下一格' },
+  ],
+  doubleBatchimExceptions: [
+    { word:'읽고', pronounced:'일꼬', title:'ㄺ 動詞詞幹＋ㄱ', note:'읽- 後面接 ㄱ 時通常保留 ㄹ，後面的 ㄱ 再變緊音。' },
+    { word:'밟다', pronounced:'밥따', title:'밟- 的特別規則', note:'밟- 接子音時多念成 ㅂ 收尾，不照一般 ㄼ 留 ㄹ。' },
+  ],
   soundChanges: [
     {
       id:'liaison', label:'連音', badge:'MOVE THE BATCHIM', title:'收尾往下一格滑', article:'標準發音法第 13、14 條',

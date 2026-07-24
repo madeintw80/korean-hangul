@@ -1,8 +1,8 @@
 # 內建韓文語音
 
-本資料夾收錄 korean-hangul v3.1.0-preview 的固定教材音檔，讓母音、子音、收尾音、音變、團名、常用句與既有歌詞不必逐次呼叫雲端 TTS。
+本資料夾收錄 korean-hangul v3.2.0-preview 的固定教材音檔，讓母音、子音、單／雙收尾音、音變、團名、常用句與既有歌詞不必逐次呼叫雲端 TTS。
 
-目前共有 154 段固定教材、三套聲線，共 462 個 MP3；其中 15 個音變例字的 45 個音檔已列入 PWA 核心離線快取。
+目前共有 174 段固定教材、三套聲線，共 522 個 MP3；雙收音教材新增 20 段／60 個音檔，連同既有 `없어` 均列入 PWA 核心離線快取。核心快取目前共 267 個 MP3。
 
 - 產生工具：Supertonic 3 / `supertonic` Python package 1.3.1
 - 官方專案：https://github.com/supertone-inc/supertonic

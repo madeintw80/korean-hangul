@@ -1,14 +1,17 @@
 # CHECKPOINT
 
-Updated: 2026-07-22T18:30:09+08:00
+Updated: 2026-07-24T17:10:00+08:00
 Task Lead: Echo
-Status: complete
+Status: in_progress
 Branch: main
 Last verified implementation commit: 6065e00
 Last published commit: c2db777
 
 ## PM requested
 
+- 參考三支收尾音教學影片更新收尾音篇；單收音不能只有例字，要保留七個代表音的單獨發音。
+- 加入 11 種雙收音的字尾規則、接母音規則與常見例外。
+- 本回合先完成本機版本；未取得新的 push／deploy 授權。
 - 參考一小時學會 40 音的教學節奏，把 App 擴充或大改成課程優先版本。
 - 除了母音、子音，加入母子組合表、組合念法與相對應測驗。
 - ㅎ 放在送氣音章；ㄴ／ㅁ／ㅇ／ㄹ 合併為鼻音／流音。

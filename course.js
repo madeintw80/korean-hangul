@@ -249,45 +249,92 @@
 
   function setupBatchimCourse() {
     const root = document.getElementById('batchimCourse');
-    const families = document.createElement('section');
-    families.innerHTML = '<h3 class="content-title">三組卡住、不爆破的收尾</h3>';
-    const familyGrid = document.createElement('div');
-    familyGrid.className = 'batchim-family-grid';
-    COURSE.batchimFamilies.forEach(family => {
+    const singles = document.createElement('section');
+    singles.className = 'single-batchim-section';
+    singles.innerHTML = `<header class="batchim-section-head">
+      <div><p class="eyebrow">STEP 1 · SEVEN SOUNDS</p><h3 class="content-title">單收音：先聽七個代表音</h3>
+      <p class="section-lead">先按粉紅色的「單獨音」，感覺聲音停在哪裡；再聽例字。ㄱ／ㄷ／ㅂ 類只把氣流卡住，不要在結尾多爆出一聲。</p></div>
+      <button class="mini-btn batchim-play-all" type="button">▶ 連續聽七音</button>
+    </header>`;
+    const singleGrid = document.createElement('div');
+    singleGrid.className = 'single-batchim-grid';
+    COURSE.singleBatchim.forEach(item => {
       const card = document.createElement('article');
-      card.className = 'batchim-family-card';
-      card.innerHTML = `<p class="eyebrow">REPRESENTATIVE ${family.sound}</p><h3>${family.title}</h3><p>${family.tone}</p>
-        <div class="spelling-strip">${family.spellings.map(item => `<b>${item}</b>`).join('')}</div>
-        <div class="sample-strip"></div>`;
-      const samples = card.querySelector('.sample-strip');
-      family.samples.forEach(sample => {
-        const button = document.createElement('button');
-        button.type = 'button'; button.textContent = `🔊 ${sample}`; button.onclick = () => speak(sample); samples.appendChild(button);
-      });
-      familyGrid.appendChild(card);
+      card.className = 'single-batchim-card';
+      card.innerHTML = `<div class="single-batchim-title"><strong>${item.sound}</strong><span>${item.roman}</span></div>
+        <p>${item.cue}</p>
+        <div class="spelling-label">這些寫法都收成 ${item.sound}</div>
+        <div class="spelling-strip">${item.spellings.map(letter => `<b>${letter}</b>`).join('')}</div>
+        <div class="single-batchim-actions">
+          <button class="standalone-play" type="button"><small>先聽單獨音</small><strong>🔊 ${item.standalone}</strong></button>
+          <button class="example-play" type="button"><small>再聽例字</small><strong>${item.example.word}</strong><span>${item.example.mean}</span></button>
+        </div>`;
+      card.querySelector('.standalone-play').onclick = () => speak(item.standalone);
+      card.querySelector('.example-play').onclick = () => speak(item.example.word);
+      singleGrid.appendChild(card);
     });
-    families.appendChild(familyGrid);
-    root.appendChild(families);
-
-    const resonants = document.createElement('section');
-    resonants.className = 'resonant-section';
-    resonants.innerHTML = '<h3 class="content-title">聲音留在下面：鼻音／流音收尾</h3><p class="section-lead">ㄴ、ㅁ、ㅇ 的鼻音仍聽得見；ㄹ 則保留舌尖停住的 l 音感。</p>';
-    const resonantGrid = document.createElement('div');
-    resonantGrid.className = 'resonant-grid';
-    COURSE.resonantBatchim.forEach(item => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'resonant-card';
-      button.innerHTML = `<span>${item.letter}</span><strong>${item.sample}</strong><b>${item.word}</b><small>${item.roman} · ${item.mean}<br>${item.cue}</small>`;
-      button.onclick = () => speak(item.word);
-      resonantGrid.appendChild(button);
-    });
-    resonants.appendChild(resonantGrid);
-    root.appendChild(resonants);
+    singles.appendChild(singleGrid);
+    singles.querySelector('.batchim-play-all').onclick = () => speakSeq(
+      COURSE.singleBatchim.map(item => ({ text:item.standalone })), 0.82, 380
+    );
+    root.appendChild(singles);
 
     const doubleBlock = document.createElement('section');
-    doubleBlock.className = 'double-batchim';
-    doubleBlock.innerHTML = `<div><p class="eyebrow">NEXT LEVEL</p><h3>11 種雙收尾先認得，不急著一次背完</h3><p>遇到後方母音、子音或詞形變化時，可能連音或留下不同一邊；放到進階音變課再逐組練。</p></div><div class="double-list">${COURSE.doubleBatchim.map(item => `<b>${item}</b>`).join('')}</div>`;
+    doubleBlock.className = 'double-batchim-section';
+    doubleBlock.innerHTML = `<header class="double-batchim-intro">
+      <div><p class="eyebrow">STEP 2 · DOUBLE BATCHIM</p><h3>雙收音：先看後面接什麼</h3>
+      <p>一個音節下面雖然寫兩個子音，字尾或子音前通常只留一個代表音；後面接母音時，才會把另一個音搬到下一格。</p></div>
+      <div class="double-rule-key"><b>字尾／子音前</b><span>只留一個音</span><i>→</i><b>母音前</b><span>一留、一搬</span></div>
+    </header>
+    <section class="double-rule-block">
+      <div class="double-rule-heading"><div><p class="eyebrow">RULE 01</p><h4>字尾或子音前：歸成五種代表音</h4></div><p>方括號內是實際讀音。點例字可直接聽。</p></div>
+      <div class="double-group-grid"></div>
+    </section>
+    <section class="double-rule-block liaison-block">
+      <div class="double-rule-heading"><div><p class="eyebrow">RULE 02</p><h4>後面接母音：前音留下，後音搬家</h4></div><p>ㄶ／ㅀ 例外：ㅎ 消失，再由 ㄴ／ㄹ 接到下一格。</p></div>
+      <div class="double-liaison-grid"></div>
+    </section>
+    <section class="double-exception-block">
+      <div><p class="eyebrow">REMEMBER THESE</p><h4>兩個高頻例外另外記</h4></div>
+      <div class="double-exception-list"></div>
+    </section>`;
+
+    const groupGrid = doubleBlock.querySelector('.double-group-grid');
+    COURSE.doubleBatchimGroups.forEach(group => {
+      const card = document.createElement('article');
+      card.className = 'double-group-card';
+      card.innerHTML = `<header><strong>${group.sound}</strong><span>${group.label}</span></header><div class="double-example-list"></div>`;
+      const list = card.querySelector('.double-example-list');
+      group.items.forEach(item => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'double-example';
+        button.innerHTML = `<b>${item.letters}</b><span>${item.word}</span><i>→</i><strong>[${item.pronounced}]</strong><small>${item.mean}</small>`;
+        button.onclick = () => speak(item.word);
+        list.appendChild(button);
+      });
+      groupGrid.appendChild(card);
+    });
+
+    const liaisonGrid = doubleBlock.querySelector('.double-liaison-grid');
+    COURSE.doubleBatchimLiaison.forEach(item => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'double-liaison-card';
+      button.innerHTML = `<b>${item.letters}</b><span>${item.word}</span><i>→</i><strong>[${item.pronounced}]</strong><small>${item.note}</small>`;
+      button.onclick = () => speak(item.word);
+      liaisonGrid.appendChild(button);
+    });
+
+    const exceptionList = doubleBlock.querySelector('.double-exception-list');
+    COURSE.doubleBatchimExceptions.forEach(item => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'double-exception-card';
+      button.innerHTML = `<span><b>${item.title}</b><small>${item.note}</small></span><strong>🔊 ${item.word} <i>[${item.pronounced}]</i></strong>`;
+      button.onclick = () => speak(item.word);
+      exceptionList.appendChild(button);
+    });
     root.appendChild(doubleBlock);
 
     const action = document.createElement('div');

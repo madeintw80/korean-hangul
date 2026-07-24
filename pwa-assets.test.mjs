@@ -40,10 +40,10 @@ assert.deepEqual(
 );
 assert.match(index, /icons\/favicon-32\.png/);
 assert.match(index, /icons\/apple-touch-icon-180\.png/);
-assert.match(index, /한글 Studio v3\.1\.0-preview/);
-assert.match(sw, /hangul-v3\.1\.0-preview-public/);
+assert.match(index, /한글 Studio v3\.2\.0-preview/);
+assert.match(sw, /hangul-v3\.2\.0-preview-local/);
 assert.match(sw, /course-data\.js/);
 assert.match(sw, /course\.js/);
 assert.doesNotMatch(generator, /BASE\s*=\s*r?["']C:\\\\Users/i);
 
-console.log('PASS: favicon, course assets, PWA any, and maskable icons are wired for v3.1.0-preview');
+console.log('PASS: favicon, course assets, PWA any, and maskable icons are wired for v3.2.0-preview');
