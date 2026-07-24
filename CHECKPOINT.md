@@ -1,11 +1,11 @@
 # CHECKPOINT
 
-Updated: 2026-07-24T16:33:40+08:00
+Updated: 2026-07-24T16:40:24+08:00
 Task Lead: Echo
-Status: in_progress
+Status: complete
 Branch: main
 Last verified implementation commit: 2919998
-Last published commit: c2db777
+Last published commit: 22bb269
 
 ## PM requested
 
@@ -60,6 +60,9 @@ Last published commit: c2db777
 
 ## Verification
 
+- GitHub Pages 公開驗收：首頁、`audio/manifest.js`、`sw.js` 與 Sarah／Olivia／Emily 的新 `맛없다` MP3 均為 HTTP 200；三個音檔皆回傳 `audio/mp3`。
+- 公開 manifest 為 `v3.3.0-preview`、221 段／663 個 MP3／408 個核心快取檔；Service Worker cache 為 `hangul-v3.3.0-preview-public`。
+- 公開版 Browser：頁首 `PUBLIC PREVIEW`、footer「公開預覽版」、12 個標準發音分類、流音化例外均可見，console warning／error 0。
 - 全套自動測試 PASS：`pronunciation.test.js`、`audio-assets.test.mjs`、`pwa-assets.test.mjs`、`course.test.mjs`、`cf-tts-worker/worker.test.mjs`。
 - `pronunciation.test.js`：21 母音、19 子音、75 組變音、15 組注音與 3,192 組合 PASS。
 - 規則稽核：52／52 個唯一答案案例與預期標準讀音完全一致。
@@ -92,11 +95,10 @@ Last published commit: c2db777
 
 ## Current state
 
-- v3.3.0-preview 已完成本機 implementation commit `2919998` 與 verification commit `8f6c0ba`；正在準備 push／GitHub Pages 發布。
+- v3.3.0-preview 已發布至 GitHub Pages：https://madeintw80.github.io/korean-hangul/ ，公開程式 commit 為 `22bb269`。
 - v3.2.1-preview 已完成本機 implementation commit `8b2995f`；尚未 push／deploy。
-- 公開版仍是 v3.1.0-preview：https://madeintw80.github.io/korean-hangul/ ，公開版 commit 為 `c2db777`。
-- 公開首頁已顯示 `PUBLIC PREVIEW`；Service Worker cache 為 `hangul-v3.1.0-preview-public`。
-- 公開 manifest 為 154 段／462 個 MP3／207 個核心快取檔；Sarah／Olivia／Emily 新音變 MP3 均為 HTTP 200、`audio/mp3`。
+- 公開首頁已顯示 `PUBLIC PREVIEW` 與「公開預覽版」；Service Worker cache 為 `hangul-v3.3.0-preview-public`。
+- 公開 manifest 為 221 段／663 個 MP3／408 個核心快取檔；Sarah／Olivia／Emily 新標準發音 MP3 均為 HTTP 200、`audio/mp3`。
 - 本次沒有 Cloudflare Worker 程式或設定變更，因此未重部署 Worker。
 
 ## Decisions and assumptions
@@ -112,8 +114,7 @@ Last published commit: c2db777
 
 ## Next actions
 
-1. 建立 v3.3 公開標示 commit，push `main`。
-2. 驗證 GitHub Pages 首頁、manifest、Service Worker 與三套女聲樣本。
+1. 無。
 
 ## Risks / blockers
 

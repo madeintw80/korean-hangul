@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Echo 發布 v3.3.0-preview，並驗證 GitHub Pages 與三套女聲資產。
+- 無。
 
 ## Todo（依優先順序）
 
@@ -60,6 +60,8 @@
 - [x] Echo 完成 v3.3.0-preview 全套自動測試、桌機／390×844 Browser 驗收與 PWA 更新驗證。
 - [x] Echo 建立本機 implementation commit `2919998`；未 push／deploy。
 - [x] PM 明確授權 push v3.3.0-preview 至 GitHub `main`，由 GitHub Pages 自動發布。
+- [x] Echo push `main`，公開程式 commit `22bb269` 已由 GitHub Pages 上線。
+- [x] Echo 驗證公開首頁、v3.3 public cache、221 段／663 個 MP3 manifest、12 類標準發音與三套新女聲樣本皆正常。
 
 ## Backlog / 之後再說
 
