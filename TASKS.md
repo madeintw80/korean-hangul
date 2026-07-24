@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Echo 同步並完成 v3.3.0-preview Browser 驗收與本機 commit。
+- 無。
 
 ## Todo（依優先順序）
 
@@ -57,7 +57,8 @@
 - [x] Echo 將標準發音篇擴充為 12 類、59 組例字，並完成 52／52 個唯一答案案例稽核。
 - [x] Echo 補正四個歌曲標準讀音與慢速播放路徑，維持 Sarah／Olivia／Emily 內建女聲。
 - [x] Echo 為 43 段新固定教材補齊三聲線共 129 個 MP3；manifest 更新為 221 段／663 檔／408 個核心檔。
-- [x] Echo 完成 v3.3.0-preview 全套自動測試；等待 Browser 驗收與本機 commit。
+- [x] Echo 完成 v3.3.0-preview 全套自動測試、桌機／390×844 Browser 驗收與 PWA 更新驗證。
+- [x] Echo 建立本機 implementation commit `2919998`；未 push／deploy。
 
 ## Backlog / 之後再說
 

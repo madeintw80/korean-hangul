@@ -1,10 +1,10 @@
 # CHECKPOINT
 
-Updated: 2026-07-24T16:16:48+08:00
+Updated: 2026-07-24T16:24:44+08:00
 Task Lead: Echo
-Status: in_progress
+Status: complete
 Branch: main
-Last verified implementation commit: pending v3.3.0 commit
+Last verified implementation commit: 2919998
 Last published commit: c2db777
 
 ## PM requested
@@ -63,6 +63,9 @@ Last published commit: c2db777
 - 規則稽核：52／52 個唯一答案案例與預期標準讀音完全一致。
 - `audio-assets.test.mjs`：221 段 × 3 聲線＝663 個 MP3 PASS；59 個標準發音教材詞與四個歌曲新讀音均有三聲線且在核心快取。
 - `course.test.mjs`：九關、399 音節、七個獨立單收音、11 個雙收音、12 類標準發音與四種朗讀測驗 PASS。
+- Browser 一般視窗：12 個分類按鈕與新增例字正常；Sarah／Olivia／Emily 均成功試播 `맛없다`，歌曲四個新讀音與慢速固定音檔正常，console warning／error 0。
+- Browser 390×844：`clientWidth`／`scrollWidth`／`bodyWidth` 均為 375，標準發音篇無整頁水平溢出。
+- PWA「立即更新」實測可套用 v3.3；頁籤、footer、`app.js`、教材資料與音檔 manifest 版本一致。
 - `audio-assets.test.mjs`：178 段 × 3 聲線＝534 個 MP3 PASS；四個流音化例字三聲線與核心快取覆蓋全部通過。
 - `course.test.mjs`：六類音變、19 個音變例字與四種朗讀測驗模式 PASS；其餘 syntax、發音、PWA、Worker 測試全部 PASS。
 - Browser 一般視窗：流音化分類、規則文字與四組例字均可見；`난로` 使用 Sarah／Olivia／Emily 各試播成功，console warning／error 0。
@@ -87,7 +90,7 @@ Last published commit: c2db777
 
 ## Current state
 
-- v3.3.0-preview 已在暫存副本完成實作與全套自動測試；等待同步回 repo、Browser 驗收與 commit。
+- v3.3.0-preview 已完成本機 implementation commit `2919998`；尚未 push／deploy。
 - v3.2.1-preview 已完成本機 implementation commit `8b2995f`；尚未 push／deploy。
 - 公開版仍是 v3.1.0-preview：https://madeintw80.github.io/korean-hangul/ ，公開版 commit 為 `c2db777`。
 - 公開首頁已顯示 `PUBLIC PREVIEW`；Service Worker cache 為 `hangul-v3.1.0-preview-public`。
@@ -107,8 +110,7 @@ Last published commit: c2db777
 
 ## Next actions
 
-1. Echo 同步 v3.3.0 至 repo、完成桌機／手機 Browser 驗收並建立本機 commit。
-2. PM 本機試用 12 類標準發音與三套聲線，再決定是否 push／deploy。
+1. PM 本機試用 12 類標準發音與三套聲線，再決定是否 push／deploy。
 
 ## Risks / blockers
 
