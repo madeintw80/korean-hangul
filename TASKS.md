@@ -6,7 +6,7 @@
 
 ## Todo（依優先順序）
 
-1. [ ] PM 在 iPhone 更新公開的 v3.0.2-preview PWA；看到更新提示時按「立即更新」，若仍顯示舊圖示再移除舊主畫面捷徑並重新加入。
+1. [ ] PM 本機試用 v3.2.0-preview 的單收音獨立發音與雙收音規則，再決定是否 push／deploy。
 
 ## Done
 
@@ -48,6 +48,9 @@
 - [x] Echo 完成 v3.1.0-preview 桌機／390×844 Browser 驗收與全部自動測試，建立 implementation commit `6065e00`；僅本機、未 push／deploy。
 - [x] PM 明確授權 push／deploy v3.1.0-preview；Echo 已將本機 commits push 至 GitHub `main`。
 - [x] Echo 發布 `c2db777`，並驗證公開首頁、v3.1 PWA cache、154 段／462 個 MP3 manifest 與三套新音變語音皆正常。
+- [x] Echo 完成 v3.2.0-preview：七個單收音均可獨立播放，11 個雙收音加入字尾、母音前連音與高頻例外規則。
+- [x] Echo 為 20 段新雙收音教材補齊 Sarah／Olivia／Emily 共 60 個 MP3；manifest 更新為 174 段／522 檔／267 個核心檔。
+- [x] Echo 完成 v3.2 桌機／390×844 Browser 驗收與全部自動測試，建立本機 implementation commit `ab054ec`；未 push／deploy。
 
 ## Backlog / 之後再說
 
