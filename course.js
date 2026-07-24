@@ -402,11 +402,14 @@
     { word:'꽃', answer:'ㄷ' }, { word:'밥', answer:'ㅂ' }, { word:'앞', answer:'ㅂ' }, { word:'손', answer:'ㄴ' },
     { word:'밤', answer:'ㅁ' }, { word:'공', answer:'ㅇ' }, { word:'말', answer:'ㄹ' },
   ];
-  const SOUND_CHANGE_WORDS = COURSE.soundChanges.flatMap(rule => rule.examples.map(example => ({
-    ...example,
-    ruleId: rule.id,
-    ruleLabel: rule.label,
-  })));
+  // 有斜線或長音符號的「多種皆可」例子保留教學，但不拿來做單選題。
+  const SOUND_CHANGE_WORDS = COURSE.soundChanges.flatMap(rule => rule.examples
+    .filter(example => example.quiz !== false)
+    .map(example => ({
+      ...example,
+      ruleId: rule.id,
+      ruleLabel: rule.label,
+    })));
 
   function setCourseQuizMode(modeId) {
     if (!QUIZ_MODES.some(mode => mode.id === modeId)) return;

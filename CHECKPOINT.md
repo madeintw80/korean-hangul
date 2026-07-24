@@ -1,14 +1,16 @@
 # CHECKPOINT
 
-Updated: 2026-07-24T13:48:46+08:00
+Updated: 2026-07-24T16:16:48+08:00
 Task Lead: Echo
-Status: complete
+Status: in_progress
 Branch: main
-Last verified implementation commit: 8b2995f
+Last verified implementation commit: pending v3.3.0 commit
 Last published commit: c2db777
 
 ## PM requested
 
+- 全部補進 App：完整檢查標準發音遺漏，包含單／雙收音、ㄴ／ㄹ 流音化、其他音變與歌曲標準讀音。
+- 確認固定教材是否為內建女聲，新增或修改內容仍要同步 Sarah／Olivia／Emily。
 - 音變篇再加入「流音化」：ㄴ 與 ㄹ 相遇時的發音規則，並同步更新內建女聲。
 - 參考三支收尾音教學影片更新收尾音篇；單收音不能只有例字，要保留七個代表音的單獨發音。
 - 加入 11 種雙收音的字尾規則、接母音規則與常見例外。
@@ -26,6 +28,12 @@ Last published commit: c2db777
 
 ## Completed
 
+- v3.3.0 將音變篇擴充為 12 類、59 組例字：連音、語素邊界代表音、鼻音化、緊音化、送氣化、口蓋音化、流音化、ㄴ 添加、사이시옷、母音規則、韓文字母名稱連音與長短音。
+- 依《標準發音法》第 4～7、15～16、18～20、23～30 條補齊規則、可接受雙讀與例外；容易有多個標準答案或只差音長的 7 組保留教學但不進單選題。
+- 發音引擎新增語素邊界、ㄹ／ㄴ 例外、緊音、ㄴ 添加、사이시옷、字母名稱與 `져／쪄／쳐` 規則；52 個唯一答案稽核案例全部精確命中。
+- 歌曲補正 `커져가→커저가`、`겁 없이→거법씨`、`던져→던저`、`맘속→맘쏙`；慢速鍵改為降速播放原固定 MP3，維持目前選取的內建女聲。
+- 為 39 個新教材詞與 4 個歌曲讀音補齊 Sarah／Olivia／Emily 共 129 個 MP3；manifest 更新為 221 段／663 個 MP3／408 個核心離線快取檔。
+- 首頁、Service Worker cache、靜態資產 query 與測試版本同步更新為 `v3.3.0-preview`，維持 `LOCAL PREVIEW`、不 push／deploy。
 - v3.2.1 音變篇新增第六類「流音化」，依標準發音法第 20 條說明 ㄴ 在 ㄹ 前後通常變成 ㄹ。
 - 新增 `난로→날로`、`신라→실라`、`칼날→칼랄`、`물난리→물랄리`，同時涵蓋 ㄴ＋ㄹ 與 ㄹ＋ㄴ 兩個方向；四組自動納入音變測驗題庫。
 - 四個新例字已補齊 Sarah／Olivia／Emily 共 12 個 MP3；manifest 更新為 178 段／534 個 MP3／279 個核心快取檔。
@@ -50,6 +58,11 @@ Last published commit: c2db777
 
 ## Verification
 
+- 全套自動測試 PASS：`pronunciation.test.js`、`audio-assets.test.mjs`、`pwa-assets.test.mjs`、`course.test.mjs`、`cf-tts-worker/worker.test.mjs`。
+- `pronunciation.test.js`：21 母音、19 子音、75 組變音、15 組注音與 3,192 組合 PASS。
+- 規則稽核：52／52 個唯一答案案例與預期標準讀音完全一致。
+- `audio-assets.test.mjs`：221 段 × 3 聲線＝663 個 MP3 PASS；59 個標準發音教材詞與四個歌曲新讀音均有三聲線且在核心快取。
+- `course.test.mjs`：九關、399 音節、七個獨立單收音、11 個雙收音、12 類標準發音與四種朗讀測驗 PASS。
 - `audio-assets.test.mjs`：178 段 × 3 聲線＝534 個 MP3 PASS；四個流音化例字三聲線與核心快取覆蓋全部通過。
 - `course.test.mjs`：六類音變、19 個音變例字與四種朗讀測驗模式 PASS；其餘 syntax、發音、PWA、Worker 測試全部 PASS。
 - Browser 一般視窗：流音化分類、規則文字與四組例字均可見；`난로` 使用 Sarah／Olivia／Emily 各試播成功，console warning／error 0。
@@ -74,6 +87,7 @@ Last published commit: c2db777
 
 ## Current state
 
+- v3.3.0-preview 已在暫存副本完成實作與全套自動測試；等待同步回 repo、Browser 驗收與 commit。
 - v3.2.1-preview 已完成本機 implementation commit `8b2995f`；尚未 push／deploy。
 - 公開版仍是 v3.1.0-preview：https://madeintw80.github.io/korean-hangul/ ，公開版 commit 為 `c2db777`。
 - 公開首頁已顯示 `PUBLIC PREVIEW`；Service Worker cache 為 `hangul-v3.1.0-preview-public`。
@@ -93,7 +107,8 @@ Last published commit: c2db777
 
 ## Next actions
 
-1. PM 開啟本機 v3.2.1 試用單／雙收音、流音化與三套聲線，再決定是否發布。
+1. Echo 同步 v3.3.0 至 repo、完成桌機／手機 Browser 驗收並建立本機 commit。
+2. PM 本機試用 12 類標準發音與三套聲線，再決定是否 push／deploy。
 
 ## Risks / blockers
 

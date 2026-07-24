@@ -2,11 +2,11 @@
 
 ## In progress
 
-- 無。
+- [ ] Echo 同步並完成 v3.3.0-preview Browser 驗收與本機 commit。
 
 ## Todo（依優先順序）
 
-1. [ ] PM 本機試用 v3.2.1-preview 的單／雙收音與流音化，再決定是否 push／deploy。
+1. [ ] PM 本機試用 v3.3.0-preview 的 12 類標準發音與三套女聲，再決定是否 push／deploy。
 
 ## Done
 
@@ -54,6 +54,10 @@
 - [x] Echo 在音變篇新增流音化：`난로`、`신라`、`칼날`、`물난리` 四組例字及第 20 條規則，並自動納入音變測驗。
 - [x] Echo 為四個流音化例字補齊 Sarah／Olivia／Emily 共 12 個 MP3；manifest 更新為 178 段／534 檔／279 個核心檔。
 - [x] Echo 完成 v3.2.1 桌機／390×844 Browser 驗收與全部自動測試，建立本機 implementation commit `8b2995f`；未 push／deploy。
+- [x] Echo 將標準發音篇擴充為 12 類、59 組例字，並完成 52／52 個唯一答案案例稽核。
+- [x] Echo 補正四個歌曲標準讀音與慢速播放路徑，維持 Sarah／Olivia／Emily 內建女聲。
+- [x] Echo 為 43 段新固定教材補齊三聲線共 129 個 MP3；manifest 更新為 221 段／663 檔／408 個核心檔。
+- [x] Echo 完成 v3.3.0-preview 全套自動測試；等待 Browser 驗收與本機 commit。
 
 ## Backlog / 之後再說
 

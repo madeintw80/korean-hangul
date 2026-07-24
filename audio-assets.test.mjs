@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -33,20 +34,26 @@ const nmixxSamples = [
   '날 믿고 다음 다음 Step을 밟아',
   '이젠 알아',
 ];
-const soundChangeSamples = [
-  '먹어','집에','읽어','없어',
-  '국물','먹는','앞문',
-  '학교','먹다','잡지',
-  '좋다','축하','입학',
-  '굳이','같이',
-  '난로','신라','칼날','물난리',
+const courseContext = { window: {} };
+vm.createContext(courseContext);
+vm.runInContext(
+  fs.readFileSync(path.join(root, 'course-data.js'), 'utf8'),
+  courseContext,
+);
+const soundChangeSamples = courseContext.window.HANGUL_COURSE_DATA.soundChanges
+  .flatMap((group) => group.examples.map((example) => example.written));
+const updatedSongPronSamples = [
+  '거세게 커저가 Ah Oh Ay',
+  '거법씨 Walk my way',
+  '던저 On my stage',
+  '맘쏙 Fireworks',
 ];
 
-assert.equal(manifest.version, '3.2.1-preview');
+assert.equal(manifest.version, '3.3.0-preview');
 assert.deepEqual(Object.keys(manifest.voices), ['sarah', 'olivia', 'emily']);
-assert.equal(Object.keys(manifest.texts).length, 178);
+assert.equal(Object.keys(manifest.texts).length, 221);
 assert.equal(manifest.files.length, Object.keys(manifest.texts).length * 3);
-assert.equal(manifest.coreFiles.length, 93 * 3);
+assert.equal(manifest.coreFiles.length, 136 * 3);
 
 for (const text of [...vowelSamples, ...consonantSamples, ...batchimSamples, manifest.previewText]) {
   assert.ok(manifest.texts[text], `missing core text: ${text}`);
@@ -63,6 +70,14 @@ for (const text of soundChangeSamples) {
   assert.deepEqual(Object.keys(manifest.texts[text]), ['sarah', 'olivia', 'emily']);
   for (const relPath of Object.values(manifest.texts[text])) {
     assert.ok(manifest.coreFiles.includes(relPath), `sound-change audio is not in core cache: ${relPath}`);
+  }
+}
+
+for (const text of updatedSongPronSamples) {
+  assert.ok(manifest.texts[text], `missing updated song pronunciation: ${text}`);
+  assert.deepEqual(Object.keys(manifest.texts[text]), ['sarah', 'olivia', 'emily']);
+  for (const relPath of Object.values(manifest.texts[text])) {
+    assert.ok(manifest.coreFiles.includes(relPath), `song pronunciation audio is not in core cache: ${relPath}`);
   }
 }
 
@@ -88,6 +103,8 @@ assert.match(index, /id="naturalVoiceSelect"/);
 const app = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
 assert.match(app, /function playStatic/);
 assert.match(app, /playStatic\(text, r\)\.catch\(\(\) => speakSystem/);
+assert.match(app, /speak\(line\.han, 0\.6\)/);
+assert.doesNotMatch(app, /speak\(a\.pron, 0\.6\)/);
 
 const course = fs.readFileSync(path.join(root, 'course.js'), 'utf8');
 assert.match(course, /\.slow'\)\.onclick = \(\) => speak\(example\.written, 0\.72\)/);
@@ -107,7 +124,7 @@ for (const removedText of [
 }
 
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-assert.match(sw, /hangul-v3\.2\.1-preview-local/);
+assert.match(sw, /hangul-v3\.3\.0-preview-local/);
 assert.match(sw, /CORE_AUDIO/);
 
 console.log(`PASS: ${Object.keys(manifest.texts).length} texts × 3 voices = ${manifest.files.length} MP3 files`);
