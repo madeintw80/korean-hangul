@@ -1,14 +1,15 @@
 # CHECKPOINT
 
-Updated: 2026-07-24T16:24:44+08:00
+Updated: 2026-07-24T16:33:40+08:00
 Task Lead: Echo
-Status: complete
+Status: in_progress
 Branch: main
 Last verified implementation commit: 2919998
 Last published commit: c2db777
 
 ## PM requested
 
+- PM 已明確要求 push v3.3.0；授權涵蓋 GitHub `main` 與 GitHub Pages 自動發布，Cloudflare Worker 不在變更範圍。
 - 全部補進 App：完整檢查標準發音遺漏，包含單／雙收音、ㄴ／ㄹ 流音化、其他音變與歌曲標準讀音。
 - 確認固定教材是否為內建女聲，新增或修改內容仍要同步 Sarah／Olivia／Emily。
 - 音變篇再加入「流音化」：ㄴ 與 ㄹ 相遇時的發音規則，並同步更新內建女聲。
@@ -28,6 +29,7 @@ Last published commit: c2db777
 
 ## Completed
 
+- v3.3.0 公開發布準備完成：首頁改標 `PUBLIC PREVIEW`，Service Worker cache 改為 `hangul-v3.3.0-preview-public`，README 與 PWA 測試同步更新。
 - v3.3.0 將音變篇擴充為 12 類、59 組例字：連音、語素邊界代表音、鼻音化、緊音化、送氣化、口蓋音化、流音化、ㄴ 添加、사이시옷、母音規則、韓文字母名稱連音與長短音。
 - 依《標準發音法》第 4～7、15～16、18～20、23～30 條補齊規則、可接受雙讀與例外；容易有多個標準答案或只差音長的 7 組保留教學但不進單選題。
 - 發音引擎新增語素邊界、ㄹ／ㄴ 例外、緊音、ㄴ 添加、사이시옷、字母名稱與 `져／쪄／쳐` 規則；52 個唯一答案稽核案例全部精確命中。
@@ -90,7 +92,7 @@ Last published commit: c2db777
 
 ## Current state
 
-- v3.3.0-preview 已完成本機 implementation commit `2919998`；尚未 push／deploy。
+- v3.3.0-preview 已完成本機 implementation commit `2919998` 與 verification commit `8f6c0ba`；正在準備 push／GitHub Pages 發布。
 - v3.2.1-preview 已完成本機 implementation commit `8b2995f`；尚未 push／deploy。
 - 公開版仍是 v3.1.0-preview：https://madeintw80.github.io/korean-hangul/ ，公開版 commit 為 `c2db777`。
 - 公開首頁已顯示 `PUBLIC PREVIEW`；Service Worker cache 為 `hangul-v3.1.0-preview-public`。
@@ -106,11 +108,12 @@ Last published commit: c2db777
 - PM 已把權限擴充為 GitHub `main` push 與 GitHub Pages 自動發布；Cloudflare Worker 不在本次授權與變更範圍。
 - 工具箱確實有重複：母音／子音／收尾／拼字／字母測驗已由主流程取代；依 PM 拍板全部移除，只留有獨立實戰價值的女團／歌詞。
 - 固定教材不能以裝置聲線 fallback 視為完成；任何教材文字變更都要同步更新三聲線 MP3、manifest、核心快取與覆蓋測試。
-- PM 先前授權只涵蓋 v3.1 push／GitHub Pages 發布；v3.2.1 尚未取得新的 push／deploy 授權。
+- PM 已於 2026-07-24 明確授權 push v3.3.0；本次不變更 Cloudflare Worker。
 
 ## Next actions
 
-1. PM 本機試用 12 類標準發音與三套聲線，再決定是否 push／deploy。
+1. 建立 v3.3 公開標示 commit，push `main`。
+2. 驗證 GitHub Pages 首頁、manifest、Service Worker 與三套女聲樣本。
 
 ## Risks / blockers
 

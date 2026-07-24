@@ -3,11 +3,9 @@
 vanilla JS PWA（無框架、無 build step），固定教材預設使用三套內建 Supertonic 3 韓文女聲；
 自由句可手動切換 Gemini，無音檔或雲端不可用時再用 Web Speech API。
 
-**公開 Demo（目前 v3.1.0-preview）**：https://madeintw80.github.io/korean-hangul/
+**公開 Demo（目前 v3.3.0-preview）**：https://madeintw80.github.io/korean-hangul/
 
-> v3.1.0-preview 已發布：新增連音＋基礎音變教材、第四種全朗讀測驗，以及 15 個例字的三套離線語音。
->
-> v3.3.0-preview 已在本機完成：補齊 12 類標準發音教材、例外與歌曲讀音；尚未 push／deploy。
+> v3.3.0-preview 已發布：補齊 12 類標準發音教材、單／雙收音、例外、歌曲讀音與三套離線女聲。
 
 ## 功能
 

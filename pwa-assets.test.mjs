@@ -42,8 +42,9 @@ assert.deepEqual(
 assert.match(index, /icons\/favicon-32\.png/);
 assert.match(index, /icons\/apple-touch-icon-180\.png/);
 assert.match(index, /한글 Studio v3\.3\.0-preview/);
+assert.match(index, /PUBLIC PREVIEW/);
 assert.match(index, /app\.js\?v=3\.3\.0/);
-assert.match(sw, /hangul-v3\.3\.0-preview-local/);
+assert.match(sw, /hangul-v3\.3\.0-preview-public/);
 assert.match(sw, /app\.js\?v=3\.3\.0/);
 assert.match(sw, /audio\/manifest\.js\?v=3\.3\.0/);
 assert.match(sw, /course-data\.js/);

@@ -52,7 +52,8 @@
 | 2026-07-24 | 多個標準讀音與只差音長的例字保留在教材、不放單選測驗 | 避免把合法雙讀或音長差異錯判成唯一答案；朗讀測驗只保留 52 個可單值驗證的例字 | Echo（教學決策） |
 | 2026-07-24 | 歌曲慢速播放沿用原固定 MP3 並調整播放速率 | 確保慢速鍵仍使用目前選取的 Sarah／Olivia／Emily，而不是落到裝置女聲 | Echo（實作決策） |
 | 2026-07-24 | v3.3.0-preview 維持本機版本，不自行 push／deploy | PM 要求把內容都加進去，但未提供新的公開發布授權 | Echo（權限邊界） |
+| 2026-07-24 | PM 授權 push／deploy v3.3.0-preview | 授權範圍為 GitHub `main` 與 GitHub Pages 自動發布；Cloudflare Worker 無變更、不重部署 | PM |
 
 ## 待 PM 決定
 
-- PM 驗收 v3.3.0-preview 後，再決定是否 push／deploy。
+- 無。

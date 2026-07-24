@@ -2,11 +2,11 @@
 
 ## In progress
 
-- 無。
+- [ ] Echo 發布 v3.3.0-preview，並驗證 GitHub Pages 與三套女聲資產。
 
 ## Todo（依優先順序）
 
-1. [ ] PM 本機試用 v3.3.0-preview 的 12 類標準發音與三套女聲，再決定是否 push／deploy。
+- 無。
 
 ## Done
 
@@ -59,6 +59,7 @@
 - [x] Echo 為 43 段新固定教材補齊三聲線共 129 個 MP3；manifest 更新為 221 段／663 檔／408 個核心檔。
 - [x] Echo 完成 v3.3.0-preview 全套自動測試、桌機／390×844 Browser 驗收與 PWA 更新驗證。
 - [x] Echo 建立本機 implementation commit `2919998`；未 push／deploy。
+- [x] PM 明確授權 push v3.3.0-preview 至 GitHub `main`，由 GitHub Pages 自動發布。
 
 ## Backlog / 之後再說
 

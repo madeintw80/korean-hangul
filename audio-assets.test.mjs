@@ -124,7 +124,7 @@ for (const removedText of [
 }
 
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-assert.match(sw, /hangul-v3\.3\.0-preview-local/);
+assert.match(sw, /hangul-v3\.3\.0-preview-public/);
 assert.match(sw, /CORE_AUDIO/);
 
 console.log(`PASS: ${Object.keys(manifest.texts).length} texts × 3 voices = ${manifest.files.length} MP3 files`);
