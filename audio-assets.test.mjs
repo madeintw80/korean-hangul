@@ -39,13 +39,14 @@ const soundChangeSamples = [
   '학교','먹다','잡지',
   '좋다','축하','입학',
   '굳이','같이',
+  '난로','신라','칼날','물난리',
 ];
 
-assert.equal(manifest.version, '3.2.0-preview');
+assert.equal(manifest.version, '3.2.1-preview');
 assert.deepEqual(Object.keys(manifest.voices), ['sarah', 'olivia', 'emily']);
-assert.equal(Object.keys(manifest.texts).length, 174);
+assert.equal(Object.keys(manifest.texts).length, 178);
 assert.equal(manifest.files.length, Object.keys(manifest.texts).length * 3);
-assert.equal(manifest.coreFiles.length, 89 * 3);
+assert.equal(manifest.coreFiles.length, 93 * 3);
 
 for (const text of [...vowelSamples, ...consonantSamples, ...batchimSamples, manifest.previewText]) {
   assert.ok(manifest.texts[text], `missing core text: ${text}`);
@@ -106,7 +107,7 @@ for (const removedText of [
 }
 
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-assert.match(sw, /hangul-v3\.2\.0-preview-local/);
+assert.match(sw, /hangul-v3\.2\.1-preview-local/);
 assert.match(sw, /CORE_AUDIO/);
 
 console.log(`PASS: ${Object.keys(manifest.texts).length} texts × 3 voices = ${manifest.files.length} MP3 files`);

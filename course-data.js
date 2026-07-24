@@ -1,6 +1,6 @@
 /* 한글 Studio v3 課程資料：內容與互動引擎分離，之後擴課不必改主程式。 */
 window.HANGUL_COURSE_DATA = {
-  version: '3.2.0-preview',
+  version: '3.2.1-preview',
   lessons: [
     {
       id: 'blocks', number: '01', minutes: 4, title: '先看懂韓文字塊',
@@ -221,6 +221,17 @@ window.HANGUL_COURSE_DATA = {
       examples:[
         { written:'굳이', pronounced:'구지', note:'ㄷ ＋ 이 → 지' },
         { written:'같이', pronounced:'가치', note:'ㅌ ＋ 이 → 치' },
+      ],
+    },
+    {
+      id:'liquid', label:'流音化', badge:'TURN N INTO L', title:'ㄴ 與 ㄹ 相遇，ㄴ 常變成 ㄹ', article:'標準發音法第 20 條',
+      summary:'ㄴ 在 ㄹ 的前面或後面時，通常會被 ㄹ 同化，兩邊一起念成 ㄹㄹ；文字不變，舌尖動作合併成一次。',
+      cue:'先找相鄰的 ㄴ／ㄹ，再把 ㄴ 改想成 ㄹ。少數漢字詞會念成 ㄴㄴ，初學先熟悉這四個常見詞。',
+      examples:[
+        { written:'난로', pronounced:'날로', note:'ㄴ ＋ ㄹ → ㄹ ＋ ㄹ' },
+        { written:'신라', pronounced:'실라', note:'ㄴ ＋ ㄹ → ㄹ ＋ ㄹ' },
+        { written:'칼날', pronounced:'칼랄', note:'ㄹ ＋ ㄴ → ㄹ ＋ ㄹ' },
+        { written:'물난리', pronounced:'물랄리', note:'ㄹ ＋ ㄴ → ㄹ ＋ ㄹ' },
       ],
     },
   ],

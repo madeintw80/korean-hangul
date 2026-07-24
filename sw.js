@@ -5,18 +5,18 @@
    ===================================================================== */
 importScripts('./audio/manifest.js');
 
-const CACHE = 'hangul-v3.2.0-preview-local';
+const CACHE = 'hangul-v3.2.1-preview-local';
 const CORE_AUDIO = (self.HANGUL_AUDIO && self.HANGUL_AUDIO.coreFiles || []).map(path => './' + path);
 
 // 要預先快取的檔案（相對路徑，配合 GitHub Pages 子目錄）
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=3.2.0',
+  './style.css?v=3.2.1',
   './app.js',
-  './course-data.js?v=3.2.0',
-  './course.js?v=3.2.0',
-  './audio/manifest.js?v=3.2.0',
+  './course-data.js?v=3.2.1',
+  './course.js?v=3.2.1',
+  './audio/manifest.js?v=3.2.1',
   './manifest.json',
   './icons/favicon-32.png',
   './icons/apple-touch-icon-180.png',

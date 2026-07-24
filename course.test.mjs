@@ -11,7 +11,7 @@ const course = sandbox.window.HANGUL_COURSE_DATA;
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const courseJs = fs.readFileSync(path.join(root, 'course.js'), 'utf8');
 
-assert.equal(course.version, '3.2.0-preview');
+assert.equal(course.version, '3.2.1-preview');
 assert.equal(course.lessons.length, 9);
 assert.deepEqual(
   Array.from(course.lessons.find(lesson => lesson.id === 'aspirated').sounds, item => item.letter),
@@ -46,8 +46,8 @@ for (const item of [
 ]) {
   assert.ok(item.word && item.pronounced, `雙收音 ${item.letters || item.title} 需要拼法與實際讀音`);
 }
-assert.deepEqual(Array.from(course.soundChanges, rule => rule.id), ['liaison', 'nasal', 'tense', 'aspiration', 'palatal']);
-assert.equal(course.soundChanges.flatMap(rule => rule.examples).length, 15);
+assert.deepEqual(Array.from(course.soundChanges, rule => rule.id), ['liaison', 'nasal', 'tense', 'aspiration', 'palatal', 'liquid']);
+assert.equal(course.soundChanges.flatMap(rule => rule.examples).length, 19);
 for (const rule of course.soundChanges) {
   assert.ok(rule.examples.length >= 2, `${rule.label} 至少需要兩組例字`);
   for (const example of rule.examples) {
@@ -72,4 +72,4 @@ assert.match(courseJs, /courseQuiz\.audio = item\.word/);
 assert.match(courseJs, /courseQuiz\.audio = item\.written/);
 assert.match(courseJs, /if \(courseQuiz\.audio\) speak\(courseQuiz\.audio\)/);
 
-console.log('PASS: 9 lessons, 399 syllables, 7 standalone final sounds, 11 double finals, 5 sound changes, and 4 narrated quiz modes are wired');
+console.log('PASS: 9 lessons, 399 syllables, 7 standalone final sounds, 11 double finals, 6 sound changes, and 4 narrated quiz modes are wired');

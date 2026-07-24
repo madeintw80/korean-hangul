@@ -1,14 +1,15 @@
 # CHECKPOINT
 
-Updated: 2026-07-24T13:26:37+08:00
+Updated: 2026-07-24T13:48:00+08:00
 Task Lead: Echo
-Status: complete
+Status: in_progress
 Branch: main
 Last verified implementation commit: ab054ec
 Last published commit: c2db777
 
 ## PM requested
 
+- 音變篇再加入「流音化」：ㄴ 與 ㄹ 相遇時的發音規則，並同步更新內建女聲。
 - 參考三支收尾音教學影片更新收尾音篇；單收音不能只有例字，要保留七個代表音的單獨發音。
 - 加入 11 種雙收音的字尾規則、接母音規則與常見例外。
 - 本回合先完成本機版本；未取得新的 push／deploy 授權。
