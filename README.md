@@ -3,11 +3,11 @@
 vanilla JS PWA（無框架、無 build step），發音只使用 Sarah／Olivia／Emily 三套內建
 Supertonic 3 韓文女聲；不呼叫 Web Speech 裝置女聲，也不在前端切換 Gemini。
 
-**公開 Demo（目前 v3.3.0-preview）**：https://madeintw80.github.io/korean-hangul/
+**公開 Demo（目前 v3.3.1-preview）**：https://madeintw80.github.io/korean-hangul/
 
 > v3.3.0-preview 已發布：補齊 12 類標準發音教材、單／雙收音、例外、歌曲讀音與三套離線女聲。
 >
-> v3.3.1-preview 已在本機完成：719 段可點擊固定內容全部具備三個內建女聲，並補上桌機歌曲列的左右按鈕、滾輪、scrollbar 與滑鼠拖曳。
+> v3.3.1-preview 已公開：719 段可點擊固定內容全部具備三個內建女聲，並補上桌機歌曲列的左右按鈕、滾輪、scrollbar 與滑鼠拖曳。
 
 ## 功能
 

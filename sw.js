@@ -5,7 +5,7 @@
    ===================================================================== */
 importScripts('./audio/manifest.js?v=3.3.1');
 
-const CACHE = 'hangul-v3.3.1-preview';
+const CACHE = 'hangul-v3.3.1-preview-public';
 const CORE_AUDIO = (self.HANGUL_AUDIO && self.HANGUL_AUDIO.coreFiles || []).map(path => './' + path);
 
 // 要預先快取的檔案（相對路徑，配合 GitHub Pages 子目錄）
