@@ -40,7 +40,8 @@ vm.runInContext(
   fs.readFileSync(path.join(root, 'course-data.js'), 'utf8'),
   courseContext,
 );
-const soundChangeSamples = courseContext.window.HANGUL_COURSE_DATA.soundChanges
+const courseData = courseContext.window.HANGUL_COURSE_DATA;
+const soundChangeSamples = courseData.soundChanges
   .flatMap((group) => group.examples.map((example) => example.written));
 const updatedSongPronSamples = [
   '거세게 커저가 Ah Oh Ay',
@@ -49,11 +50,11 @@ const updatedSongPronSamples = [
   '맘쏙 Fireworks',
 ];
 
-assert.equal(manifest.version, '3.3.0-preview');
+assert.equal(manifest.version, '3.3.1-preview');
 assert.deepEqual(Object.keys(manifest.voices), ['sarah', 'olivia', 'emily']);
-assert.equal(Object.keys(manifest.texts).length, 221);
+assert.equal(Object.keys(manifest.texts).length, 732);
 assert.equal(manifest.files.length, Object.keys(manifest.texts).length * 3);
-assert.equal(manifest.coreFiles.length, 136 * 3);
+assert.equal(manifest.coreFiles.length, 496 * 3);
 
 for (const text of [...vowelSamples, ...consonantSamples, ...batchimSamples, manifest.previewText]) {
   assert.ok(manifest.texts[text], `missing core text: ${text}`);
@@ -97,12 +98,13 @@ for (const relPath of manifest.files) {
 
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 assert.ok(index.indexOf('audio/manifest.js') < index.indexOf('app.js'));
-assert.match(index, /value="static"/);
 assert.match(index, /id="naturalVoiceSelect"/);
+assert.doesNotMatch(index, /id="ttsMode"|id="voiceSelect"|value="system"|value="cloud"/);
 
 const app = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
 assert.match(app, /function playStatic/);
-assert.match(app, /playStatic\(text, r\)\.catch\(\(\) => speakSystem/);
+assert.match(app, /playStatic\(text, r\)\.catch\(showStaticAudioUnavailable\)/);
+assert.doesNotMatch(app, /speechSynthesis|SpeechSynthesisUtterance|speakSystem|playCloud|ttsMode/);
 assert.match(app, /speak\(line\.han, 0\.6\)/);
 assert.doesNotMatch(app, /speak\(a\.pron, 0\.6\)/);
 
@@ -115,6 +117,79 @@ const allEnglishLines = lyricLines.filter((line) => !/[가-힣]/.test(line));
 assert.ok(lyricLines.length > 0, 'failed to extract built-in lyric lines');
 assert.deepEqual(allEnglishLines, [], `all-English built-in lyrics are not allowed: ${allEnglishLines.join(' | ')}`);
 
+// 從真正可點擊的固定內容反推覆蓋率，避免新增 UI 後又悄悄落回裝置女聲。
+const speechHeading = app.indexOf('2. 語音引擎');
+const dataEnd = app.lastIndexOf('/* ---------------------------------------------------------------------', speechHeading);
+assert.ok(dataEnd > 0, 'failed to locate app data boundary');
+const appContext = {};
+vm.createContext(appContext);
+vm.runInContext(
+  `${app.slice(0, dataEnd)}
+globalThis.__APP_DATA__ = {
+  vowelGroups, consonantGroups, batchim, groups, phrases, songs,
+  CHO, JUNG, composeHangul, applyPronLine
+};`,
+  appContext,
+);
+const appData = appContext.__APP_DATA__;
+const reachableFixedTexts = new Set();
+const addFixed = text => {
+  const normalized = String(text ?? '').trim();
+  if (normalized) reachableFixedTexts.add(normalized);
+};
+
+for (const group of appData.vowelGroups) for (const item of group.items) addFixed(item.s);
+for (const group of appData.consonantGroups) for (const item of group.items) addFixed(item.s);
+for (const item of appData.batchim) {
+  addFixed(item.s);
+  addFixed(item.ex);
+}
+for (const item of appData.groups) addFixed(item.han);
+for (const item of appData.phrases) addFixed(item.han);
+for (const song of appData.songs) {
+  for (const line of song.lines) {
+    addFixed(line.han);
+    const tokens = line.pron
+      ? line.han.split(' ').filter(Boolean).map((word, index) => {
+          const pronounced = line.pron.split(' ').filter(Boolean)[index] || word;
+          return { text: pronounced, isKorean: /[가-힣]/.test(pronounced) };
+        })
+      : appData.applyPronLine(line.han).tokens.map(token => ({
+          text: token.koPron || token.p,
+          isKorean: token.isKo,
+        }));
+    for (const token of tokens) if (token.isKorean) addFixed(token.text);
+  }
+}
+for (const lesson of courseData.lessons) {
+  for (const sound of lesson.sounds) addFixed(sound.sample);
+  for (const comparison of lesson.comparisons || []) {
+    for (const value of comparison.values || []) addFixed(value);
+  }
+}
+for (const cho of appData.CHO) {
+  for (const jung of appData.JUNG) addFixed(appData.composeHangul(cho, jung, ''));
+}
+for (const item of courseData.singleBatchim) {
+  addFixed(item.standalone);
+  addFixed(item.example.word);
+}
+for (const group of courseData.doubleBatchimGroups) {
+  for (const item of group.items) addFixed(item.word);
+}
+for (const item of courseData.doubleBatchimLiaison) addFixed(item.word);
+for (const item of courseData.doubleBatchimExceptions) addFixed(item.word);
+for (const rule of courseData.soundChanges) {
+  for (const example of rule.examples) addFixed(example.written);
+}
+addFixed(manifest.previewText);
+
+assert.equal(reachableFixedTexts.size, 719);
+for (const text of reachableFixedTexts) {
+  assert.ok(manifest.texts[text], `reachable fixed text has no built-in voice: ${text}`);
+  assert.deepEqual(Object.keys(manifest.texts[text]), ['sarah', 'olivia', 'emily']);
+}
+
 for (const removedText of [
   "I'm on the next level",
   "I'll make it LEMONADE",
@@ -124,7 +199,7 @@ for (const removedText of [
 }
 
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-assert.match(sw, /hangul-v3\.3\.0-preview-public/);
+assert.match(sw, /hangul-v3\.3\.1-preview/);
 assert.match(sw, /CORE_AUDIO/);
 
 console.log(`PASS: ${Object.keys(manifest.texts).length} texts × 3 voices = ${manifest.files.length} MP3 files`);

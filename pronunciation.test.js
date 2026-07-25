@@ -134,11 +134,6 @@ const allMappingsAreDefined = evaluate(`CHO.every(cho => JUNG.every(jung =>
 ))`);
 assert.equal(allMappingsAreDefined, true, '19×21×8 的注音組合都必須有輸出');
 
-assert.ok(evaluate(`voiceQualityScore({ name: 'Microsoft SunHi Online (Natural)' })`) > evaluate(`voiceQualityScore({ name: 'Google 한국의' })`));
-assert.ok(evaluate(`voiceQualityScore({ name: 'Google 한국의' })`) > evaluate(`voiceQualityScore({ name: 'Yuna' })`));
-assert.ok(evaluate(`voiceQualityScore({ name: 'Yuna' })`) > evaluate(`voiceQualityScore({ name: 'Basic Korean' })`));
-assert.equal(evaluate(`voiceQualityScore({ name: 'Microsoft InJoon' })`), evaluate(`voiceQualityScore({ name: 'Yuna' })`));
-
 assert.equal(
   evaluate(`songs.find(item => item.song === 'Supernova').lines.find(line => line.han.includes('커져가')).pron`),
   '거세게 커저가 Ah Oh Ay'

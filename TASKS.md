@@ -62,6 +62,10 @@
 - [x] PM 明確授權 push v3.3.0-preview 至 GitHub `main`，由 GitHub Pages 自動發布。
 - [x] Echo push `main`，公開程式 commit `22bb269` 已由 GitHub Pages 上線。
 - [x] Echo 驗證公開首頁、v3.3 public cache、221 段／663 個 MP3 manifest、12 類標準發音與三套新女聲樣本皆正常。
+- [x] Echo 修正桌機歌曲橫列，加入左右按鈕、可見 scrollbar、滾輪、滑鼠拖曳與 active song 自動置中。
+- [x] Echo 移除 Web Speech／裝置女聲與 Gemini 前端切換，只保留 Sarah／Olivia／Emily。
+- [x] Echo 盤點 719 段實際可點擊固定內容，找出並補齊 511 段缺音，共新增三聲線 1,533 個 MP3。
+- [x] Echo 將音檔測試改為由 UI 資料反推全覆蓋，防止組合表或歌詞逐字再次悄悄掉回其他聲線。
 
 ## Backlog / 之後再說
 

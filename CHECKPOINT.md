@@ -1,14 +1,27 @@
 # CHECKPOINT
 
-Updated: 2026-07-24T16:40:24+08:00
+Updated: 2026-07-25T00:10:00+08:00
 Task Lead: Echo
 Status: complete
 Branch: main
-Last verified implementation commit: 2919998
+Last verified implementation commit: pending local feature commit
 Last published commit: 22bb269
+
+## v3.3.1 local completion receipt
+
+- Removed every frontend Web Speech / device-voice fallback and left only the three bundled voices: Sarah, Olivia, and Emily.
+- Audited all 719 fixed Korean teaching/playback texts reachable from the app and course data.
+- Added 511 missing texts for all three bundled voices: 1,533 new MP3 files.
+- Audio manifest now contains 732 texts and 2,196 MP3 files; every reachable fixed text has all three voices.
+- Desktop K-pop song picker now supports mouse drag, visible horizontal scrollbar, and left/right navigation buttons.
+- Browser verification at 1280 x 720 reached the last ITZY song by both navigation and drag; a newly added Korean lyric MP3 played with no console warnings or errors.
+- Automated checks passed: pronunciation, comprehensive audio coverage, PWA assets, course data, worker tests, and JavaScript syntax.
+- This work is committed locally only. It has not been pushed or published because PM did not authorize a new deployment in this turn.
 
 ## PM requested
 
+- 修正網頁版 K-pop 歌曲橫列在桌機無法拉到最右邊。
+- 全面稽核固定教材播放，移除裝置女聲與 Web Speech fallback，只保留 Sarah／Olivia／Emily 三個內建女聲。
 - PM 已明確要求 push v3.3.0；授權涵蓋 GitHub `main` 與 GitHub Pages 自動發布，Cloudflare Worker 不在變更範圍。
 - 全部補進 App：完整檢查標準發音遺漏，包含單／雙收音、ㄴ／ㄹ 流音化、其他音變與歌曲標準讀音。
 - 確認固定教材是否為內建女聲，新增或修改內容仍要同步 Sarah／Olivia／Emily。

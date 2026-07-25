@@ -11,7 +11,7 @@ const course = sandbox.window.HANGUL_COURSE_DATA;
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const courseJs = fs.readFileSync(path.join(root, 'course.js'), 'utf8');
 
-assert.equal(course.version, '3.3.0-preview');
+assert.equal(course.version, '3.3.1-preview');
 assert.equal(course.lessons.length, 9);
 assert.deepEqual(
   Array.from(course.lessons.find(lesson => lesson.id === 'aspirated').sounds, item => item.letter),

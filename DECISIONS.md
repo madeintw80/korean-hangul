@@ -54,6 +54,10 @@
 | 2026-07-24 | v3.3.0-preview 維持本機版本，不自行 push／deploy | PM 要求把內容都加進去，但未提供新的公開發布授權 | Echo（權限邊界） |
 | 2026-07-24 | PM 授權 push／deploy v3.3.0-preview | 授權範圍為 GitHub `main` 與 GitHub Pages 自動發布；Cloudflare Worker 無變更、不重部署 | PM |
 | 2026-07-24 | v3.3.0-preview 公開驗收通過 | 公開首頁、public cache、221 段／663 個 MP3 manifest、Sarah／Olivia／Emily 新音檔與 12 類標準發音 Browser smoke 均正常 | Echo（驗收結果） |
+| 2026-07-24 | App 發音只保留 Sarah／Olivia／Emily，全面移除裝置女聲與 Web Speech fallback | PM 實際使用發現多處突然換成裝置女聲；固定內容必須維持一致聲線，缺檔時也不得靜默換聲 | PM |
+| 2026-07-24 | 719 段可點擊固定內容全部納入三聲線覆蓋測試 | 舊測試只抽查 221 段 manifest，漏掉組合表與歌詞逐字路徑；改由實際 UI 資料反推，才能防止日後回歸 | Echo（實作決策） |
+| 2026-07-24 | 自由貼上的歌詞只做發音拆解、不提供合成播放 | 任意新文字沒有預生成 Sarah／Olivia／Emily 音檔；為遵守只留三個內建女聲，不再借用裝置或雲端 TTS | Echo（實作決策） |
+| 2026-07-24 | 桌機歌曲列提供左右按鈕、可見 scrollbar、滾輪與滑鼠拖曳 | 隱藏 scrollbar 的純 overflow 列在一般滑鼠上無法可靠到達最右端 | PM＋Echo |
 
 ## 待 PM 決定
 

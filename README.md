@@ -1,11 +1,13 @@
 # 한글 Studio — 60 分鐘韓文速通＋K-pop 練習
 
-vanilla JS PWA（無框架、無 build step），固定教材預設使用三套內建 Supertonic 3 韓文女聲；
-自由句可手動切換 Gemini，無音檔或雲端不可用時再用 Web Speech API。
+vanilla JS PWA（無框架、無 build step），發音只使用 Sarah／Olivia／Emily 三套內建
+Supertonic 3 韓文女聲；不呼叫 Web Speech 裝置女聲，也不在前端切換 Gemini。
 
 **公開 Demo（目前 v3.3.0-preview）**：https://madeintw80.github.io/korean-hangul/
 
 > v3.3.0-preview 已發布：補齊 12 類標準發音教材、單／雙收音、例外、歌曲讀音與三套離線女聲。
+>
+> v3.3.1-preview 已在本機完成：719 段可點擊固定內容全部具備三個內建女聲，並補上桌機歌曲列的左右按鈕、滾輪、scrollbar 與滑鼠拖曳。
 
 ## 功能
 
@@ -16,12 +18,11 @@ vanilla JS PWA（無框架、無 build step），固定教材預設使用三套�
 - **四種朗讀測驗**：拆字、聽音、收尾、音變；每題自動念一次並可重播，錯題會記入本機弱點紀錄
 - **女團拼讀**：aespa / NMIXX / ITZY… 團名 + 追星常用語
 - **歌詞學習**：副歌逐字跟讀 + 發音變化引擎（連音/鼻音化/緊音化…自動標「實際唸法」），
-  也可以貼任何韓文歌詞自動拆解
+  也可以貼任何韓文歌詞自動拆解；自由貼文只做文字分析，不借用裝置女聲播放
 - **台灣注音輔助**：以韓國標準發音後的音節產生近似提示；清楚標出緊音與不爆破收尾，
   並提醒 ㅓ／ㅡ／ㅢ 等華語沒有精準對應的音仍要以韓文聲音與口型為準
-- **三套內建自然女聲**：Sarah／Olivia／Emily 可切換；221 段固定教材共 663 個 MP3，新增教材均有三套離線語音
-  不受 Gemini 每分鐘／每日限額影響
-- **自由句雲端備援**：需要合成教材外的新句子時可手動切 Gemini；失敗會改用裝置聲線
+- **三套內建自然女聲**：Sarah／Olivia／Emily 可切換；732 段 manifest、2,196 個 MP3，719 段實際可點擊固定內容完整覆蓋
+- **聲線一致**：裝置女聲與自動 fallback 已移除；音檔缺失時明確提示，不會悄悄換成另一個聲音
 
 ## 加到手機主畫面
 
@@ -47,6 +48,7 @@ vanilla JS PWA（無框架、無 build step），固定教材預設使用三套�
 - v3.2.0-preview 補齊七個可單獨播放的代表收尾音，以及 11 種雙收音的字尾、連音與高頻例外。
 - v3.2.1-preview 新增 ㄴ／ㄹ 流音化。
 - v3.3.0-preview 依《標準發音法》擴充為 12 類、59 組例字；補上 ㅚ／ㅟ／ㅢ、字母名稱、長短音、語素邊界與歌曲標準讀音。
+- v3.3.1-preview 補齊 399 格組合表、課程比較音與歌詞逐字跟讀的三聲線 MP3，移除 Web Speech／裝置女聲 fallback；桌機歌曲列新增可見導覽與拖曳操作。
 - 正式站仍是 vanilla JS 靜態 PWA，沒有新增 framework 或 build step。
 - 手機以單欄練習為主；桌面改為學習區＋發音控制台雙欄。
 
@@ -54,13 +56,13 @@ vanilla JS PWA（無框架、無 build step），固定教材預設使用三套�
 
 - 實際唸法以韓國國立國語院[《標準發音法》](https://www.korean.go.kr/kornorms/m/m_regltn.do?regltn_code=0002)為主；課程逐類標示對應條文與例外。
 - 注音只是給台灣初學者的近似入口，不是正式轉寫；遇到 ㅓ／ㅡ／ㅢ、平音／送氣音／緊音，應以韓文聲音與口型為準。
-- 舊 Cloudflare MeloTTS 的韓文整句會截斷，v2.3.0 已改接 Gemini；前端會核對 provider，避免誤播舊音訊。
+- 舊 Cloudflare／Gemini Worker 原始碼只留作歷史相容與測試，v3.3.1 前端已不再呼叫。
 
-## 雲端語音設定與測試
+## 測試
 
 - API key 只存於 Cloudflare encrypted secret，禁止放進前端或 Git；完整步驟見
   [`cf-tts-worker/SETUP.md`](./cf-tts-worker/SETUP.md)。
-- Worker 測試：`node cf-tts-worker/worker.test.mjs`
+- 歷史 Worker 回歸：`node cf-tts-worker/worker.test.mjs`（前端未使用）
 - 發音／注音回歸：`node pronunciation.test.js`
 - 三聲線音檔覆蓋：`node audio-assets.test.mjs`
 - PWA 圖示／manifest：`node pwa-assets.test.mjs`

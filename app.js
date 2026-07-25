@@ -1,6 +1,6 @@
 /* =====================================================================
    한글 練習 PWA — 主程式
-   - 用瀏覽器內建 Web Speech API 唸韓文（不需後端、不需金鑰）
+   - 固定教材只用 Sarah／Olivia／Emily 三套內建 MP3，不呼叫裝置女聲
    - 資料驅動：母音/子音/받침/女團/歌曲 都放在陣列，方便日後擴充
    - v2.0.0 新增：發音變化引擎（連音/鼻音化/緊音化…自動標出「實際唸法」）
      + 歌詞逐字跟讀 + 貼歌詞自動拆解
@@ -627,54 +627,22 @@ function zhuWord(word) {
 }
 
 /* ---------------------------------------------------------------------
-   2. 語音引擎（Web Speech API）
+   2. 語音引擎
    --------------------------------------------------------------------- */
-let koVoice = null;       // 目前選用的韓文語音
-let koVoices = [];        // 裝置上所有韓文語音
 let currentRate = 1.0;    // 整句預設自然語速；需要拆音時另有 0.6x 慢速鍵
 let seqToken = 0;         // 逐字播放的「世代」編號：發新動作就 +1，舊隊伍自動停
 
 /* ---------------------------------------------------------------------
-   2.5 自然發音（內建 Supertonic 3 + 選用 Gemini TTS）
-   - 固定教材預設用三套內建 MP3，不受 Gemini 每日額度影響
-   - 使用者切到 Gemini 自由句時，抓不到才退回裝置韓文聲線
-   - ⚠️ iPhone Safari 對 <audio> 在「非點擊當下」播放會擋掉（要抓雲端音檔約 1 秒，
-     抓完已脫離手勢），所以改用 Web Audio API（AudioContext）：第一次點擊時 resume
-     解鎖一次，之後就能自由播放，不受手勢限制
-   - Gemini 同一句只 decode 一次，存進 bufCache，省流量也更快
+   2.5 內建自然發音（Supertonic 3）
+   - 所有固定教材都必須有 Sarah／Olivia／Emily 三套 MP3
+   - 不再使用 Web Speech／裝置女聲；缺檔時明確提示，不悄悄換聲線
    --------------------------------------------------------------------- */
 const STATIC_TTS = window.HANGUL_AUDIO || null;
 const STATIC_TTS_ENABLED = Boolean(STATIC_TTS && STATIC_TTS.texts && STATIC_TTS.voices);
-const TTS_WORKER = 'https://hangul-tts.madeintw80.workers.dev';
-const CLOUD_TTS_ENABLED = true;
-const TTS_PROVIDER_VERSION = 'static-3voice-v1';
-const savedProviderVersion = localStorage.getItem('ttsProviderVersion');
-let ttsMode = localStorage.getItem('ttsMode') || (STATIC_TTS_ENABLED ? 'static' : 'system');
 let naturalVoice = localStorage.getItem('naturalVoice') || (STATIC_TTS && STATIC_TTS.defaultVoice) || 'sarah';
-if (!['static', 'cloud', 'system'].includes(ttsMode)) ttsMode = STATIC_TTS_ENABLED ? 'static' : 'system';
 if (STATIC_TTS_ENABLED && !STATIC_TTS.voices[naturalVoice]) naturalVoice = STATIC_TTS.defaultVoice;
-if (savedProviderVersion !== TTS_PROVIDER_VERSION) {
-  // 新版改以內建音檔為預設，避免 Gemini 免費額度讓教材按鍵失聲。
-  ttsMode = STATIC_TTS_ENABLED ? 'static' : 'system';
-  localStorage.setItem('ttsMode', ttsMode);
-  localStorage.setItem('ttsProviderVersion', TTS_PROVIDER_VERSION);
-}
-const bufCache = new Map();     // rate + text → 已 decode 的 AudioBuffer（同句不重抓）
-let audioCtx = null;            // Web Audio 播放引擎
-let curSource = null;           // 目前在播的音源，停止時要 stop 它
 let curAudio = null;            // 內建 MP3 用原生 Audio 播放，iPhone 可保留音高調整語速
-let cloudTTSAvailable = null;   // null=尚未呼叫、true=可用、false=已退回裝置聲線
-
-// 取得（或建立）AudioContext
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
-
-// 解鎖音訊：iPhone 規定「播放必須源自使用者手勢」，第一次點擊就 resume 一次
-function unlockAudio() {
-  try { const ctx = getAudioCtx(); if (ctx.state === 'suspended') ctx.resume(); } catch (e) {}
-}
+let voiceStatusTimer = null;
 
 function getStaticAudioPath(text) {
   if (!STATIC_TTS_ENABLED) return null;
@@ -703,87 +671,6 @@ function playStatic(text, rate, myToken) {
   });
 }
 
-// 抓某句的音檔並 decode 成 AudioBuffer（先查快取，沒有才打 worker）
-async function fetchTTSBuffer(text, rate) {
-  const requestedRate = Math.min(1.2, Math.max(0.5, Number(rate) || 1));
-  const cacheKey = requestedRate.toFixed(2) + ':' + text;
-  if (bufCache.has(cacheKey)) return bufCache.get(cacheKey);
-
-  try {
-    const params = new URLSearchParams({ text, rate: requestedRate.toFixed(2) });
-    const res = await fetch(TTS_WORKER + '/?' + params.toString());
-    const provider = res.headers.get('X-TTS-Provider') || '';
-    if (!res.ok || !provider.startsWith('gemini-3.1')) throw new Error('worker HTTP ' + res.status);
-    const buf = await getAudioCtx().decodeAudioData(await res.arrayBuffer());
-    bufCache.set(cacheKey, buf);
-    cloudTTSAvailable = true;
-    updateVoiceStatus();
-    return buf;
-  } catch (error) {
-    cloudTTSAvailable = false;
-    updateVoiceStatus();
-    throw error;
-  }
-}
-
-// 用真人語音播一句；回傳 Promise（播完才 resolve）。失敗 reject → 呼叫端退回系統語音
-// myToken：給逐字播放用的「世代」檢查，中途被打斷就不播
-function playCloud(text, rate, myToken) {
-  return new Promise((resolve, reject) => {
-    fetchTTSBuffer(text, rate).then(buf => {
-      if (myToken !== undefined && myToken !== seqToken) { resolve(); return; }  // 已被打斷
-      const ctx = getAudioCtx();
-      if (ctx.state === 'suspended') ctx.resume();    // 保險再解鎖一次
-      const src = ctx.createBufferSource();
-      src.buffer = buf;
-      // 語速已交給 Gemini 自然演繹，避免 Web Audio 加減速造成聲調一起變形。
-      src.playbackRate.value = 1;
-      src.connect(ctx.destination);
-      curSource = src;
-      src.onended = resolve;
-      src.start(0);
-    }).catch(reject);
-  });
-}
-
-function loadVoices() {
-  const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
-  koVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('ko'));
-  // 自動挑最自然的：保留使用者選擇；新使用者優先 Natural/Neural，再選 Google。
-  const saved = localStorage.getItem('koVoiceName');
-  koVoice = koVoices.find(v => v.name === saved)
-         || [...koVoices].sort((a, b) => voiceQualityScore(b) - voiceQualityScore(a))[0]
-         || null;
-  populateVoiceSelect();
-  updateVoiceStatus();
-}
-
-// 名稱是 Web Speech 唯一可攜的品質線索；不假裝知道瀏覽器未揭露的模型版本。
-function voiceQualityScore(voice) {
-  const name = (voice && voice.name) || '';
-  if (/dragonhd|natural|neural|premium|enhanced/i.test(name)) return 400;
-  if (/google/i.test(name)) return 300;
-  if (/siri|sunhi|injoon|yuna|sora/i.test(name)) return 200;
-  return 100;
-}
-
-// 把裝置上所有韓文語音填進下拉選單，讓使用者自己挑最順耳的
-function populateVoiceSelect() {
-  const sel = document.getElementById('voiceSelect');
-  if (!sel) return;
-  if (!koVoices.length) { sel.style.display = 'none'; return; }  // 沒語音就藏起來
-  sel.style.display = '';
-  sel.innerHTML = '';
-  koVoices.forEach(v => {
-    const opt = document.createElement('option');
-    opt.value = v.name;
-    const recommended = voiceQualityScore(v) >= 300;
-    opt.textContent = (recommended ? '⭐ ' : '') + v.name + (v.localService ? ' · 裝置' : ' · 線上');
-    if (koVoice && v.name === koVoice.name) opt.selected = true;
-    sel.appendChild(opt);
-  });
-}
-
 function populateNaturalVoiceSelect() {
   const sel = document.getElementById('naturalVoiceSelect');
   if (!sel || !STATIC_TTS_ENABLED) return;
@@ -801,71 +688,39 @@ function updateVoiceStatus() {
   const el = document.getElementById('voiceStatus');
   const preview = document.getElementById('voicePreview');
   if (!el) return;
-  if (ttsMode === 'static' && STATIC_TTS_ENABLED) {
+  if (STATIC_TTS_ENABLED) {
     const voice = STATIC_TTS.voices[naturalVoice];
     el.className = 'voice-status ok';
-    el.textContent = `🎙️ ${voice.label} 內建自然女聲｜免費・不限次數・核心教材可離線`;
+    el.textContent = `🎙️ ${voice.label} 內建女聲｜固定教材全程不使用裝置 TTS`;
     if (preview) preview.disabled = false;
     return;
   }
-  if (ttsMode === 'cloud' && cloudTTSAvailable === false) {
-    el.className = 'voice-status warn';
-    el.textContent = '⚠️ Gemini 免費額度可能已用完，這句已改用 iPhone／裝置聲線';
-    if (preview) preview.disabled = false;
-    return;
-  }
-  if (ttsMode === 'cloud') {
-    el.className = 'voice-status ok';
-    el.textContent = '☁️ Gemini 自由句聲線｜免費額度每日有限';
-    if (preview) preview.disabled = false;
-    return;
-  }
-  if (!('speechSynthesis' in window)) {
-    el.className = 'voice-status warn';
-    el.textContent = '⚠️ 此瀏覽器不支援語音，建議用 Chrome / Edge / Safari';
-    if (preview) preview.disabled = true;
-  } else if (koVoice) {
-    el.className = 'voice-status ok';
-    el.textContent = (voiceQualityScore(koVoice) >= 300 ? '🎙️ 推薦聲線：' : '✅ 裝置聲線：') + koVoice.name;
-    if (preview) preview.disabled = false;
-  } else {
-    el.className = 'voice-status warn';
-    el.textContent = '⚠️ 沒找到韓文語音 → 連網路用 Chrome/Edge/Safari 最穩，或裝系統韓文語音包';
-    if (preview) preview.disabled = true;
-  }
+  el.className = 'voice-status warn';
+  el.textContent = '⚠️ 內建女聲資源尚未載入，請重新整理 App';
+  if (preview) preview.disabled = true;
+}
+
+function showStaticAudioUnavailable() {
+  const el = document.getElementById('voiceStatus');
+  if (!el) return;
+  el.className = 'voice-status warn';
+  el.textContent = '⚠️ 這段沒有內建音檔；裝置女聲已停用，因此不會自動換聲線';
+  clearTimeout(voiceStatusTimer);
+  voiceStatusTimer = setTimeout(updateVoiceStatus, 3600);
 }
 
 // 停掉所有發音（含逐字隊伍）
 function stopSpeak() {
   seqToken++;
-  if ('speechSynthesis' in window) speechSynthesis.cancel();
   if (curAudio) { try { curAudio.pause(); curAudio.currentTime = 0; } catch (e) {} curAudio = null; }
-  if (curSource) { try { curSource.onended = null; curSource.stop(); } catch (e) {} curSource = null; }  // 停掉真人語音
   document.querySelectorAll('.w-chip.speaking').forEach(e => e.classList.remove('speaking'));
 }
 
 // 唸出韓文文字（rate 可另外指定，例如慢速跟讀）
-// 教材模式：先播內建自然聲線；沒有預製音檔的自訂內容才退回裝置聲線。
 function speak(text, rate) {
   stopSpeak();
   const r = rate || currentRate;
-  if (ttsMode === 'static') {
-    playStatic(text, r).catch(() => speakSystem(text, r));
-  } else if (ttsMode === 'cloud') {
-    playCloud(text, r).catch(() => speakSystem(text, r));
-  } else {
-    speakSystem(text, r);
-  }
-}
-
-// 系統內建語音（Web Speech API）— 真人模式的備援
-function speakSystem(text, rate) {
-  if (!('speechSynthesis' in window)) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR';
-  if (koVoice) u.voice = koVoice;
-  u.rate = rate || currentRate;
-  speechSynthesis.speak(u);
+  playStatic(text, r).catch(showStaticAudioUnavailable);
 }
 
 /* 逐字接力播放：一個字一個字唸，唸到哪個字就高亮哪個
@@ -873,8 +728,6 @@ function speakSystem(text, rate) {
 function speakSeq(items, rate, gapMs) {
   stopSpeak();
   const myToken = ++seqToken;   // 記住自己的世代；中途有新動作就停
-  // Gemini 模式才預抓；內建音檔由瀏覽器與 Service Worker 自己快取。
-  if (ttsMode === 'cloud') items.forEach(it => fetchTTSBuffer(it.text, rate).catch(() => {}));
   let i = 0;
   const next = () => {
     if (myToken !== seqToken || i >= items.length) {
@@ -885,27 +738,12 @@ function speakSeq(items, rate, gapMs) {
     document.querySelectorAll('.w-chip.speaking').forEach(e => e.classList.remove('speaking'));
     if (it.el) it.el.classList.add('speaking');
     const advance = () => { if (myToken === seqToken) setTimeout(next, gapMs); };
-    if (ttsMode === 'static') {
-      playStatic(it.text, rate, myToken).then(advance).catch(() => speakSeqOneSystem(it.text, rate, advance));
-    } else if (ttsMode === 'cloud') {
-      playCloud(it.text, rate, myToken).then(advance).catch(() => speakSeqOneSystem(it.text, rate, advance));
-    } else {
-      speakSeqOneSystem(it.text, rate, advance);
-    }
+    playStatic(it.text, rate, myToken).then(advance).catch(() => {
+      showStaticAudioUnavailable();
+      advance();
+    });
   };
   next();
-}
-
-// 系統語音播一個字（逐字接力的備援）
-function speakSeqOneSystem(text, rate, done) {
-  if (!('speechSynthesis' in window)) { done(); return; }
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR';
-  if (koVoice) u.voice = koVoice;
-  u.rate = rate;
-  u.onend = done;
-  u.onerror = done;
-  speechSynthesis.speak(u);
 }
 
 /* ---------------------------------------------------------------------
@@ -1225,7 +1063,7 @@ function analyzeLine(line) {
     const pTok = line.pron.split(' ').filter(t => t.length);
     const tokens = wTok.map((w, i) => {
       const p = pTok[i] || w;
-      return { w, p, isKo: /^[가-힣]+$/.test(p), koPron: p };
+      return { w, p, isKo: /[가-힣]/.test(p), koPron: p };
     });
     return { pron: line.pron, changes: line.changes || [], tokens };
   }
@@ -1233,7 +1071,7 @@ function analyzeLine(line) {
 }
 
 // 建一張「歌詞句卡」：逐字 chips + 實際唸法 + 注音 + 羅馬 + 意思 + 播放按鈕
-function makeLyricCard(line, showMean) {
+function makeLyricCard(line, showMean, allowAudio = true) {
   const a = analyzeLine(line);
   const card = el('div', 'card lyric-card');
 
@@ -1242,7 +1080,11 @@ function makeLyricCard(line, showMean) {
   const chipEls = [];
   a.tokens.forEach(t => {
     const s = el('span', 'w-chip' + (t.isKo ? '' : ' w-en'), t.w);
-    s.onclick = () => speak(t.koPron || t.p, Math.max(0.5, currentRate * 0.8));
+    if (allowAudio && t.isKo) {
+      s.onclick = () => speak(t.koPron || t.p, Math.max(0.5, currentRate * 0.8));
+    } else {
+      s.classList.add('audio-disabled');
+    }
     wordsRow.appendChild(s);
     chipEls.push(s);
   });
@@ -1264,7 +1106,7 @@ function makeLyricCard(line, showMean) {
   // ⑤ 中文意思
   if (showMean && line.mean) card.appendChild(el('div', 'mean', '💬 ' + line.mean));
 
-  // ⑥ 播放按鈕列：整句 / 慢速 / 逐字跟讀 /（有變音才出現）變音說明
+  // ⑥ 內建教材才顯示播放；自由貼文只分析，避免又借用裝置女聲。
   const btns = el('div', 'line-btns');
   const mkBtn = (label, fn, cls) => {
     const b = el('button', 'mini-btn' + (cls ? ' ' + cls : ''), label);
@@ -1272,11 +1114,14 @@ function makeLyricCard(line, showMean) {
     btns.appendChild(b);
     return b;
   };
-  mkBtn('🔊 整句', () => speak(line.han));                 // 整句用原文：TTS 自己會做自然變音
-  // 固定歌詞用原文 MP3 降速播放；合成器會自然套用音變，也能保證仍是所選內建女聲。
-  mkBtn('🐢 慢速', () => speak(line.han, 0.6));
-  mkBtn('🎯 逐字跟讀', () => speakSeq(
-    a.tokens.map((t, i) => ({ text: t.koPron || t.p, el: chipEls[i] })), 0.65, 380));
+  if (allowAudio) {
+    mkBtn('🔊 整句', () => speak(line.han));                 // 整句用原文 MP3
+    mkBtn('🐢 慢速', () => speak(line.han, 0.6));
+    mkBtn('🎯 逐字跟讀', () => speakSeq(
+      a.tokens.flatMap((t, i) => t.isKo
+        ? [{ text: t.koPron || t.p, el: chipEls[i] }]
+        : []), 0.65, 380));
+  }
 
   if (a.changes.length) {
     const panel = el('div', 'chg-panel');
@@ -1291,9 +1136,9 @@ function makeLyricCard(line, showMean) {
       panel.style.display = open ? '' : 'none';
       tg.classList.toggle('on', open);
     }, 'chg-btn');
-    card.appendChild(btns);
+    if (allowAudio || a.changes.length) card.appendChild(btns);
     card.appendChild(panel);
-  } else {
+  } else if (allowAudio) {
     card.appendChild(btns);
   }
   return card;
@@ -1325,15 +1170,85 @@ function renderSongMode(root) {
     + '<br>🟡 點<b>單字</b>＝慢速唸那個字｜🎯 <b>逐字跟讀</b>＝一個字一個字帶你唸｜⚡ 看<b>為什麼變音</b>';
   root.appendChild(intro);
 
-  // 選歌 chips
+  // 選歌列同時支援箭頭、滾輪、觸控與滑鼠拖曳，桌機不會再卡在最左邊。
+  const picker = el('div', 'song-picker');
+  const previous = el('button', 'song-scroll-btn', '←');
+  previous.type = 'button';
+  previous.setAttribute('aria-label', '往左看更多歌曲');
   const chips = el('div', 'song-chips');
+  chips.setAttribute('role', 'list');
+  chips.setAttribute('aria-label', '歌曲選擇，可左右拖曳');
+  chips.tabIndex = 0;
+  let activeChip = null;
   songs.forEach((s, i) => {
     const b = el('button', 'song-chip' + (i === currentSongIdx ? ' active' : ''));
     b.innerHTML = `<span class="sc-group">${s.group}</span>${s.song}`;
     b.onclick = () => { currentSongIdx = i; renderLyrics(); };
     chips.appendChild(b);
+    if (i === currentSongIdx) activeChip = b;
   });
-  root.appendChild(chips);
+  const next = el('button', 'song-scroll-btn', '→');
+  next.type = 'button';
+  next.setAttribute('aria-label', '往右看更多歌曲');
+
+  const updateScrollButtons = () => {
+    const max = Math.max(0, chips.scrollWidth - chips.clientWidth);
+    previous.disabled = chips.scrollLeft <= 2;
+    next.disabled = chips.scrollLeft >= max - 2;
+  };
+  const scrollSongs = direction => {
+    chips.scrollBy({ left: direction * Math.max(260, chips.clientWidth * 0.72), behavior: 'smooth' });
+  };
+  previous.onclick = () => scrollSongs(-1);
+  next.onclick = () => scrollSongs(1);
+  chips.addEventListener('scroll', updateScrollButtons, { passive: true });
+  chips.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+      chips.scrollLeft += event.deltaY;
+      event.preventDefault();
+    }
+  }, { passive: false });
+
+  let dragStartX = 0;
+  let dragStartLeft = 0;
+  let suppressClick = false;
+  chips.addEventListener('pointerdown', event => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    dragStartX = event.clientX;
+    dragStartLeft = chips.scrollLeft;
+    suppressClick = false;
+    chips.classList.add('dragging');
+    chips.setPointerCapture(event.pointerId);
+  });
+  chips.addEventListener('pointermove', event => {
+    if (!chips.classList.contains('dragging')) return;
+    const delta = event.clientX - dragStartX;
+    if (Math.abs(delta) > 5) suppressClick = true;
+    chips.scrollLeft = dragStartLeft - delta;
+  });
+  const finishDrag = event => {
+    if (!chips.classList.contains('dragging')) return;
+    chips.classList.remove('dragging');
+    if (chips.hasPointerCapture(event.pointerId)) chips.releasePointerCapture(event.pointerId);
+    setTimeout(() => { suppressClick = false; }, 0);
+  };
+  chips.addEventListener('pointerup', finishDrag);
+  chips.addEventListener('pointercancel', finishDrag);
+  chips.addEventListener('click', event => {
+    if (!suppressClick) return;
+    event.preventDefault();
+    event.stopPropagation();
+  }, true);
+
+  picker.append(previous, chips, next);
+  root.appendChild(picker);
+  requestAnimationFrame(() => {
+    // 等 grid 完成第二次 layout 才量 scrollWidth，避免桌機初次渲染把右鍵誤判成 disabled。
+    requestAnimationFrame(() => {
+      if (activeChip) activeChip.scrollIntoView({ block: 'nearest', inline: 'center' });
+      updateScrollButtons();
+    });
+  });
 
   const song = songs[currentSongIdx];
   const h = el('h3', 'group-title', `${song.group} — ${song.song}（${song.year}）副歌精華`);
@@ -1345,7 +1260,7 @@ function renderSongMode(root) {
 function renderPasteMode(root) {
   const intro = el('p', 'tab-intro');
   intro.innerHTML = '從任何地方複製韓文歌詞貼進來（一行一句），妮妮自動標'
-    + '<b>實際唸法、注音、羅馬拼音</b>，一樣可以逐字跟讀 ✨<br>'
+    + '<b>實際唸法、注音、羅馬拼音</b>。自由貼文不播放，避免改用裝置女聲。<br>'
     + '<span class="paste-note">⚠️ 引擎涵蓋常規變音與教材常見的複合詞／漢字詞；'
     + '自由貼上的內容若牽涉詞性、詞源或停頓位置，仍可能需要查字典確認。中文意思也可以問我！</span>';
   root.appendChild(intro);
@@ -1370,7 +1285,7 @@ function renderPasteMode(root) {
     result.innerHTML = '';
     const lines = area.value.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 50);
     if (!lines.length) { result.appendChild(el('p', 'tab-intro', '先貼一點歌詞再按拆解唷 🐱')); return; }
-    lines.forEach(l => result.appendChild(makeLyricCard({ han: l }, false)));
+    lines.forEach(l => result.appendChild(makeLyricCard({ han: l }, false, false)));
   };
   btn.onclick = doParse;
   if (area.value.trim()) doParse();   // 上次貼過的自動拆好
@@ -1396,6 +1311,8 @@ function setupTabs() {
       document.querySelectorAll('.tab-content').forEach(c => {
         c.classList.toggle('active', c.id === target);
       });
+      // 歌詞頁初始時是 display:none，必須在顯示後重畫才能量到真正的橫向寬度。
+      if (target === 'tab-lyrics') renderLyrics();
       // 切走時停掉正在唸的音（含逐字隊伍）。
       stopSpeak();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1407,34 +1324,14 @@ function setupTabs() {
    5. 啟動
    --------------------------------------------------------------------- */
 function init() {
-  // 解鎖音訊：iPhone 規定播放要源自使用者手勢，第一次點擊就先 resume AudioContext
-  document.addEventListener('pointerdown', unlockAudio, { passive: true });
-
-  // 語音
+  // 語音只提供三套內建女聲，不讀取或呼叫裝置語音。
   populateNaturalVoiceSelect();
-  if ('speechSynthesis' in window) {
-    speechSynthesis.onvoiceschanged = loadVoices;
-    loadVoices();
-  } else {
-    updateVoiceStatus();
-  }
+  updateVoiceStatus();
 
   // K-pop 實戰只保留女團拼讀與歌詞拼音，避免與主課程重複。
   renderIdols();
   renderLyrics();
   setupTabs();
-
-  // 語音選單：切換 voice + 記住選擇 + 立刻試聽
-  const voiceSel = document.getElementById('voiceSelect');
-  if (voiceSel) {
-    voiceSel.onchange = () => {
-      koVoice = koVoices.find(v => v.name === voiceSel.value) || koVoice;
-      localStorage.setItem('koVoiceName', voiceSel.value);  // 記住，下次自動用
-      updateVoiceStatus();
-      stopSpeak();
-      speakSystem('안녕하세요', 1.0);   // 直接試聽剛選的裝置備援聲線
-    };
-  }
 
   const naturalVoiceSel = document.getElementById('naturalVoiceSelect');
   if (naturalVoiceSel) {
@@ -1444,22 +1341,7 @@ function init() {
       localStorage.setItem('naturalVoice', naturalVoice);
       updateVoiceStatus();
       stopSpeak();
-      playStatic(STATIC_TTS.previewText, 1.0).catch(() => speakSystem(STATIC_TTS.previewText, 1.0));
-    };
-  }
-
-  // 發音模式：內建三聲線 / Gemini 自由句 / 裝置最佳聲線
-  const ttsModeRow = document.getElementById('ttsModeRow');
-  const ttsModeSel = document.getElementById('ttsMode');
-  if (!CLOUD_TTS_ENABLED) {
-    if (ttsModeRow) ttsModeRow.style.display = 'none';   // 真人停用 → 藏起選單，固定用裝置最佳聲線
-  } else if (ttsModeSel) {
-    ttsModeSel.value = ttsMode;
-    ttsModeSel.onchange = () => {
-      ttsMode = ttsModeSel.value;
-      localStorage.setItem('ttsMode', ttsMode);
-      updateVoiceStatus();
-      speak('안녕하세요');   // 換模式馬上試聽
+      playStatic(STATIC_TTS.previewText, 1.0).catch(showStaticAudioUnavailable);
     };
   }
 
