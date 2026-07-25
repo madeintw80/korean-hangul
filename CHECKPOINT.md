@@ -1,11 +1,20 @@
 # CHECKPOINT
 
-Updated: 2026-07-25T00:10:00+08:00
+Updated: 2026-07-25T13:36:12+08:00
 Task Lead: Echo
 Status: complete
 Branch: main
 Last verified implementation commit: bf4703b
-Last published commit: 22bb269
+Last published commit: 4cc95b2
+
+## v3.3.1 public publication receipt
+
+- PM explicitly authorized publishing v3.3.1 to GitHub `main`; release commit `4cc95b2` was pushed successfully.
+- GitHub Pages homepage returned HTTP 200 and showed `PUBLIC PREVIEW`, `v3.3.1`, and the public-preview footer.
+- Public `audio/manifest.js` returned HTTP 200 with version `3.3.1-preview`, 732 texts, and 2,196 unique MP3 paths.
+- Public Service Worker returned HTTP 200 with cache `hangul-v3.3.1-preview-public`.
+- Newly added sample `움켜쥔` returned HTTP 200 and `audio/mp3` for Sarah, Olivia, and Emily.
+- Public browser verification confirmed exactly three built-in voice options, no device-voice controls, working right navigation through `ITZY / Girls Will Be Girls`, and zero console warnings or errors.
 
 ## v3.3.1 local completion receipt
 
