@@ -1,11 +1,11 @@
 # CHECKPOINT
 
-Updated: 2026-07-26T23:28:20+08:00
+Updated: 2026-07-26T23:31:45+08:00
 Task Lead: Echo
-Status: ready_to_publish
+Status: complete
 Branch: main
 Last verified implementation commit: 39ecf83
-Last published commit: 4cc95b2
+Last published commit: 7a0db01
 
 ## v3.3.2 short-audio voice consistency
 
@@ -16,6 +16,14 @@ Last published commit: 4cc95b2
 - The legacy standalone `voices.html` Web Speech diagnostic page was removed, leaving no shipped frontend page that can call a device voice.
 - Automated checks passed: pronunciation, 732-text／2,196-MP3 audio coverage, PWA assets, course data, worker history tests, JavaScript syntax, and `git diff --check`.
 - Local browser verification selected Olivia and Emily, replayed a quiz syllable, clicked a lyric word, and ran word-by-word follow-along. Observed resources remained under the selected `audio/olivia/` or `audio/emily/` directory; the UI reported the selected built-in voice and browser logs were empty.
+
+## v3.3.2 public publication receipt
+
+- PM's existing publish instruction covered this follow-up correction; commits `39ecf83` and `7a0db01` were pushed to GitHub `main`.
+- Public homepage returned HTTP 200 and showed `v3.3.2 Preview` plus the `短音一致化` footer.
+- Public `audio/manifest.js` returned HTTP 200 with version `3.3.2-preview` and the 511-entry `contextualShortTexts` marker; public Service Worker uses `hangul-v3.3.2-preview-public`.
+- Public Olivia quiz／lyric samples and Emily quiz sample returned HTTP 200 and byte-for-byte matched the local regenerated MP3 files.
+- Public browser verification selected Olivia, auto-played a quiz syllable, clicked a lyric word, and completed word-by-word follow-along. Every observed clip stayed under `audio/olivia/`, the UI reported Olivia as the built-in voice, and browser logs were empty.
 
 ## v3.3.1 public publication receipt
 
