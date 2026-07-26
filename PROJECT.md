@@ -28,7 +28,7 @@
 
 ## 測試
 
-- 靜態結構、732 段 manifest／2,196 個 MP3、719 段可點擊固定內容三聲線全覆蓋、核心離線快取與版本一致性檢查。
+- 靜態結構、732 段 manifest／2,196 個 MP3、719 段可點擊固定內容三聲線全覆蓋、511 段語境化短音標記、核心離線快取與版本一致性檢查。
 - 課程資料：九關、399 個母子組合、七種有獨立發音的代表收尾音、11 個雙收音及其連音／例外、12 類標準發音與四種自動朗讀測驗模式。
 - Browser smoke：390×844、1280×720、六個主學習區、K-pop 兩個 tab、TTS、進度、組合表、音變、測驗與 console error。
 - PWA：manifest、service worker assets 與 CACHE 版本。
@@ -41,10 +41,12 @@
 ## 已知風險 / 注意事項
 
 - 固定內容若漏進 manifest，App 會明確顯示缺檔，不會改用裝置女聲；`audio-assets.test.mjs` 會直接阻擋這類回歸。
+- 單一音節／短詞若直接獨立合成，神經 TTS 仍可能出現音色漂移；這些內容必須先放進韓文提示語境生成，再按停頓裁切。
 - 歌詞逐字音檔採首次連線載入後 cache-first；課程核心音檔則由 Service Worker 預先快取。
 - Service worker 若未 bump CACHE，舊使用者可能看不到更新。
 
 ## 固定教材語音更新規則
 
 - 新增或修改任何固定教材文字時，Sarah／Olivia／Emily 三套預生成 MP3、`audio/manifest.js`、Service Worker 核心快取與 `audio-assets.test.mjs` 必須同批更新。
+- 測驗音節、歌詞點讀與逐字跟讀的短音必須列入 `contextualShortTexts`，以語境化生成流程製作；逐字播放不得低於能保留原聲線的 0.88x。
 - 固定教材不可把 Web Speech／裝置聲線 fallback 當作完成；教材外的自由文字也不 fallback，只提供文字拆解。

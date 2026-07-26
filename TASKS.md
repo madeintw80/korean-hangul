@@ -2,7 +2,7 @@
 
 ## In progress
 
-- 無。
+- [ ] Echo 重製 511 段測驗／歌詞短音 × Sarah／Olivia／Emily，完成 v3.3.2 測試、發布與公開驗收。
 
 ## Todo（依優先順序）
 

@@ -50,11 +50,12 @@ const updatedSongPronSamples = [
   '맘쏙 Fireworks',
 ];
 
-assert.equal(manifest.version, '3.3.1-preview');
+assert.equal(manifest.version, '3.3.2-preview');
 assert.deepEqual(Object.keys(manifest.voices), ['sarah', 'olivia', 'emily']);
 assert.equal(Object.keys(manifest.texts).length, 732);
 assert.equal(manifest.files.length, Object.keys(manifest.texts).length * 3);
 assert.equal(manifest.coreFiles.length, 496 * 3);
+assert.equal(manifest.contextualShortTexts.length, 511);
 
 for (const text of [...vowelSamples, ...consonantSamples, ...batchimSamples, manifest.previewText]) {
   assert.ok(manifest.texts[text], `missing core text: ${text}`);
@@ -107,6 +108,17 @@ assert.match(app, /playStatic\(text, r\)\.catch\(showStaticAudioUnavailable\)/);
 assert.doesNotMatch(app, /speechSynthesis|SpeechSynthesisUtterance|speakSystem|playCloud|ttsMode/);
 assert.match(app, /speak\(line\.han, 0\.6\)/);
 assert.doesNotMatch(app, /speak\(a\.pron, 0\.6\)/);
+assert.match(app, /Math\.max\(0\.88, currentRate \* 0\.95\)/);
+assert.match(app, /\]\), 0\.92, 300\)\);/);
+assert.equal(fs.existsSync(path.join(root, 'voices.html')), false);
+for (const frontendFile of ['index.html', 'app.js', 'course.js', 'course-data.js', 'sw.js']) {
+  const source = fs.readFileSync(path.join(root, frontendFile), 'utf8');
+  assert.doesNotMatch(
+    source,
+    /speechSynthesis|SpeechSynthesisUtterance/,
+    `device voice API remains in ${frontendFile}`,
+  );
+}
 
 const course = fs.readFileSync(path.join(root, 'course.js'), 'utf8');
 assert.match(course, /\.slow'\)\.onclick = \(\) => speak\(example\.written, 0\.72\)/);
@@ -190,6 +202,13 @@ for (const text of reachableFixedTexts) {
   assert.deepEqual(Object.keys(manifest.texts[text]), ['sarah', 'olivia', 'emily']);
 }
 
+const contextualSet = new Set(manifest.contextualShortTexts);
+assert.equal(contextualSet.size, manifest.contextualShortTexts.length);
+for (const text of contextualSet) {
+  assert.ok(reachableFixedTexts.has(text), `contextual short text is not reachable: ${text}`);
+  assert.ok(manifest.texts[text], `contextual short text has no built-in voice: ${text}`);
+}
+
 for (const removedText of [
   "I'm on the next level",
   "I'll make it LEMONADE",
@@ -199,7 +218,7 @@ for (const removedText of [
 }
 
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-assert.match(sw, /hangul-v3\.3\.1-preview/);
+assert.match(sw, /hangul-v3\.3\.2-preview/);
 assert.match(sw, /CORE_AUDIO/);
 
 console.log(`PASS: ${Object.keys(manifest.texts).length} texts × 3 voices = ${manifest.files.length} MP3 files`);

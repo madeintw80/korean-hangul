@@ -3,11 +3,13 @@
 vanilla JS PWA（無框架、無 build step），發音只使用 Sarah／Olivia／Emily 三套內建
 Supertonic 3 韓文女聲；不呼叫 Web Speech 裝置女聲，也不在前端切換 Gemini。
 
-**公開 Demo（目前 v3.3.1-preview）**：https://madeintw80.github.io/korean-hangul/
+**公開 Demo（目前 v3.3.2-preview）**：https://madeintw80.github.io/korean-hangul/
 
 > v3.3.0-preview 已發布：補齊 12 類標準發音教材、單／雙收音、例外、歌曲讀音與三套離線女聲。
 >
 > v3.3.1-preview 已公開：719 段可點擊固定內容全部具備三個內建女聲，並補上桌機歌曲列的左右按鈕、滾輪、scrollbar 與滑鼠拖曳。
+>
+> v3.3.2-preview 將 511 段測驗音節與歌詞短詞用完整韓文語境重製後裁切，並避免逐字播放過度降速造成音色漂移。
 
 ## 功能
 
@@ -23,6 +25,7 @@ Supertonic 3 韓文女聲；不呼叫 Web Speech 裝置女聲，也不在前端�
   並提醒 ㅓ／ㅡ／ㅢ 等華語沒有精準對應的音仍要以韓文聲音與口型為準
 - **三套內建自然女聲**：Sarah／Olivia／Emily 可切換；732 段 manifest、2,196 個 MP3，719 段實際可點擊固定內容完整覆蓋
 - **聲線一致**：裝置女聲與自動 fallback 已移除；音檔缺失時明確提示，不會悄悄換成另一個聲音
+- **短音一致**：測驗音節、歌詞點讀與逐字跟讀使用語境化生成的 Sarah／Olivia／Emily 音檔，不再用孤立單字合成
 
 ## 加到手機主畫面
 
@@ -49,6 +52,7 @@ Supertonic 3 韓文女聲；不呼叫 Web Speech 裝置女聲，也不在前端�
 - v3.2.1-preview 新增 ㄴ／ㄹ 流音化。
 - v3.3.0-preview 依《標準發音法》擴充為 12 類、59 組例字；補上 ㅚ／ㅟ／ㅢ、字母名稱、長短音、語素邊界與歌曲標準讀音。
 - v3.3.1-preview 補齊 399 格組合表、課程比較音與歌詞逐字跟讀的三聲線 MP3，移除 Web Speech／裝置女聲 fallback；桌機歌曲列新增可見導覽與拖曳操作。
+- v3.3.2-preview 用完整韓文語境重製 511 段短音後再裁切目標字，逐字跟讀改為 0.92x，並刪除最後一個使用 Web Speech 的舊診斷頁。
 - 正式站仍是 vanilla JS 靜態 PWA，沒有新增 framework 或 build step。
 - 手機以單欄練習為主；桌面改為學習區＋發音控制台雙欄。
 
@@ -56,7 +60,7 @@ Supertonic 3 韓文女聲；不呼叫 Web Speech 裝置女聲，也不在前端�
 
 - 實際唸法以韓國國立國語院[《標準發音法》](https://www.korean.go.kr/kornorms/m/m_regltn.do?regltn_code=0002)為主；課程逐類標示對應條文與例外。
 - 注音只是給台灣初學者的近似入口，不是正式轉寫；遇到 ㅓ／ㅡ／ㅢ、平音／送氣音／緊音，應以韓文聲音與口型為準。
-- 舊 Cloudflare／Gemini Worker 原始碼只留作歷史相容與測試，v3.3.1 前端已不再呼叫。
+- 舊 Cloudflare／Gemini Worker 原始碼只留作歷史相容與測試，v3.3.2 前端已不再呼叫。
 
 ## 測試
 

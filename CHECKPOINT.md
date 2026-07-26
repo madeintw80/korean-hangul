@@ -1,11 +1,18 @@
 # CHECKPOINT
 
-Updated: 2026-07-25T13:36:12+08:00
+Updated: 2026-07-26T22:53:25+08:00
 Task Lead: Echo
-Status: complete
+Status: in_progress
 Branch: main
 Last verified implementation commit: bf4703b
 Last published commit: 4cc95b2
+
+## v3.3.2 short-audio voice consistency
+
+- PM reports that quiz playback, lyric word taps, and word-by-word follow-along do not sound like the selected Sarah／Olivia／Emily voice.
+- Public browser inspection confirmed quiz playback requests the selected Olivia asset, so this is short-clip timbre drift rather than a hidden device-TTS route.
+- Remediation is in progress: regenerate all 511 affected short texts for Sarah／Olivia／Emily inside a Korean carrier phrase and crop the target after a deliberate pause; lyric taps and follow-along now stay at 0.88x or faster.
+- The legacy standalone `voices.html` Web Speech diagnostic page was removed, leaving no shipped frontend page that can call a device voice.
 
 ## v3.3.1 public publication receipt
 

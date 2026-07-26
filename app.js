@@ -1075,13 +1075,13 @@ function makeLyricCard(line, showMean, allowAudio = true) {
   const a = analyzeLine(line);
   const card = el('div', 'card lyric-card');
 
-  // ① 歌詞原文 — 每個字是一顆可點的 chip（點了用慢速唸那個字）
+  // ① 歌詞原文 — 每個字是一顆可點的 chip；短音不再過度降速，避免內建聲線失真。
   const wordsRow = el('div', 'lyric-words');
   const chipEls = [];
   a.tokens.forEach(t => {
     const s = el('span', 'w-chip' + (t.isKo ? '' : ' w-en'), t.w);
     if (allowAudio && t.isKo) {
-      s.onclick = () => speak(t.koPron || t.p, Math.max(0.5, currentRate * 0.8));
+      s.onclick = () => speak(t.koPron || t.p, Math.max(0.88, currentRate * 0.95));
     } else {
       s.classList.add('audio-disabled');
     }
@@ -1120,7 +1120,7 @@ function makeLyricCard(line, showMean, allowAudio = true) {
     mkBtn('🎯 逐字跟讀', () => speakSeq(
       a.tokens.flatMap((t, i) => t.isKo
         ? [{ text: t.koPron || t.p, el: chipEls[i] }]
-        : []), 0.65, 380));
+        : []), 0.92, 300));
   }
 
   if (a.changes.length) {
