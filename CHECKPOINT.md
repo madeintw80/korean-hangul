@@ -1,18 +1,21 @@
 # CHECKPOINT
 
-Updated: 2026-07-26T22:53:25+08:00
+Updated: 2026-07-26T23:28:20+08:00
 Task Lead: Echo
-Status: in_progress
+Status: ready_to_publish
 Branch: main
-Last verified implementation commit: bf4703b
+Last verified implementation commit: 39ecf83
 Last published commit: 4cc95b2
 
 ## v3.3.2 short-audio voice consistency
 
 - PM reports that quiz playback, lyric word taps, and word-by-word follow-along do not sound like the selected Sarah／Olivia／Emily voice.
 - Public browser inspection confirmed quiz playback requests the selected Olivia asset, so this is short-clip timbre drift rather than a hidden device-TTS route.
-- Remediation is in progress: regenerate all 511 affected short texts for Sarah／Olivia／Emily inside a Korean carrier phrase and crop the target after a deliberate pause; lyric taps and follow-along now stay at 0.88x or faster.
+- Regenerated all 511 affected short texts × Sarah／Olivia／Emily inside a Korean carrier phrase, then cropped each target after deliberate pauses: 1,533 MP3 files were replaced.
+- Lyric taps now stay at 0.88x or faster; word-by-word follow-along uses 0.92x. `contextualShortTexts` records all 511 protected short texts.
 - The legacy standalone `voices.html` Web Speech diagnostic page was removed, leaving no shipped frontend page that can call a device voice.
+- Automated checks passed: pronunciation, 732-text／2,196-MP3 audio coverage, PWA assets, course data, worker history tests, JavaScript syntax, and `git diff --check`.
+- Local browser verification selected Olivia and Emily, replayed a quiz syllable, clicked a lyric word, and ran word-by-word follow-along. Observed resources remained under the selected `audio/olivia/` or `audio/emily/` directory; the UI reported the selected built-in voice and browser logs were empty.
 
 ## v3.3.1 public publication receipt
 
