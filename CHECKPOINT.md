@@ -1,11 +1,17 @@
 # CHECKPOINT
 
-Updated: 2026-09-03T10:45:00+08:00
+Updated: 2026-09-03T10:40:00+08:00
 Task Lead: Batnini
-Status: complete（local；**未 push、未發布**——AGENTS.md：Push 與 GitHub Pages 發布需 PM 授權）
+Status: complete（PM 2026-09-03 10:25「都你幫我處理」授權 → 已 push 並驗證公開站）
 Branch: main
-Last verified implementation commit: 見 git log（本輪 v3.3.3 commit）
-Last published commit: 7a0db01（v3.3.2；v3.3.3 尚未發布）
+Last verified implementation commit: 59f8d0e
+Last published commit: 59f8d0e
+
+## v3.3.3 public publication receipt
+
+- PM 授權後 `git push origin main`：`3868936..59f8d0e main -> main`。
+- 公開站 `https://madeintw80.github.io/korean-hangul/`：`index.html` title「한글 Studio v3.3.3 Preview」、footer strong「한글 Studio v3.3.3-preview」；`sw.js` 回 `const CACHE = 'hangul-v3.3.3-preview-public'`、`importScripts('./audio/manifest.js?v=3.3.3')`（WebFetch 實讀）。
+- 音檔未變動（`audio/manifest.js` 內容同 v3.3.2，僅 query string 改），不需重驗聲線。
 
 ## v3.3.3 lyric self-XSS fix（健檢 2026-09 backlog 第二級）
 
