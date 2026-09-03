@@ -3,20 +3,20 @@
    ⚠️ 改版規則：每次更新檔案，把 CACHE 版本號 +1（例 v2.0.1 → v2.0.2）
       這樣使用者的瀏覽器才會抓到新版（對應 App Versioning Rule）
    ===================================================================== */
-importScripts('./audio/manifest.js?v=3.3.2');
+importScripts('./audio/manifest.js?v=3.3.3');
 
-const CACHE = 'hangul-v3.3.2-preview-public';
+const CACHE = 'hangul-v3.3.3-preview-public';
 const CORE_AUDIO = (self.HANGUL_AUDIO && self.HANGUL_AUDIO.coreFiles || []).map(path => './' + path);
 
 // 要預先快取的檔案（相對路徑，配合 GitHub Pages 子目錄）
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=3.3.2',
-  './app.js?v=3.3.2',
-  './course-data.js?v=3.3.2',
-  './course.js?v=3.3.2',
-  './audio/manifest.js?v=3.3.2',
+  './style.css?v=3.3.3',
+  './app.js?v=3.3.3',
+  './course-data.js?v=3.3.3',
+  './course.js?v=3.3.3',
+  './audio/manifest.js?v=3.3.3',
   './manifest.json',
   './icons/favicon-32.png',
   './icons/apple-touch-icon-180.png',

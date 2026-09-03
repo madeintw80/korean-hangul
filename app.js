@@ -1092,8 +1092,13 @@ function makeLyricCard(line, showMean, allowAudio = true) {
 
   // ② 實際唸法（只有跟原文不同才顯示；變音的字加粗）
   if (a.pron !== line.han) {
-    const pr = el('div', 'pron-row');
-    pr.innerHTML = '🗣 實際唸：' + a.tokens.map(t => t.p !== t.w ? `<b>${t.p}</b>` : t.p).join(' ');
+    // 用 DOM 節點組、不走 innerHTML：歌詞是使用者自己貼上的文字，innerHTML 會讓貼進來的
+    // <img onerror=…> 之類直接執行（self-XSS，健檢 2026-09）。同函式其他欄位本來就走 el()。
+    const pr = el('div', 'pron-row', '🗣 實際唸：');
+    a.tokens.forEach((t, i) => {
+      if (i) pr.appendChild(document.createTextNode(' '));
+      pr.appendChild(t.p !== t.w ? el('b', null, t.p) : document.createTextNode(t.p));
+    });
     card.appendChild(pr);
   }
 

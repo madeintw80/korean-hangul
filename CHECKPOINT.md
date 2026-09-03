@@ -1,11 +1,19 @@
 # CHECKPOINT
 
-Updated: 2026-07-26T23:31:45+08:00
-Task Lead: Echo
-Status: complete
+Updated: 2026-09-03T10:45:00+08:00
+Task Lead: Batnini
+Status: complete（local；**未 push、未發布**——AGENTS.md：Push 與 GitHub Pages 發布需 PM 授權）
 Branch: main
-Last verified implementation commit: 39ecf83
-Last published commit: 7a0db01
+Last verified implementation commit: 見 git log（本輪 v3.3.3 commit）
+Last published commit: 7a0db01（v3.3.2；v3.3.3 尚未發布）
+
+## v3.3.3 lyric self-XSS fix（健檢 2026-09 backlog 第二級）
+
+- 來源：全專案健檢 2026-09 review_D 榮譽提名——`app.js:1096` 貼歌詞區「實際唸」列用 `innerHTML` 拼字串，使用者貼進來的 `<img onerror=…>` 會直接執行（純本機 self-XSS，只能自己害自己；但同函式其他欄位都走 `el()`，唯獨這行例外）。
+- 修法：改用 `el()`＋`document.createTextNode` 組 DOM，變音字仍以 `<b>` 標粗；行為與外觀不變。
+- 版號：`sw.js` CACHE `hangul-v3.3.2-preview-public`→`hangul-v3.3.3-preview-public`、`importScripts`／所有 `?v=` 同步 3.3.3；`index.html` title／issue／footer 改 v3.3.3、footer 文案「…＋歌詞區安全修正」。`audio/manifest.js` 內容未動（音檔版本不變，僅 query string 改）。
+- 驗證（本機 `python -m http.server`，launch.json `korean-hangul`）：載入 console 無錯；K-pop 實戰 → Lyrics → 貼歌詞拆解，輸入 `먹는 <img src=x onerror="window.__xss=1"> 같이` 後拆解：`.pron-row` 內 `img` 元素 0 個、`window.__xss` 未被設定、textContent 原字呈現 `<img …>`，變音字 `멍는`／`가치` 仍正確加粗。
+- 對外：**未 push、未發布**。PM 授權後 `git push origin main` 即上線，並比照 v3.3.2 做 public receipt（首頁 200＋footer v3.3.3、`sw.js` cache 名 `hangul-v3.3.3-preview-public`）。
 
 ## v3.3.2 short-audio voice consistency
 
