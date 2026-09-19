@@ -1,6 +1,6 @@
 # AGENTS — korean-hangul 協作規則
 
-本 repo 是 **Batnini × Echo 雙腦協作專案**。最高規則見 `C:/Users/User/agent-workspace/brain/PROTOCOL.md`。
+本 repo 是 **Batnini × Echo × 大黑 多腦協作專案**。最高規則見 `C:/Users/User/agent-workspace/brain/PROTOCOL.md`（多腦協作憲章 v3.1）。
 
 ## 動態主導
 
